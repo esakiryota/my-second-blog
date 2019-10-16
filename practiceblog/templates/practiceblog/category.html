@@ -3,21 +3,14 @@
 {% block content %}
       <nav style="margin-top: 40px;" class="text-darken-2">
       <div class="nav-wrapper red lighten-3">
-      <a href="#!" class="brand-logo" style="font-size: 20px;"><i class="material-icons">library_books</i>新着記事</a>
+      <a href="#!" class="brand-logo" style="font-size: 17px;"><i class="material-icons">library_books</i>『{{str}}』</a>
     </div>
   </nav>
       <span></span>
 
     {% for post in posts %}
-        <!-- <div class="post">
-            <div class="date">
-                {{ post.published_date }}
-            </div>
-            <h2><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h2>
-            <p>{{ post.text|linebreaksbr }}</p>
-        </div> -->
         <a href="{% url 'post_detail' pk=post.pk %}">
-        <div class="card  grey lighten-5 hoverable">
+        <div class="card grey lighten-5 hoverable">
           <div class="card-content black-text">
             <div class="chip" >{{ post.cate }}</div>
             <span class="card-title">{{ post.title }}</span>
@@ -32,15 +25,15 @@
     <ul class="pagination center">
         <!-- [{{posts.number}}/{{posts.paginator.num_pages}}] -->
       {% if posts.has_previous %}
-          <li class="disabled"><a href="{% url 'post_list' %}"><i class="material-icons">chevron_left</i></a></li>
-          <li class="waves-effect"><a href="{% url 'post_list' %}{{posts.previous_page_number}}">{{posts.previous_page_number}}</a></li>
+          <li class="disabled"><a href="{% url 'category' %}{{str}}"><i class="material-icons">chevron_left</i></a></li>
+          <li class="waves-effect"><a href="{% url 'category' %}{{str}}/{{posts.previous_page_number}}">{{posts.previous_page_number}}</a></li>
       {% endif %}
       <span class="current">
-        <li class="active"><a href="{% url 'post_list' %}{{posts.number}}">{{posts.number}}</a></li>
+        <li class="active"><a href="{% url 'category' %}{{str}}/{{posts.number}}">{{posts.number}}</a></li>
       </span>
       {% if posts.has_next %}
-          <li class="waves-effect"><a href="{% url 'post_list' %}{{posts.next_page_number}}">{{posts.next_page_number}}</a></li>
-          <li class="waves-effect"><a href="{% url 'post_list' %}{{posts.paginator.num_pages}}"><i class="material-icons">chevron_right</i></a></li>
+          <li class="waves-effect"><a href="{% url 'category' %}{{str}}/{{posts.next_page_number}}">{{posts.next_page_number}}</a></li>
+          <li class="waves-effect"><a href="{% url 'category' %}{{str}}/{{posts.paginator.num_pages}}"><i class="material-icons">chevron_right</i></a></li>
           <!-- <a href="{% url 'post_list' %}{{posts.paginator.num_pages}}">last&raquo;</a> -->
       {% endif %}
     </ul>

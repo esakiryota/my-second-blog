@@ -16,55 +16,44 @@
         <link rel="stylesheet" href="{% static 'css/blog.css' %}">
     </head>
     <body>
-      <header>
-
-      </header>
-      <body>
-        <div class="navbar-fixed">
-         <nav>
-           <div class="nav-wrapper">
-             <a href="/" class="brand-logo">MyBlog</a>
-             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-             <ul class="right hide-on-med-and-down">
-               <li><a href="sass.html">全て</a></li>
-               <li><a href="sass.html">プログラミング</a></li>
-               <li><a href="badges.html">生物系</a></li>
-               <li><a href="collapsible.html">筋トレ系</a></li>
-             </ul>
-           </div>
-         </nav>
-       </div>
-       <ul class="sidenav" id="mobile-demo">
-         <div class="nav-wrapper">
-           <form>
-             <div class="input-field">
-               <input id="search" type="search" required>
-               <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-               <i class="material-icons">close</i>
+      <body class="brown lighten-5">
+        <header>
+          <div class="navbar-fixed">
+           <nav>
+             <div class="nav-wrapper">
+               <!-- <a href="/" class="">MyBlog</a> -->
+               <a href="/" class="brand-logo">MyBlog</a>
+               <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+               <ul class="right hide-on-med-and-down">
+                 <li><a href="{% url 'post_list' %}">全て</a></li>
+                 <li><a href="{% url 'category' %}プログラミング/1">プログラミング</a></li>
+                 <li><a href="{% url 'category' %}生活/1">生活</a></li>
+                 <li><a href="{% url 'category' %}筋トレ/1">筋トレ</a></li>
+               </ul>
              </div>
-           </form>
+           </nav>
          </div>
-         <li><a href="sass.html">全て</a></li>
-         <li><a href="sass.html">プログラミング</a></li>
-         <li><a href="badges.html">生物系</a></li>
-         <li><a href="collapsible.html">筋トレ系</a></li>
-       </ul>
-            {% if user.is_authenticated %}
-            <div class="fixed-action-btn">
-                <a href="{% url 'post_new' %}" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
-              </div>
-            {% endif %}
-            <!-- <div class="fixed-action-btn">
-              <a class="btn-floating btn-large red">
-                <i class="large material-icons">add</i>
-              </a>
-              <ul>
-                <li><a class="btn-floating red" href="{% url 'post_new' %}"><i class="material-icons">mode_edit</i></a></li>
-                <li><a class="btn-floating yellow darken-1"><i class="material-icons">business_center</i></a></li>
-                <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
-                <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
-              </ul>
-            </div> -->
+         <ul class="sidenav" id="mobile-demo">
+           <div class="nav-wrapper">
+             <form>
+               <div class="input-field">
+                 <input id="search" type="search" required>
+                 <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                 <i class="material-icons">close</i>
+               </div>
+             </form>
+           </div>
+             <li><a href="{% url 'post_list' %}">全て</a></li>
+             <li><a href="{% url 'category' %}プログラミング">プログラミング</a></li>
+             <li><a href="{% url 'category' %}生活">生活</a></li>
+             <li><a href="{% url 'category' %}筋トレ">筋トレ</a></li>
+         </ul>
+              {% if user.is_authenticated %}
+              <div class="fixed-action-btn">
+                  <a href="{% url 'post_new' %}" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+                </div>
+              {% endif %}
+        </header>
           <div class="content container">
               <div class="row">
                   <div class="col-md-8">
@@ -73,6 +62,38 @@
                   </div>
               </div>
           </div>
+          <hr>
+          <footer class="">
+            <div class="row">
+              <div class="col s12">
+                <div class="card grey lighten-3">
+                  <div class="card-content">
+                    <div class="container">
+                      <div class="row">
+                        <div class="col s4">
+                          <!-- <img scr="{% static 'img/my_image.jpg' %}"> -->
+                          <img src="{% static 'img/my_image.jpg' %}" alt="" class="circle responsive-img">
+                        </div>
+                        <div class="col s8">
+                          <span class="card-title">りのたん</span>
+                          <p>東京工業大学3年生<br>新しい物好き。興味があったらすぐに飛びつくので、長続きしない。<br>プログラミング、家庭教師、筋トレ、研究などについて呟いていく。</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-action">
+                    <a href="#"><a href="https://twitter.com/AKpDbERJm5hZzUm" class="twitter-follow-button" data-show-count="false">Follow りのたん</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="footer-copyright">
+              <div class="container">
+                © 2019 Copyright Rinotan
+                <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+              </div>
+            </div>
+          </footer>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
           <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>

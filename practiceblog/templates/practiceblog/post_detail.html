@@ -1,13 +1,14 @@
 {% extends 'practiceblog/base.html' %}
 
 {% block content %}
-    <div class="post">
+    <div class="post" style="margin-top: 40px;">
         {% if post.published_date %}
-            <div class="date">
+            <div class="right" style="font-size: 10px;">
                 {{ post.published_date }}
             </div>
         {% endif %}
-        <h2>{{ post.title }}</h2>
+        <p style="font-weight: bold; font-size: 20px; border-bottom: solid 3px #ffcdd2;">{{ post.title }}<p>
         <p>{{ post.text|linebreaksbr }}</p>
+        <img src="{{ post.image.url }}" alt="">
     </div>
 {% endblock %}
