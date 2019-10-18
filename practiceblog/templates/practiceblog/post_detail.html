@@ -8,7 +8,7 @@
             </div>
         {% endif %}
         <p style="font-weight: bold; font-size: 20px; border-bottom: solid 3px #ffcdd2;">{{ post.title }}<p>
-        <p>{{ post.text|linebreaksbr }}</p>
+        <p>{{ post.text|safe }}</p>
         <img src="{{ post.image.url }}" alt="">
     </div>
 {% endblock %}
