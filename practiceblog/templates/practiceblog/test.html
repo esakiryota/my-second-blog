@@ -2,12 +2,13 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Doodle</title>
     <style media="screen">
       #mycanvas {
         border: 10px solid #999;
         cursor: crosshair;
+        position: fixed;
       }
     </style>
   </head>
@@ -26,7 +27,7 @@
       </select>
       <input type="button" id="erase" name="" value="消去">
     </p>
-    <canvas width="400" height="200" id="mycanvas">
+    <canvas width="400" height="200" id="mycanvas" class="">
       Canvasに対応したブラウザを用意してください。
     </canvas>
   </body>
@@ -70,11 +71,13 @@
 
     canvas.addEventListener("touchstart", function (e) {
       isDrowing = true;
+      e.preventDefault();
       startX = e.pageX - $(this).offset().left - borderWidth;
       startY = e.pageY - $(this).offset().top - borderWidth;
-    })
+    }, {passive: false})
 
     canvas.addEventListener("touchmove", function (e) {
+      e.preventDefault();
       if (!isDrowing) return;
       x = e.pageX - $(this).offset().left - borderWidth;
       y = e.pageY - $(this).offset().top - borderWidth;
@@ -84,7 +87,7 @@
       ctx.stroke();
       startX = x;
       startY = y;
-    });
+    }, {passive: false});
 
     canvas.addEventListener("touchend", function (e) {
       isDrowing = false;
