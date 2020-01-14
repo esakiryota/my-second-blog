@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" /> -->
     <title>Doodle</title>
     <style media="screen">
       #mycanvas {
@@ -74,7 +74,7 @@
       startY = e.pageY - $(this).offset().top - borderWidth;
     })
 
-    canvas.addEventListener("touchend", function (e) {
+    canvas.addEventListener("touchmove", function (e) {
       if (!isDrowing) return;
       x = e.pageX - $(this).offset().left - borderWidth;
       y = e.pageY - $(this).offset().top - borderWidth;
@@ -84,6 +84,10 @@
       ctx.stroke();
       startX = x;
       startY = y;
+    });
+
+    canvas.addEventListener("touchend", function (e) {
+      isDrowing = false;
     });
 
 
