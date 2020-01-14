@@ -73,3 +73,9 @@ def find(request, num=1, str='cate'):
     'posts': page.get_page(num),
     }
     return render(request, 'practiceblog/find.html', params)
+
+def student(request):
+    return render(request, 'practiceblog/student.html')
+
+def test(request):
+    return render(request, 'practiceblog/test.html')

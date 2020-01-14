@@ -1,0 +1,15 @@
+{% extends 'practiceblog/base.html' %}
+{% block content %}
+<a href="{% url 'test' %}">
+<div class="card grey lighten-5 hoverable">
+  <div class="card-content black-text">
+    <div class="chip" >test1</div>
+    <span class="card-title">2次方程式</span>
+    <!-- <p>{{ post.text|linebreaksbr }}</p> -->
+  </div>
+  <div class="card-action black-text" style="font-size: 10px;">
+      2月23日
+  </div>
+</div>
+</a>
+{% endblock %}

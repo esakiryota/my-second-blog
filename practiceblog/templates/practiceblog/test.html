@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Doodle</title>
+    <style media="screen">
+      #mycanvas {
+        border: 10px solid #999;
+        cursor: crosshair;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      <select id="penColor" class="" name="">
+        <option value="black">黒</option>
+        <option value="red">赤</option>
+        <option value="blue">青</option>
+        <option value="white">白</option>
+      </select>
+      <select id="penWidth" class="" name="">
+        <option value="1">細</option>
+        <option value="3">中</option>
+        <option value="5">太</option>
+      </select>
+      <input type="button" id="erase" name="" value="消去">
+    </p>
+    <canvas width="400" height="200" id="mycanvas">
+      Canvasに対応したブラウザを用意してください。
+    </canvas>
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+  $(function() {
+    var canvas = document.getElementById('mycanvas');
+    if (!canvas || !canvas.getContext) return false;
+    var ctx = canvas.getContext('2d');
+
+    var startX,
+        startY,
+        x,
+        y,
+        borderWidth = 10,
+        isDrowing = false;
+
+
+    $('#mycanvas').mousedown(function(e) {
+      isDrowing = true;
+      startX = e.pageX - $(this).offset().left - borderWidth;
+      startY = e.pageY - $(this).offset().top - borderWidth;
+    })
+    .mousemove(function(e) {
+      if (!isDrowing) return;
+      x = e.pageX - $(this).offset().left - borderWidth;
+      y = e.pageY - $(this).offset().top - borderWidth;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      startX = x;
+      startY = y;
+    })
+    .mouseup(function(e) {
+      isDrowing = false;
+    })
+    .mouseleave(function(e) {
+      isDrowing = false;
+    });
+
+    canvas.addEventListener("touchstart", function (e) {
+      isDrowing = true;
+      startX = e.pageX - $(this).offset().left - borderWidth;
+      startY = e.pageY - $(this).offset().top - borderWidth;
+    })
+
+    canvas.addEventListener("touchend", function (e) {
+      if (!isDrowing) return;
+      x = e.pageX - $(this).offset().left - borderWidth;
+      y = e.pageY - $(this).offset().top - borderWidth;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      startX = x;
+      startY = y;
+    });
+
+
+    $('#penColor').change(function(e) {
+      ctx.strokeStyle = $(this).val();
+    });
+
+    $('#penWidth').change(function(e) {
+      ctx.lineWidth = $(this).val();
+    });
+    $('#erase').click(function() {
+      if (!confirm('本当に消去しますか？')) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    })
+  });
+  </script>
+</html>
