@@ -14,4 +14,8 @@
  $(document).ready(function(){
    $('.fixed-action-btn').floatingActionButton();
  });
+
+ $(document).ready(function(){
+   $('select').formSelect();
+ });
 })(jQuery); // end of jQuery name space
