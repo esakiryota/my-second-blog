@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.utils import timezone
 from .models import Post
+from .models import Image
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm
+from .forms import PostForm, FindForm, ImageForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -78,4 +79,13 @@ def student(request):
     return render(request, 'practiceblog/student.html')
 
 def test(request):
-    return render(request, 'practiceblog/test.html')
+    form = ImageForm()
+    if (request.method == 'POST'):
+        req_form = ImageForm(request.POST, request.FILES)
+        images = req_form.save(commit=False)
+        images.author = request.user
+        images.published_date = timezone.now()
+        images.save()
+        return redirect('student')
+
+    return render(request, 'practiceblog/test.html',  {'form': form})
