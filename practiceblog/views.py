@@ -3,11 +3,14 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from .models import Post
 from .models import Image
+from .models import Question
+from .models import Solve
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm, ImageForm
+from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
 def post_list(request, num=1):
     if (request.method == 'POST'):
@@ -76,16 +79,73 @@ def find(request, num=1, str='cate'):
     return render(request, 'practiceblog/find.html', params)
 
 def student(request):
-    return render(request, 'practiceblog/student.html')
+    test = Question.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    solve = Solve.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    params = {
+    'tests': test,
+    'solves': solve,
+    }
+    return render(request, 'practiceblog/student.html', params)
 
-def test(request):
+def question(request):
+    form = QuestionForm()
+    if (request.method == 'POST'):
+        req_form = QuestionForm(request.POST, request.FILES)
+        images = req_form.save(commit=False)
+        images.author = request.user
+        images.published_date = timezone.now()
+        images.save()
+        return redirect('teacher')
+    return render(request, 'practiceblog/question.html', {'form': form})
+
+def teacher(request):
+    data = Image.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    return render(request, 'practiceblog/teacher.html', {'posts': data})
+
+def test(request, pk):
     form = ImageForm()
+    question = get_object_or_404(Question, pk=pk)
+    params = {
+    'form': form,
+    'question': question,
+    }
     if (request.method == 'POST'):
         req_form = ImageForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
         images.published_date = timezone.now()
+        images.questionId = pk
         images.save()
         return redirect('student')
 
-    return render(request, 'practiceblog/test.html',  {'form': form})
+    return render(request, 'practiceblog/test.html',  params)
+
+def answer(request, pk):
+    image = get_object_or_404(Image, pk=pk)
+    id = image.questionId
+    question = get_object_or_404(Question, pk=id)
+    form = SolveForm()
+    params = {
+    'form': form,
+    'image': image,
+    'question': question,
+    };
+    if (request.method == 'POST'):
+        req_form = SolveForm(request.POST, request.FILES)
+        images = req_form.save(commit=False)
+        images.author = request.user
+        images.published_date = timezone.now()
+        images.questionId = id
+        images.save()
+        return redirect('teacher')
+    return render(request, 'practiceblog/answer.html',  params)
+
+def solve(request, pk):
+    image = get_object_or_404(Solve, pk=pk)
+    id = image.questionId
+    question = get_object_or_404(Question, pk=id)
+    params = {
+    'image': image,
+    'question': question,
+    }
+    return render(request, 'practiceblog/solve.html',  params)

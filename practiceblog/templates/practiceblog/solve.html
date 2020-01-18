@@ -51,6 +51,9 @@
       #download {
         display: none;
       }
+      .hidden {
+        display: none;
+      }
       /* #penColor {
         position: fixed;
         left: 50%;
@@ -90,29 +93,12 @@
       </div>
     </div>
     <a id="download" href="#" download="canvas.png">ダウンロード</a>
-
     <canvas width="400" height="1200" id="mycanvas" class="">
     <!-- <canvas id="mycanvas" class=""> -->
       Canvasに対応したブラウザを用意してください。
     </canvas>
+    {{ image.image.url|json_script:"image-data" }}
     <!-- <div id="result"><img src="" id="img"></div> -->
-      <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
-        {% csrf_token %}
-        <div class="container">
-          <div class="row">
-              {{ form.image }}
-          </div>
-          <div class="row">
-            <div class="col m6">
-              {{ form.title }}
-            </div>
-            <div class="col m6">
-              {{ form.cate }}
-            </div>
-          </div>
-          </div>
-        </div>
-      </form>
   </body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -198,8 +184,6 @@
       e.preventDefault();
       var canvas = document.getElementById('mycanvas');
       var base64 = canvas.toDataURL();
-      // var base64 = canvas.toDataURL().replace(/^.*,/, '');
-      // document.getElementById('img').src = base64
       document.getElementById("download").href = base64;
       document.getElementById("download").click();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -210,6 +194,15 @@
       var form = document.getElementById('form');
       form.submit();
     })
+
+    var value = JSON.parse(document.getElementById('image-data').textContent);
+
+    var img = new Image();
+    img.src = value;
+
+    img.onload = function(){
+    ctx.drawImage(img, 0, 0, 400,  1200);
+  };
   });
   </script>
 </html>

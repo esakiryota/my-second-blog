@@ -12,5 +12,11 @@ urlpatterns = [
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('post/new/', views.post_new, name='post_new'),
     path('student', views.student, name='student'),
+    path('teacher', views.teacher, name='teacher'),
     path('test', views.test, name='test'),
+    path('test/<int:pk>/', views.test, name='test'),
+    path('answer', views.answer, name='answer'),
+    path('answer/<int:pk>/', views.answer, name='answer'),
+    path('question', views.question, name='question'),
+    path('solve/<int:pk>', views.solve, name='solve'),
 ]

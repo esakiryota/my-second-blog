@@ -51,6 +51,9 @@
       #download {
         display: none;
       }
+      .hidden {
+        display: none;
+      }
       /* #penColor {
         position: fixed;
         left: 50%;
@@ -65,8 +68,8 @@
       <div class="row">
         <div class="col s12 m2">
         <select id="penColor" class="" name="">
-          <option value="black">黒</option>
           <option value="red">赤</option>
+          <option value="black">黒</option>
           <option value="blue">青</option>
           <option value="white">白</option>
         </select>
@@ -90,11 +93,11 @@
       </div>
     </div>
     <a id="download" href="#" download="canvas.png">ダウンロード</a>
-
     <canvas width="400" height="1200" id="mycanvas" class="">
     <!-- <canvas id="mycanvas" class=""> -->
       Canvasに対応したブラウザを用意してください。
     </canvas>
+    {{ image.image.url|json_script:"image-data" }}
     <!-- <div id="result"><img src="" id="img"></div> -->
       <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
         {% csrf_token %}
@@ -132,6 +135,8 @@
         y,
         borderWidth = 10,
         isDrowing = false;
+
+    ctx.strokeStyle = "red";
 
 
     $('#mycanvas').mousedown(function(e) {
@@ -198,8 +203,6 @@
       e.preventDefault();
       var canvas = document.getElementById('mycanvas');
       var base64 = canvas.toDataURL();
-      // var base64 = canvas.toDataURL().replace(/^.*,/, '');
-      // document.getElementById('img').src = base64
       document.getElementById("download").href = base64;
       document.getElementById("download").click();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -210,6 +213,15 @@
       var form = document.getElementById('form');
       form.submit();
     })
+
+    var value = JSON.parse(document.getElementById('image-data').textContent);
+
+    var img = new Image();
+    img.src = value;
+
+    img.onload = function(){
+    ctx.drawImage(img, 0, 0, 400,  1200);
+  };
   });
   </script>
 </html>
