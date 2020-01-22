@@ -179,14 +179,17 @@
     });
 
     canvas.addEventListener("gesturestart", function(e) {
+      e.preventDefault();
       isDrowing = false;
     }, {passive: true});
 
     canvas.addEventListener("gesturechange", function(e) {
+      e.preventDefault();
       isDrowing = false;
     }, {passive: true});
 
     canvas.addEventListener("gestureend", function(e) {
+      e.preventDefault();
       isDrowing = false;
     }, {passive: true});
 
