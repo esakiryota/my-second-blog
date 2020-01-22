@@ -180,15 +180,15 @@
 
     canvas.addEventListener("gesturestart", function(e) {
       isDrowing = false;
-    });
+    }, {passive: true});
 
     canvas.addEventListener("gesturechange", function(e) {
       isDrowing = false;
-    });
+    }, {passive: true});
 
     canvas.addEventListener("gestureend", function(e) {
       isDrowing = false;
-    });
+    }, {passive: true});
 
 
     $('#penColor').change(function(e) {
