@@ -27,7 +27,7 @@
         border: 10px solid #999;
         cursor: crosshair;
         position: absolute;
-        left: 50%;
+        left: 5%;
         top: 100px;
         z-index: 0;
       }
@@ -61,9 +61,6 @@
     </style>
   </head>
   <body>
-    <div class="container" id="question">
-      <img src="{{ question.image.url }}" alt="">
-    </div>
     <div id="pen"class="container">
       <div class="row">
         <div class="col s12 m2">
@@ -93,7 +90,7 @@
       </div>
     </div>
     <a id="download" href="#" download="canvas.png">ダウンロード</a>
-    <canvas width="400" height="1200" id="mycanvas" class="">
+    <canvas width="980" height="2500" id="mycanvas" class="">
     <!-- <canvas id="mycanvas" class=""> -->
       Canvasに対応したブラウザを用意してください。
     </canvas>
@@ -220,7 +217,7 @@
     img.src = value;
 
     img.onload = function(){
-    ctx.drawImage(img, 0, 0, 400,  1200);
+    ctx.drawImage(img, 0, 0, 980,  2500);
   };
   });
   </script>
