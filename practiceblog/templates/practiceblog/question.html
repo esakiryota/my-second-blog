@@ -39,7 +39,8 @@
       }
       #form {
         position: fixed;
-        width: 45%;
+        width: 80%;
+        bottom: 1px;
       }
       #question {
         border: 10px solid #999;
@@ -58,34 +59,24 @@
     </style>
   </head>
   <body>
-    <div id="pen"class="container">
-      <div class="row">
-        <div class="col s12 m2">
-        <select id="penColor" class="" name="">
-          <option value="black">黒</option>
-          <option value="red">赤</option>
-          <option value="blue">青</option>
-          <option value="white">白</option>
-        </select>
-      </div>
-      <div class="col s12 m2">
-        <select id="penWidth" class="" name="">
-          <option value="1">細</option>
-          <option value="3">中</option>
-          <option value="5">太</option>
-        </select>
-      </div>
-      <div class="col m2">
-        <button class="btn waves-effect waves-light" type="submit" name="action" id="erase"><i class="material-icons">cancel</i></button>
-      </div>
-      <div class="col m2">
-        <a class="waves-effect waves-light btn" id="store" href=""><i class="material-icons">file_download</i></a>
-      </div>
-      <div class="col m2">
-        <a class="waves-effect waves-light btn" id="send" href=""><i class="material-icons">send</i></a>
-      </div>
-      </div>
-    </div>
+    <div class="fixed-action-btn">
+  <a class="btn-floating btn-large red">
+    <i class="large material-icons">mode_edit</i>
+  </a>
+  <ul>
+    <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
+    <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
+    <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
+    <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li>
+    <li><a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a></li>
+    <li><a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a></li>
+    <li><a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a></li>
+    <li><a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a></li>
+    <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
+    <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
+    <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
+  </ul>
+</div>
     <a id="download" href="#" download="canvas.png">ダウンロード</a>
 
     <canvas width="980" height="2500" id="mycanvas" class="">
@@ -93,23 +84,28 @@
       Canvasに対応したブラウザを用意してください。
     </canvas>
     <!-- <div id="result"><img src="" id="img"></div> -->
-      <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
-        {% csrf_token %}
-        <div class="container">
-          <div class="row">
+    <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
+      {% csrf_token %}
+      <div class="container">
+        <div class="row">
+          <div class="file-field input-field col m4">
+            <div class="btn">
+              <span>File</span>
               {{ form.image }}
-          </div>
-          <div class="row">
-            <div class="col m6">
-              {{ form.title }}
             </div>
-            <div class="col m6">
-              {{ form.cate }}
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text">
             </div>
           </div>
+          <div class="col m4">
+            {{ form.title }}
+          </div>
+          <div class="col m4">
+            {{ form.cate }}
           </div>
         </div>
-      </form>
+        </div>
+    </form>
   </body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -194,17 +190,29 @@
     }, {passive: true});
 
 
-    $('#penColor').change(function(e) {
-      ctx.strokeStyle = $(this).val();
-    });
+        $('#erase').click(function() {
+          ctx.strokeStyle = "white";
+          ctx.lineWidth = "20";
+        })
 
-    $('#penWidth').change(function(e) {
-      ctx.lineWidth = $(this).val();
-    });
-    $('#erase').click(function() {
-      if (!confirm('本当に消去しますか？')) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    })
+        $('#penStyle').click(function() {
+          ctx.strokeStyle = "black";
+          ctx.lineWidth = "1";
+        })
+
+
+        $('#zoom_in').click(function() {
+          $('#mycanvas').css("zoom","125%");
+        })
+
+        $('#zoom_out').click(function() {
+          $('#mycanvas').css("zoom","75%");
+          })
+
+        $('#undo').click(function() {
+          $('#mycanvas').css("zoom","100%");
+          })
+
     $('#store').click(function(e) {
       if (!confirm('本当に保存しますか？')) return;
       e.preventDefault();
@@ -222,6 +230,23 @@
       var form = document.getElementById('form');
       form.submit();
     })
+
+
+        $('#up').click(function(e) {
+          scrollBy(0,-100);
+        })
+
+        $('#down').click(function(e) {
+          scrollBy(0,100);
+        })
+
+        $('#left').click(function(e) {
+          scrollBy(-100,0);
+        })
+
+        $('#right').click(function(e) {
+          scrollBy(100,0);
+        })
   });
   </script>
 </html>

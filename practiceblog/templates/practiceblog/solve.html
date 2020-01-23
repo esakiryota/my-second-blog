@@ -39,7 +39,8 @@
       }
       #form {
         position: fixed;
-        width: 45%;
+        width: 80%;
+        bottom: 1px;
       }
       #question {
         border: 10px solid #999;
@@ -61,34 +62,24 @@
     </style>
   </head>
   <body>
-    <div id="pen"class="container">
-      <div class="row">
-        <div class="col s12 m2">
-        <select id="penColor" class="" name="">
-          <option value="black">黒</option>
-          <option value="red">赤</option>
-          <option value="blue">青</option>
-          <option value="white">白</option>
-        </select>
-      </div>
-      <div class="col s12 m2">
-        <select id="penWidth" class="" name="">
-          <option value="1">細</option>
-          <option value="3">中</option>
-          <option value="5">太</option>
-        </select>
-      </div>
-      <div class="col m2">
-        <button class="btn waves-effect waves-light" type="submit" name="action" id="erase"><i class="material-icons">cancel</i></button>
-      </div>
-      <div class="col m2">
-        <a class="waves-effect waves-light btn" id="store" href=""><i class="material-icons">file_download</i></a>
-      </div>
-      <div class="col m2">
-        <a class="waves-effect waves-light btn" id="send" href=""><i class="material-icons">send</i></a>
-      </div>
-      </div>
-    </div>
+    <div class="fixed-action-btn">
+  <a class="btn-floating btn-large red">
+    <i class="large material-icons">mode_edit</i>
+  </a>
+  <ul>
+    <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
+    <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
+    <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
+    <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li>
+    <li><a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a></li>
+    <li><a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a></li>
+    <li><a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a></li>
+    <li><a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a></li>
+    <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
+    <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
+    <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
+  </ul>
+</div>
     <a id="download" href="#" download="canvas.png">ダウンロード</a>
     <canvas width="980" height="2500" id="mycanvas" class="">
     <!-- <canvas id="mycanvas" class=""> -->
@@ -164,18 +155,45 @@
       isDrowing = false;
     });
 
-
-    $('#penColor').change(function(e) {
-      ctx.strokeStyle = $(this).val();
-    });
-
-    $('#penWidth').change(function(e) {
-      ctx.lineWidth = $(this).val();
-    });
     $('#erase').click(function() {
-      if (!confirm('本当に消去しますか？')) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = "20";
     })
+
+    $('#penStyle').click(function() {
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = "1";
+    })
+
+
+    $('#zoom_in').click(function() {
+      $('#mycanvas').css("zoom","125%");
+    })
+
+    $('#zoom_out').click(function() {
+      $('#mycanvas').css("zoom","75%");
+      })
+
+    $('#undo').click(function() {
+      $('#mycanvas').css("zoom","100%");
+      })
+      
+      $('#up').click(function(e) {
+        scrollBy(0,-100);
+      })
+
+      $('#down').click(function(e) {
+        scrollBy(0,100);
+      })
+
+      $('#left').click(function(e) {
+        scrollBy(-100,0);
+      })
+
+      $('#right').click(function(e) {
+        scrollBy(100,0);
+      })
+
     $('#store').click(function(e) {
       if (!confirm('本当に保存しますか？')) return;
       e.preventDefault();
