@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+import requests
 
 def post_list(request, num=1):
     if (request.method == 'POST'):
@@ -90,6 +91,12 @@ def student(request):
 def question(request):
     form = QuestionForm()
     if (request.method == 'POST'):
+        api = "https://notify-api.line.me/api/notify"
+        token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
+        headers = {"Authorization" : "Bearer "+ token}
+        message = '新しいテストを発行しました！url: http://esakiryota.pythonanywhere.com/student'
+        payload = {"message" :  message}
+        post = requests.post(api, headers = headers, params=payload)
         req_form = QuestionForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
@@ -110,6 +117,12 @@ def test(request, pk):
     'question': question,
     }
     if (request.method == 'POST'):
+        api = "https://notify-api.line.me/api/notify"
+        token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
+        headers = {"Authorization" : "Bearer "+ token}
+        message = 'テストをときました！url: http://esakiryota.pythonanywhere.com/teacher'
+        payload = {"message" :  message}
+        post = requests.post(api, headers = headers, params=payload)
         req_form = ImageForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
@@ -131,6 +144,12 @@ def answer(request, pk):
     'question': question,
     };
     if (request.method == 'POST'):
+        api = "https://notify-api.line.me/api/notify"
+        token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
+        headers = {"Authorization" : "Bearer "+ token}
+        message = '採点しました！url: http://esakiryota.pythonanywhere.com/teacher'
+        payload = {"message" :  message}
+        post = requests.post(api, headers = headers, params=payload)
         req_form = SolveForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
