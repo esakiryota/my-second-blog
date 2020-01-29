@@ -79,14 +79,20 @@ def find(request, num=1, str='cate'):
     }
     return render(request, 'practiceblog/find.html', params)
 
-def student(request):
+def student(request, num=1):
     test = Question.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
     solve = Solve.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    page = Paginator(test, 3)
     params = {
-    'tests': test,
+    'tests': page.get_page(num),
     'solves': solve,
     }
     return render(request, 'practiceblog/student.html', params)
+
+def result(request, num=1):
+    solve = Solve.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    page = Paginator(solve, 3)
+    return render(request, 'practiceblog/result.html', {"solves": page.get_page(num)})
 
 def question(request):
     form = QuestionForm()
@@ -105,9 +111,10 @@ def question(request):
         return redirect('teacher')
     return render(request, 'practiceblog/question.html', {'form': form})
 
-def teacher(request):
+def teacher(request, num=1):
     data = Image.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    return render(request, 'practiceblog/teacher.html', {'posts': data})
+    page = Paginator(data, 3)
+    return render(request, 'practiceblog/teacher.html', {'posts': page.get_page(num)})
 
 def test(request, pk):
     form = ImageForm()

@@ -14,7 +14,6 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <link rel="stylesheet" href="{% static 'css/blog.css' %}">
-    </head>
     <body>
       <body class="brown lighten-5">
         <header>
@@ -22,7 +21,7 @@
            <nav>
              <div class="nav-wrapper">
                <!-- <a href="/" class="">MyBlog</a> -->
-               <a href="/" class="brand-logo">MyBlog</a>
+               <a href="/" class="brand-logo">RPT</a>
                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                <ul class="right hide-on-med-and-down">
                  <li><a href="{% url 'post_list' %}">全て</a></li>
@@ -33,7 +32,7 @@
              </div>
            </nav>
          </div>
-         <ul class="sidenav" id="mobile-demo">
+         <ul class="sidenav collapsible" id="mobile-demo">
            <div class="nav-wrapper">
              <form>
                <div class="input-field">
@@ -43,12 +42,37 @@
                </div>
              </form>
            </div>
-             <li><a href="{% url 'post_list' %}">全て</a></li>
-             <li><a href="{% url 'category' %}プログラミング">プログラミング</a></li>
-             <li><a href="{% url 'category' %}生活">生活</a></li>
-             <li><a href="{% url 'category' %}筋トレ">筋トレ</a></li>
-             <li><a href="{% url 'student' %}">生徒</a></li>
-             <li><a href="{% url 'teacher' %}">先生</a></li>
+              <li>
+                <a class="collapsible-header"><i class="material-icons">insert_chart</i>ブログ</a>
+                <div class="collapsible-body">
+                  <ul>
+                    <li><a href="{% url 'post_list' %}"><i class="material-icons">apps</i>全て</a></li>
+                    <li><a href="{% url 'category' %}プログラミング"><i class="material-icons">desktop_mac</i>プログラミング</a></li>
+                    <li><a href="{% url 'category' %}生活"><i class="material-icons">date_range</i>生活</a></li>
+                    <li><a href="{% url 'category' %}筋トレ"><i class="material-icons">accessibility</i>筋トレ</a></li>
+                  </ul>
+                </div>
+              </li>
+              <li>
+                <a class="collapsible-header"><i class="material-icons">border_color</i>テスト</a>
+                <div class="collapsible-body">
+                  <ul>
+                    <div class="collapsible">
+                      <li class="">
+                        <a class="collapsible-header"><i class="material-icons">insert_emoticon</i>生徒</a>
+                        <div class="collapsible-body">
+                          <ul>
+                            <li><a href="{% url 'student' %}"><i class="material-icons">import_contacts</i>テスト</a></li>
+                            <li><a href="{% url 'result' %}"><i class="material-icons">local_library</i>結果</a></li>
+                          </ul>
+                        </div>
+                      </li>
+                    </div>
+                    <li><a  href="{% url 'teacher' %}"><i class="material-icons">face</i>先生</a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
          </ul>
         </header>
           <div class="content container">

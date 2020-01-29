@@ -19,24 +19,20 @@
     </div>
   </a>
 {% endfor %}
-<nav style="margin-top: 40px;" class="text-darken-2">
-<div class="nav-wrapper red lighten-3">
-<a href="#!" class="brand-logo" style="font-size: 15px;">結果</a>
-</div>
-</nav>
-{% for post in solves %}
-    <a href="{% url 'solve' pk=post.pk %}">
-    <div class="card grey lighten-5 hoverable">
-      <div class="card-content black-text">
-        <div class="chip" >{{ post.cate }}</div>
-        <span class="card-title">{{ post.title }}</span>
-      </div>
-      <div class="card-action black-text" style="font-size: 10px;">
-          {{ post.published_date }}
-      </div>
-    </div>
-  </a>
-{% endfor %}
+<ul class="pagination center">
+    <!-- [{{tests.number}}/{{tests.paginator.num_pages}}] -->
+  {% if tests.has_previous %}
+      <li class="disabled"><a href="{% url 'student' %}/1"><i class="material-icons">chevron_left</i></a></li>
+      <li class="waves-effect"><a href="{% url 'student' %}/{{tests.previous_page_number}}">{{tests.previous_page_number}}</a></li>
+  {% endif %}
+  <span class="current">
+    <li class="active"><a href="{% url 'student' %}/{{tests.number}}">{{tests.number}}</a></li>
+  </span>
+  {% if tests.has_next %}
+      <li class="waves-effect"><a href="{% url 'student' %}/{{tests.next_page_number}}">{{tests.next_page_number}}</a></li>
+      <li class="waves-effect"><a href="{% url 'student' %}/{{tests.paginator.num_pages}}"><i class="material-icons">chevron_right</i></a></li>
+      <!-- <a href="{% url 'post_list' %}{{tests.paginator.num_pages}}">last&raquo;</a> -->
+  {% endif %}
 {% else %}
 <a href="{% url 'login' %}">ログインして下さい</a>
 {% endif %}
