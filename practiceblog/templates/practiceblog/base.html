@@ -120,8 +120,43 @@
           <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
           <script src="{% static 'js/materialize.js' %}"></script>
           <script src="{% static 'js/init.js' %}"></script>
-          <!-- <script src="js/materialize.js"></script>
-          <script src="js/init.js"></script> -->
+          <script type="text/javascript">
+          (function($){
+            $(function(){
+
+              $('.sidenav').sidenav();
+
+            }); // end of document ready
+            document.addEventListener('DOMContentLoaded', function() {
+             var elems = document.querySelectorAll('.fixed-action-btn');
+             var instances = M.FloatingActionButton.init(elems, options);
+           });
+           document.addEventListener('DOMContentLoaded', function() {
+                var elems = document.querySelectorAll('.sidenav');
+                var instances = M.Sidenav.init(elems, {});
+              });
+
+              document.addEventListener('DOMContentLoaded', function() {
+              var elems = document.querySelectorAll('.collapsible');
+              var instances = M.Collapsible.init(elems, options);
+            });
+
+            $(document).ready(function(){
+              $('.collapsible').collapsible();
+            });
+
+
+           // Or with jQuery
+
+           $(document).ready(function(){
+             $('.fixed-action-btn').floatingActionButton();
+           });
+
+           $(document).ready(function(){
+             $('select').formSelect();
+           });
+          })(jQuery);
+          </script>
       </body>
     </body>
 </html>
