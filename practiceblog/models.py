@@ -39,6 +39,7 @@ class Question(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     cate = models.CharField(max_length=200, default='some category')
+    time = models.IntegerField(default=30)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
     image = models.ImageField(upload_to = 'media/', default='some name')

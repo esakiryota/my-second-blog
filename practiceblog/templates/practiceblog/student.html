@@ -13,8 +13,9 @@
         <div class="chip" >{{ post.cate }}</div>
         <span class="card-title">{{ post.title }}</span>
       </div>
-      <div class="card-action black-text" style="font-size: 10px;">
-          {{ post.published_date }}
+      <div class="card-action black-text">
+          <a>{{ post.published_date }}</a>
+          <a>制限時間{{ post.time }}分</a>
       </div>
     </div>
   </a>

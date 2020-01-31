@@ -24,7 +24,7 @@ class QuestionForm(forms.ModelForm):
 
     class Meta:
         model = Question
-        fields = ('cate', 'title', 'image')
+        fields = ('cate', 'title', 'image', 'time')
 
 class SolveForm(forms.ModelForm):
 

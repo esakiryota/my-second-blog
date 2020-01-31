@@ -58,6 +58,17 @@
     </style>
   </head>
   <body>
+    <div class="container">
+      <div class="row">
+        <div class="col" style="font-size: 50px;">
+          <a class="btn disabled">
+          <span id="time">30</span>
+          <span>:</span>
+          <span id="sec">00</span>
+        </a>
+        </div>
+      </div>
+    </div>
     <div class="fixed-action-btn">
   <a class="btn-floating btn-large red">
     <i class="large material-icons">mode_edit</i>
@@ -104,6 +115,7 @@
           </div>
       </form>
       {{ question.image.url|json_script:"image-data" }}
+      {{ question.time|json_script:"time" }}
   </body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -201,8 +213,6 @@
       e.preventDefault();
       var canvas = document.getElementById('mycanvas');
       var base64 = canvas.toDataURL();
-      // var base64 = canvas.toDataURL().replace(/^.*,/, '');
-      // document.getElementById('img').src = base64
       document.getElementById("download").href = base64;
       document.getElementById("download").click();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -229,6 +239,36 @@
     $('#right').click(function(e) {
       scrollBy(100,0);
     })
+    var timer = {{ question.time }};
+
+    function Timer() {
+      var i = 0;
+      var min = timer-1;
+      var timerId = setInterval(function(){
+        i++;
+        $('#time').text(min);
+        if (i > 50) {
+          var sec = 59 - i + 1;
+          $('#sec').text(`0${sec}`);
+        } else {
+          $('#sec').text(59 - i + 1);
+        };
+        if (min == 0 && i == 60) {
+          clearInterval(timerId);
+          var canvas = document.getElementById('mycanvas');
+          var base64 = canvas.toDataURL();
+          document.getElementById("download").href = base64;
+          document.getElementById("download").click();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        if (i > 59){
+          i = 0;
+          min -= 1;
+        };
+      }, 1000)
+    };
+
+    Timer();
 
     var value = JSON.parse(document.getElementById('image-data').textContent);
 
