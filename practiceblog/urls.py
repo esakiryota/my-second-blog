@@ -23,4 +23,5 @@ urlpatterns = [
     path('answer/<int:pk>/', views.answer, name='answer'),
     path('question', views.question, name='question'),
     path('solve/<int:pk>', views.solve, name='solve'),
+    path('introduce', views.introduce, name='introduce'),
 ]

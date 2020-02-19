@@ -175,3 +175,6 @@ def solve(request, pk):
     'question': question,
     }
     return render(request, 'practiceblog/solve.html',  params)
+
+def introduce(request):
+    return render(request, 'practiceblog/teacher_form.html')

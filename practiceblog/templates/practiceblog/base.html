@@ -28,9 +28,10 @@
                  <li><a href="{% url 'category' %}プログラミング/1">プログラミング</a></li>
                  <li><a href="{% url 'category' %}生活/1">生活</a></li>
                  <li><a href="{% url 'category' %}筋トレ/1">筋トレ</a></li>
-                 <li><a href="{% url 'student' %}"><i class="material-icons">import_contacts</i>テスト</a></li>
-                 <li><a href="{% url 'result' %}"><i class="material-icons">local_library</i>結果</a></li>
-                 <li><a  href="{% url 'teacher' %}"><i class="material-icons">face</i>先生</a>
+                 <li><a  href="{% url 'introduce' %}">紹介</a></li>
+                 <li><a href="{% url 'student' %}">テスト</a></li>
+                 <li><a href="{% url 'result' %}">結果</a></li>
+                 <li><a  href="{% url 'teacher' %}">先生</a></li>
                </ul>
              </div>
            </nav>
@@ -76,6 +77,7 @@
                   </ul>
                 </div>
               </li>
+              <li class="no-padding"><a  href="{% url 'introduce' %}" class="collapsible-header"><i class="material-icons">people</i>紹介</a></li>
          </ul>
         </header>
           <div class="content container">
@@ -158,6 +160,38 @@
            $(document).ready(function(){
              $('select').formSelect();
            });
+
+           document.addEventListener('DOMContentLoaded', function() {
+             var elems = document.querySelectorAll('select');
+             var instances = M.FormSelect.init(elems, options);
+           });
+
+  // Or with jQuery
+
+        $(document).ready(function(){
+          $('select').formSelect();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.timepicker');
+    var instances = M.Timepicker.init(elems, options);
+  });
+
+  // Or with jQuery
+
+  $(document).ready(function(){
+    $('.timepicker').timepicker();
+  });
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.datepicker');
+    var instances = M.Datepicker.init(elems, options);
+  });
+
+  $(document).ready(function(){
+    $('.datepicker').datepicker();
+  });
+  $(document).ready(function() {
+    $('input#input_text, textarea#textarea2').characterCounter();
+  });
           })(jQuery);
           </script>
       </body>
