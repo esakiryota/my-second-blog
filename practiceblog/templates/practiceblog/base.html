@@ -192,6 +192,9 @@
   $(document).ready(function() {
     $('input#input_text, textarea#textarea2').characterCounter();
   });
+  $('li[id^="select-options"]').on('touchend', function (e) {
+     e.stopPropagation();
+  });
           })(jQuery);
           </script>
       </body>
