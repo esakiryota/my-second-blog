@@ -177,4 +177,29 @@ def solve(request, pk):
     return render(request, 'practiceblog/solve.html',  params)
 
 def introduce(request):
+    if (request.method == 'POST'):
+        name = request.POST.get('name')
+        grade = request.POST.get('grade')
+        sex = request.POST.get('sex')
+        place = request.POST.get('place')
+        weekarray = request.POST.getlist('week')
+        week = ""
+        for w in weekarray:
+            week += " " + w
+        start_time = request.POST.get('start_time')
+        class_time = request.POST.get('class_time')
+        hope_sex = request.POST.get('hope_sex')
+        first_date1 = request.POST.get('first_date1')
+        first_time1 = request.POST.get('first_time1')
+        first_date2 = request.POST.get('first_date2')
+        first_time2 = request.POST.get('first_time2')
+        first_date3 = request.POST.get('first_date3')
+        first_time3 = request.POST.get('first_time3')
+        something = request.POST.get('something')
+        api = "https://notify-api.line.me/api/notify"
+        token = "XauFWoj65jpxdjdEv8CSchy5WmVjd4Ni4pUKDcNjLYy"
+        headers = {"Authorization" : "Bearer "+ token}
+        message = "\n[生徒情報]\n{0} {1} {2}\n[場所]\n{3}\n[曜日]\n{4}\n[開始時間]\n{5}\n[授業時間]\n{6}\n[希望性別]\n{7}\n[初回日程候補]\n{8} {9}\n{10} {11}\n{12} {13}\n[備考]\n{14}".format(name, grade, sex,place,  week, start_time, class_time, hope_sex, first_date1, first_time1, first_date2, first_time2 , first_date3,first_time3, something)
+        payload = {"message" :  message}
+        post = requests.post(api, headers = headers, params=payload)
     return render(request, 'practiceblog/teacher_form.html')

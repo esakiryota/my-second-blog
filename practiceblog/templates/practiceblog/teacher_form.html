@@ -11,133 +11,137 @@
 <form method="POST" class="post-form">
   {% csrf_token %}
   <div class="input-field col s12">
-      <input placeholder="東工大 太郎" id="first_name" type="text" class="validate">
+      <input placeholder="東工大 太郎" id="first_name" type="text" class="validate" name="name">
       <label for="first_name">名前</label>
   </div>
   <div class="input-field col s12">
-  <select>
+  <select name="grade">
     <option value="" disabled selected>学年</option>
-    <option value="1">小学１年</option>
-    <option value="1">小学２年</option>
-    <option value="1">小学３年</option>
-    <option value="1">小学４年</option>
-    <option value="1">小学５年</option>
-    <option value="1">小学６年</option>
-    <option value="1">中学１年</option>
-    <option value="1">中学２年</option>
-    <option value="1">中学３年</option>
-    <option value="1">高校１年</option>
-    <option value="1">高校２年</option>
-    <option value="1">高校３年</option>
-    <option value="1">その他</option>
+    <option value="小学１年">小学１年</option>
+    <option value="小学２年">小学２年</option>
+    <option value="小学３年">小学３年</option>
+    <option value="小学４年">小学４年</option>
+    <option value="小学５年">小学５年</option>
+    <option value="小学６年">小学６年</option>
+    <option value="中学１年">中学１年</option>
+    <option value="中学２年">中学２年</option>
+    <option value="中学３年">中学３年</option>
+    <option value="高校１年">高校１年</option>
+    <option value="高校２年">高校２年</option>
+    <option value="高校３年">高校３年</option>
+    <option value="その他">その他</option>
   </select>
   <label>学年</label>
 </div>
 <div class="input-field col s12">
-  <select >
-    <option value="1">性別</option>
-    <option value="1">男子</option>
-    <option value="1">女子</option>
+  <select name="sex">
+    <option value="">性別</option>
+    <option value="男子">男子</option>
+    <option value="女子">女子</option>
   </select>
   <label>性別</label>
 </div>
 <div class="input-field col s12">
-    <input placeholder="大岡山駅 徒歩３分" id="place" type="text" class="validate">
+    <input placeholder="大岡山駅 徒歩３分" id="place" type="text" class="validate" name="place">
     <label for="place">場所</label>
 </div>
 <div class="input-field col s2" style="margin-bottom:;">
    <label>
-      <input type="checkbox" class="filled-in" />
+      <input type="checkbox" class="filled-in" name="week" value="日曜日"/>
       <span>日</span>
    </label>
  </div>
 <div class="input-field col s2" style="margin-bottom:;">
    <label>
-      <input type="checkbox" class="filled-in" />
+      <input type="checkbox" class="filled-in" name="week" value="月曜日"/>
       <span>月</span>
    </label>
  </div>
 <div class="input-field col s2" style="margin-bottom:50px;">
    <label>
-      <input type="checkbox" class="filled-in" />
+      <input type="checkbox" class="filled-in" name="week" value="火曜日"/>
       <span>火</span>
    </label>
  </div>
 <div class="input-field col s2" style="margin-bottom:50px;">
    <label>
-      <input type="checkbox" class="filled-in" />
+      <input type="checkbox" class="filled-in" name="week" value="水曜日"/>
       <span>水</span>
    </label>
  </div>
 <div class="input-field col s2" style="margin-bottom:50px;">
    <label>
-      <input type="checkbox" class="filled-in" />
+      <input type="checkbox" class="filled-in" name="week" value="木曜日"/>
       <span>木</span>
    </label>
  </div>
 <div class="input-field col s2" style="margin-bottom:50px;">
    <label>
-      <input type="checkbox" class="filled-in" />
+      <input type="checkbox" class="filled-in" name="week" value="金曜日"/>
       <span>金</span>
    </label>
  </div>
 <div class="input-field col s2" style="margin-bottom:50px;">
    <label>
-      <input type="checkbox" class="filled-in" />
+      <input type="checkbox" class="filled-in" name="week" value="土曜日"/>
       <span>土</span>
    </label>
  </div>
  <div class="input-field col s12">
-   <input type="text" class="timepicker">
+   <input type="text" class="timepicker" name="start_time">
    <label for="">希望開始時間</label>
  </div>
  <div class="input-field col s12">
-   <select class="" name="">
+   <select class="" name="class_time">
      <option value="1">時間</option>
-     <option value="1">60分</option>
-     <option value="1">90分</option>
-     <option value="1">120分</option>
-     <option value="1">150分</option>
-     <option value="1">180分</option>
+     <option value="60分">60分</option>
+     <option value="90分">90分</option>
+     <option value="120分">120分</option>
+     <option value="150分">150分</option>
+     <option value="180分">180分</option>
    </select>
    <label for="">授業時間</label>
  </div>
   <div class="input-field col s12">
-  <select>
+  <select name="hope_sex">
     <option value="" disabled selected>性別</option>
-    <option value="1">男性</option>
-    <option value="2">女性</option>
-    <option value="3">どちらでも可</option>
+    <option value="男性">男性</option>
+    <option value="女性">女性</option>
+    <option value="どちらでも可">どちらでも可</option>
   </select>
   <label>希望性別</label>
 </div>
 <div class="input-field col s6">
-  <input type="text" class="datepicker">
+  <input type="text" class="datepicker" name="first_date1">
   <label for="">初回希望日程①</label>
 </div>
 <div class="input-field col s6">
-  <input type="text" class="timepicker">
-  <label for="">時間</label>
+  <input type="text" class="timepicker" name="first_time1">
+  <label for="">開始時間</label>
 </div>
 <div class="input-field col s6">
-  <input type="text" class="datepicker">
+  <input type="text" class="datepicker" name="first_date2">
   <label for="">初回希望日程②</label>
 </div>
 <div class="input-field col s6">
-  <input type="text" class="timepicker">
-  <label for="">時間</label>
+  <input type="text" class="timepicker" name="first_time2">
+  <label for="">開始時間</label>
 </div>
 <div class="input-field col s6">
-  <input type="text" class="datepicker">
+  <input type="text" class="datepicker" name="first_date3">
   <label for="">初回希望日程③</label>
 </div>
 <div class="input-field col s6">
-  <input type="text" class="timepicker">
-  <label for="">時間</label>
+  <input type="text" class="timepicker" name="first_time3">
+  <label for="">開始時間</label>
 </div>
 <div class="input-field col s12">
-  <textarea id="textarea2" class="materialize-textarea" data-length="120"></textarea>
+  <textarea id="textarea2" class="materialize-textarea" data-length="120" name="something"></textarea>
   <label for="textarea2">備考</label>
 </div>
+<div class="input-field col s12">
+  <button type="submit" name="button" class="waves-effect waves-light btn"><i class="material-icons left">send</i>送信</button>
+</div>
+
 </form>
 {% endblock %}
