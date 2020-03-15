@@ -6,14 +6,14 @@
 </div>
 </nav>
 
-<form method="POST" class="post-form" style="margin-top: 20px;">
+<form name="form1" method="POST" class="post-form" style="margin-top: 20px;" id="teacher_form" onSubmit="return check()">
   {% csrf_token %}
   <div class="input-field col s12">
       <input placeholder="東工大 太郎" id="first_name" type="text" class="validate" name="name">
       <label for="first_name">名前</label>
   </div>
   <div class="input-field col s12">
-  <select name="grade">
+  <select name="grade" id="grade">
     <option value="" disabled selected>学年</option>
     <option value="小学１年">小学１年</option>
     <option value="小学２年">小学２年</option>
@@ -32,7 +32,7 @@
   <label>学年</label>
 </div>
 <div class="input-field col s12">
-  <select name="sex">
+  <select name="sex" id="sex">
     <option value="">性別</option>
     <option value="男子">男子</option>
     <option value="女子">女子</option>
@@ -45,7 +45,7 @@
 </div>
 <div class="input-field col s2" style="margin-bottom:;">
    <label>
-      <input type="checkbox" class="filled-in" name="week" value="日曜日"/>
+      <input type="checkbox" class="filled-in" name="week" value="日曜日" id=""/>
       <span>日</span>
    </label>
  </div>
@@ -138,7 +138,7 @@
   <label for="textarea2">備考</label>
 </div>
 <div class="input-field col s12">
-  <button type="submit" name="button" class="waves-effect waves-light btn"><i class="material-icons left">send</i>送信</button>
+  <button type="submit" name="button" class="waves-effect waves-light btn" id="submit"><i class="material-icons left">send</i>送信</button>
 </div>
 
 </form>

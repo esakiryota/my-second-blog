@@ -127,6 +127,38 @@
           <script src="{% static 'js/select.js' %}"></script>
           <script src="{% static 'js/init.js' %}"></script>
           <script type="text/javascript">
+          function check() {
+            var name = document.forms.teacher_form.first_name.value;
+            var grade = document.forms.teacher_form.grade.value;
+            var sex = document.forms.teacher_form.sex.value;
+            var place = document.forms.teacher_form.place.value;
+            var arr1 = [];
+            var week = document.form1.week
+	           for (let i = 0; i < week.length; i++){
+		             if(week[i].checked){
+			                arr1.push(week[i].value);
+		              }
+	            }
+            var start_time = document.form1.start_time.value;
+            var class_time = document.form1.class_time.value;
+            var hope_sex = document.form1.hope_sex.value;
+            var first_date1 = document.form1.first_date1.value;
+            var first_time1 = document.form1.first_time1.value;
+            var first_date2 = document.form1.first_date2.value;
+            var first_time2 = document.form1.first_time2.value;
+            var first_date3 = document.form1.first_date3.value;
+            var first_time3 = document.form1.first_time3.value;
+            var something = document.form1.something.value;
+
+            var message = `本当に\n生徒名 ${name}\n学年 ${grade}\n性別 ${sex}\n場所 ${place}\n曜日 ${arr1}\n開始時間 ${start_time}\n授業時間 ${class_time}\n希望性別 ${hope_sex}\n第1希望日時 ${first_date1} ${first_time1}\n第2希望日時 ${first_date2} ${first_time2}\n第3希望日時 ${first_date3} ${first_time3}\n備考 ${something}\nでよろしいでしょうか`
+
+            if (window.confirm(message)) {
+              return true
+            } else {
+              alert("キャンセルされました");
+              return false
+            }
+          };
           (function($){
             $(function(){
 
