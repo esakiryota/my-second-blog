@@ -35,6 +35,16 @@
   {% endif %}
 </ul>
 {% else %}
-<a href="{% url 'login' %}">ログインして下さい</a>
+<div class="container" style="margin-top: 20px;">
+  <div class="row">
+    <div class="col s4">
+    </div>
+    <div class="col s4">
+      <a href="{% url 'login' %}" class="waves-effect waves-light btn">ログイン</a>
+    </div>
+    <div class="col s4">
+    </div>
+  </div>
+</div>
 {% endif %}
 {% endblock %}
