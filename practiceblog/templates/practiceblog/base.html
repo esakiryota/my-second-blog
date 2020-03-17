@@ -24,6 +24,12 @@
                <a href="/" class="brand-logo">RPT</a>
                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                <ul class="right hide-on-med-and-down">
+                 {% if user.is_authenticated %}
+                 <li>こんにちは、{{user.username}}さん</li>
+                 {% else %}
+                 <li><a href="{% url 'post_list' %}">ログイン</a></li>
+                 <li><a href="{% url 'user_create' %}">アカウント作成</a></li>
+                 {% endif %}
                  <li><a href="{% url 'post_list' %}">全て</a></li>
                  <li><a href="{% url 'category' %}プログラミング/1">プログラミング</a></li>
                  <li><a href="{% url 'category' %}生活/1">生活</a></li>
@@ -46,6 +52,12 @@
                </div>
              </form>
            </div>
+           {% if user.is_authenticated %}
+           <li>こんにちは、{{user.username}}さん</li>
+           {% else %}
+           <li><a href="{% url 'login' %}">ログイン</a></li>
+           <li><a href="{% url 'user_create' %}">アカウント作成</a></li>
+           {% endif %}
               <li>
                 <a class="collapsible-header"><i class="material-icons">insert_chart</i>ブログ</a>
                 <div class="collapsible-body">
