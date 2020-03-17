@@ -54,6 +54,7 @@ class Question(models.Model):
 class Solve(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
+    user_name = models.CharField(max_length=200, default='esakiryota')
     cate = models.CharField(max_length=200, default='some category')
     questionId = models.IntegerField(default=0)
     created_date = models.DateTimeField(default=timezone.now)

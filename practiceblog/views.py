@@ -100,7 +100,8 @@ def student(request, num=1):
     return render(request, 'practiceblog/student.html', params)
 
 def result(request, num=1):
-    solve = Solve.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    author = request.user.username
+    solve = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
     page = Paginator(solve, 3)
     return render(request, 'practiceblog/result.html', {"solves": page.get_page(num)})
 
@@ -170,6 +171,7 @@ def answer(request, pk):
         req_form = SolveForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
+        images.user_name = image.author.username
         images.published_date = timezone.now()
         images.questionId = id
         images.save()
