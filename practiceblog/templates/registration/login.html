@@ -17,8 +17,17 @@
             <td>{{ form.password }}</td>
         </tr>
         </table>
-
-        <input type="submit" value="login" />
+        <div class="container" style="margin-top: 10px;">
+          <div class="row">
+            <div class="col s4">
+            </div>
+            <div class="col s4">
+              <input type="submit" value="ログイン" class="btn" />
+            </div>
+            <div class="col s4">
+            </div>
+          </div>
+        </div>
         <input type="hidden" name="next" value="{{ next }}" />
     </form>
 {% endblock %}
