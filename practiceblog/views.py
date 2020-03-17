@@ -18,6 +18,8 @@ from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.signing import BadSignature, SignatureExpired, loads, dumps
+from django.http import Http404, HttpResponseBadRequest
+from django.conf import settings
 from django.template.loader import render_to_string
 import requests
 
@@ -224,7 +226,7 @@ class UserCreate(generic.CreateView):
 
     def form_valid(self,form):
         user = form.save(commit=True)
-        user.is_active = True
+        user.is_active = False
         group = self.request.POST.get('groups')
         user.groups.add(group)
         user.save()
@@ -253,37 +255,37 @@ class UserCreate(generic.CreateView):
 class UserCreateDone(generic.TemplateView):
     """ユーザー仮登録したよ"""
     template_name = 'register/user_create_done.html'
-# 
-# class UserCreateComplete(generic.TemplateView):
-#     """メール内URLアクセス後のユーザー本登録"""
-#     template_name = 'register/user_create_complete.html'
-#     timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60*60*24)  # デフォルトでは1日以内
 #
-#     def get(self, request, **kwargs):
-#         """tokenが正しければ本登録."""
-#         token = kwargs.get('token')
-#         try:
-#             user_pk = loads(token, max_age=self.timeout_seconds)
-#
-#         # 期限切れ
-#         except SignatureExpired:
-#             return HttpResponseBadRequest()
-#
-#         # tokenが間違っている
-#         except BadSignature:
-#             return HttpResponseBadRequest()
-#
-#         # tokenは問題なし
-#         else:
-#             try:
-#                 user = User.objects.get(pk=user_pk)
-#             except User.DoesNotExist:
-#                 return HttpResponseBadRequest()
-#             else:
-#                 if not user.is_active:
-#                     # 問題なければ本登録とする
-#                     user.is_active = True
-#                     user.save()
-#                     return super().get(request, **kwargs)
-#
-#         return HttpResponseBadRequest()
+class UserCreateComplete(generic.TemplateView):
+    """メール内URLアクセス後のユーザー本登録"""
+    template_name = 'register/user_create_complete.html'
+    timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60*60*24)  # デフォルトでは1日以内
+
+    def get(self, request, **kwargs):
+        """tokenが正しければ本登録."""
+        token = kwargs.get('token')
+        try:
+            user_pk = loads(token, max_age=self.timeout_seconds)
+
+        # 期限切れ
+        except SignatureExpired:
+            return HttpResponseBadRequest()
+
+        # tokenが間違っている
+        except BadSignature:
+            return HttpResponseBadRequest()
+
+        # tokenは問題なし
+        else:
+            try:
+                user = User.objects.get(pk=user_pk)
+            except User.DoesNotExist:
+                return HttpResponseBadRequest()
+            else:
+                if not user.is_active:
+                    # 問題なければ本登録とする
+                    user.is_active = True
+                    user.save()
+                    return super().get(request, **kwargs)
+
+        return HttpResponseBadRequest()
