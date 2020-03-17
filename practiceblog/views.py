@@ -6,11 +6,19 @@ from .models import Image
 from .models import Question
 from .models import Solve
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm
+from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm, UserCreateForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from django.views import generic
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.signing import BadSignature, SignatureExpired, loads, dumps
+from django.template.loader import render_to_string
 import requests
 
 def post_list(request, num=1):
@@ -198,12 +206,84 @@ def introduce(request):
         something = request.POST.get('something')
         api = "https://notify-api.line.me/api/notify"
         #家庭教師token
-        token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
+        # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
         #テストtoken
-        # token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
         headers = {"Authorization" : "Bearer "+ token}
         message = "\n[生徒情報]\n{0} {1} {2}\n[場所]\n{3}\n[曜日]\n{4}\n[開始時間]\n{5}\n[授業時間]\n{6}\n[希望性別]\n{7}\n[初回日程候補]\n{8} {9}\n{10} {11}\n{12} {13}\n[備考]\n{14}".format(name, grade, sex,place,  week, start_time, class_time, hope_sex, first_date1, first_time1, first_date2, first_time2 , first_date3,first_time3, something)
         payload = {"message" :  message}
         post = requests.post(api, headers = headers, params=payload)
         return render(request, 'practiceblog/post_list.html')
     return render(request, 'practiceblog/teacher_form.html')
+
+User = get_user_model()
+
+class UserCreate(generic.CreateView):
+    template_name = 'register/user_create.html'
+    form_class = UserCreateForm
+
+    def form_valid(self,form):
+        user = form.save(commit=True)
+        user.is_active = True
+        group = self.request.POST.get('groups')
+        user.groups.add(group)
+        user.save()
+
+        current_site = get_current_site(self.request)
+        domain = current_site.domain
+        context = {
+            'protocol': self.request.scheme,
+            'domain': domain,
+            'token': dumps(user.pk),
+            'user': user,
+        }
+
+        # subject = render_to_string('register/mail_template/create/subject.txt', context)
+        subject = "家庭教師紹介-会員登録-"
+        message = render_to_string('register/mail_template/create/message.txt', context)
+
+        from_email = 'esaki1217@gmail.com'  # 送信者
+        recipient_list = [self.request.POST.get('email')]  # 宛先リスト
+        send_mail(subject, message, from_email, recipient_list)
+
+
+
+        return redirect('user_create_done')
+
+class UserCreateDone(generic.TemplateView):
+    """ユーザー仮登録したよ"""
+    template_name = 'register/user_create_done.html'
+# 
+# class UserCreateComplete(generic.TemplateView):
+#     """メール内URLアクセス後のユーザー本登録"""
+#     template_name = 'register/user_create_complete.html'
+#     timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60*60*24)  # デフォルトでは1日以内
+#
+#     def get(self, request, **kwargs):
+#         """tokenが正しければ本登録."""
+#         token = kwargs.get('token')
+#         try:
+#             user_pk = loads(token, max_age=self.timeout_seconds)
+#
+#         # 期限切れ
+#         except SignatureExpired:
+#             return HttpResponseBadRequest()
+#
+#         # tokenが間違っている
+#         except BadSignature:
+#             return HttpResponseBadRequest()
+#
+#         # tokenは問題なし
+#         else:
+#             try:
+#                 user = User.objects.get(pk=user_pk)
+#             except User.DoesNotExist:
+#                 return HttpResponseBadRequest()
+#             else:
+#                 if not user.is_active:
+#                     # 問題なければ本登録とする
+#                     user.is_active = True
+#                     user.save()
+#                     return super().get(request, **kwargs)
+#
+#         return HttpResponseBadRequest()
