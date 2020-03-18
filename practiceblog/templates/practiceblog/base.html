@@ -34,10 +34,14 @@
                  <li><a href="{% url 'category' %}プログラミング/1">プログラミング</a></li>
                  <li><a href="{% url 'category' %}生活/1">生活</a></li>
                  <li><a href="{% url 'category' %}筋トレ/1">筋トレ</a></li>
-                 <li><a  href="{% url 'introduce' %}">紹介</a></li>
+                 {% if perms.practiceblog.add_solve %}
+                 <li><a  href="{% url 'introduce_all' %}">一覧</a></li>
+                 <li><a  href="{% url 'teacher' %}">先生</a></li>
+                 {% else %}
                  <li><a href="{% url 'student' %}">テスト</a></li>
                  <li><a href="{% url 'result' %}">結果</a></li>
-                 <li><a  href="{% url 'teacher' %}">先生</a></li>
+                 <li><a  href="{% url 'introduce' %}">紹介</a></li>
+                 {% endif %}
                </ul>
              </div>
            </nav>
@@ -73,8 +77,14 @@
                 <a class="collapsible-header"><i class="material-icons">border_color</i>テスト</a>
                 <div class="collapsible-body">
                   <ul>
-                    <div class="collapsible">
-                      <li class="">
+
+                        {% if perms.practiceblog.add_solve %}
+                        <li><a  href="{% url 'teacher' %}"><i class="material-icons">face</i>先生</a>
+                        </li>
+                        <li class="no-padding"><a  href="{% url 'introduce_all' %}" class="collapsible-header"><i class="material-icons">people</i>一覧</a></li>
+                        {% else %}
+                        <div class="collapsible">
+                          <li class="">
                         <a class="collapsible-header"><i class="material-icons">insert_emoticon</i>生徒</a>
                         <div class="collapsible-body">
                           <ul>
@@ -84,12 +94,12 @@
                         </div>
                       </li>
                     </div>
-                    <li><a  href="{% url 'teacher' %}"><i class="material-icons">face</i>先生</a>
-                    </li>
+                    <li class="no-padding"><a  href="{% url 'introduce' %}" class="collapsible-header"><i class="material-icons">people</i>紹介</a></li>
+                        {% endif %}
                   </ul>
                 </div>
               </li>
-              <li class="no-padding"><a  href="{% url 'introduce' %}" class="collapsible-header"><i class="material-icons">people</i>紹介</a></li>
+
          </ul>
         </header>
           <div class="content container">
@@ -165,6 +175,14 @@
             var message = `本当に\n生徒名 ${name}\n学年 ${grade}\n性別 ${sex}\n場所 ${place}\n曜日 ${arr1}\n開始時間 ${start_time}\n授業時間 ${class_time}\n希望性別 ${hope_sex}\n第1希望日時 ${first_date1} ${first_time1}\n第2希望日時 ${first_date2} ${first_time2}\n第3希望日時 ${first_date3} ${first_time3}\n備考 ${something}\nでよろしいでしょうか`
 
             if (window.confirm(message)) {
+              return true
+            } else {
+              alert("キャンセルされました");
+              return false
+            }
+          };
+          function intro_check() {
+            if (window.confirm("本当に応募しますか？")) {
               return true
             } else {
               alert("キャンセルされました");

@@ -5,6 +5,7 @@ from .models import Post
 from .models import Image
 from .models import Question
 from .models import Solve
+from .models import Introduce
 from django.shortcuts import render, get_object_or_404
 from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm, UserCreateForm
 from django.db.models import Q
@@ -208,6 +209,10 @@ def introduce(request):
         first_date3 = request.POST.get('first_date3')
         first_time3 = request.POST.get('first_time3')
         something = request.POST.get('something')
+
+        intro = Introduce(name=name, grade=grade, place=place, hope_sex=hope_sex, )
+        intro.save()
+
         api = "https://notify-api.line.me/api/notify"
         #家庭教師token
         # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
@@ -219,6 +224,30 @@ def introduce(request):
         post = requests.post(api, headers = headers, params=payload)
         return render(request, 'practiceblog/post_list.html')
     return render(request, 'practiceblog/teacher_form.html')
+
+def teacherIntroduce(request, num=1):
+    data = Introduce.objects.filter(intro=False).order_by('created_date').reverse()
+    page = Paginator(data, 3)
+    if (request.method == 'POST'):
+        pk = request.POST.get('intro_id')
+        user_name = request.user.username
+        intro_model = Introduce.objects.get(pk=pk)
+        intro_name = intro_model.name
+        intro_model.intro = True
+        intro_model.save()
+        api = "https://notify-api.line.me/api/notify"
+        #家庭教師token
+        # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
+        #テストtoken
+        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        headers = {"Authorization" : "Bearer "+ token}
+        message = "{0} が {1}の案件を応募しました。".format(user_name, intro_name)
+        payload = {"message" :  message}
+        post = requests.post(api, headers = headers, params=payload)
+        return render(request, 'practiceblog/introduce.html', {'posts': page.get_page(num)})
+    return render(request, 'practiceblog/introduce.html', {'posts': page.get_page(num)})
+
+
 
 User = get_user_model()
 
