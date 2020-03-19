@@ -24,6 +24,9 @@ from django.conf import settings
 from django.template.loader import render_to_string
 import requests
 
+def explanation(request):
+    return render(request, 'practiceblog/explanation.html')
+
 def post_list(request, num=1):
     if (request.method == 'POST'):
         form = FindForm(request.POST)

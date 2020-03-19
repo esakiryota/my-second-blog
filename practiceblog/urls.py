@@ -29,4 +29,5 @@ urlpatterns = [
     path('user_create/complete/<token>/', views.UserCreateComplete.as_view(), name='user_create_complete'),
     path('introduce_all', views.teacherIntroduce, name='introduce_all'),
     path('introduce_all/<int:num>/', views.teacherIntroduce, name='introduce_all'),
+    path('explanation', views.explanation, name='explanation'),
 ]
