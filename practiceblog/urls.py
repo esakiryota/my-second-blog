@@ -30,4 +30,6 @@ urlpatterns = [
     path('introduce_all', views.teacherIntroduce, name='introduce_all'),
     path('introduce_all/<int:num>/', views.teacherIntroduce, name='introduce_all'),
     path('explanation', views.explanation, name='explanation'),
+    path('question_box', views.question_box, name='question_box'),
+    path('question_box/<int:num>/', views.question_box, name='question_box'),
 ]

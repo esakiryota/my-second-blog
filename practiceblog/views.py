@@ -6,6 +6,7 @@ from .models import Image
 from .models import Question
 from .models import Solve
 from .models import Introduce
+from .models import QuestionBox
 from django.shortcuts import render, get_object_or_404
 from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm, UserCreateForm
 from django.db.models import Q
@@ -26,6 +27,11 @@ import requests
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
+
+def question_box(request, num=1):
+    question_box = QuestionBox.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    page = Paginator(question_box, 3)
+    return render(request, 'practiceblog/question_box.html', {"posts": page.get_page(num)})
 
 def post_list(request, num=1):
     if (request.method == 'POST'):
@@ -249,8 +255,6 @@ def teacherIntroduce(request, num=1):
         post = requests.post(api, headers = headers, params=payload)
         return render(request, 'practiceblog/introduce.html', {'posts': page.get_page(num)})
     return render(request, 'practiceblog/introduce.html', {'posts': page.get_page(num)})
-
-
 
 User = get_user_model()
 
