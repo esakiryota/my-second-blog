@@ -7,8 +7,9 @@ from .models import Question
 from .models import Solve
 from .models import Introduce
 from .models import QuestionBox
+from .models import QuestionSolve
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm, UserCreateForm
+from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -32,6 +33,62 @@ def question_box(request, num=1):
     question_box = QuestionBox.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
     page = Paginator(question_box, 3)
     return render(request, 'practiceblog/question_box.html', {"posts": page.get_page(num)})
+
+def question_make(request):
+    form = QuestionBoxForm()
+    if (request.method == 'POST'):
+        req_form = QuestionBoxForm(request.POST, request.FILES)
+        images = req_form.save(commit=False)
+        images.author = request.user
+        images.published_date = timezone.now()
+        images.save()
+        return redirect('question_box')
+    return render(request, 'practiceblog/question_make.html', {'form': form})
+
+def question_solve(request, pk):
+    image = get_object_or_404(QuestionBox, pk=pk)
+    form = QuestionSolveForm()
+    params = {
+    'form': form,
+    'image': image,
+    };
+    if (request.method == 'POST'):
+        req_form = QuestionSolveForm(request.POST, request.FILES)
+        images = req_form.save(commit=False)
+        images.author = request.user
+        images.user_name = image.author.username
+        images.published_date = timezone.now()
+        images.questionId = pk
+        images.save()
+        return redirect('question_box')
+    return render(request, 'practiceblog/question_solve.html',  params)
+
+def question_answer(request, num=1):
+    username = request.user
+    question_answer = QuestionSolve.objects.filter(user_name=username).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    page = Paginator(question_answer, 3)
+    return render(request, 'practiceblog/question_answer.html', {"posts": page.get_page(num)})
+
+def question_look(request, pk):
+    image = get_object_or_404(QuestionSolve, pk=pk)
+    form = QuestionBoxForm()
+    params = {
+    'form': form,
+    'image': image,
+    };
+    if (request.method == 'POST'):
+        req_form = QuestionBoxForm(request.POST, request.FILES)
+        images = req_form.save(commit=False)
+        images.author = request.user
+        images.user_name = image.author.username
+        images.published_date = timezone.now()
+        images.questionId = pk
+        images.save()
+        return redirect('question_box')
+    return render(request, 'practiceblog/question_look.html',  params)
+
+
+
 
 def post_list(request, num=1):
     if (request.method == 'POST'):

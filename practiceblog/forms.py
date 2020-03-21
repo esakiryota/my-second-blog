@@ -4,6 +4,8 @@ from .models import Post
 from .models import Image
 from .models import Question
 from .models import Solve
+from .models import QuestionBox
+from .models import QuestionSolve
 
 from django.contrib.auth.forms import (
     AuthenticationForm, UserCreationForm
@@ -38,6 +40,18 @@ class SolveForm(forms.ModelForm):
     class Meta:
         model = Solve
         fields = ('cate', 'title', 'image')
+
+class QuestionBoxForm(forms.ModelForm):
+
+    class Meta:
+        model = QuestionBox
+        fields = ('cate', 'title', 'image', 'comment')
+
+class QuestionSolveForm(forms.ModelForm):
+
+    class Meta:
+        model = QuestionSolve
+        fields = ('cate', 'title', 'image', 'comment')
 
 class UserCreateForm(UserCreationForm):
 

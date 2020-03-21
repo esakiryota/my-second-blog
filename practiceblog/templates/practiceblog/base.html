@@ -43,6 +43,7 @@
                  <li><a  href="{% url 'introduce' %}">紹介</a></li>
                  {% endif %}
                  <li><a  href="{% url 'question_box' %}">質問箱</a></li>
+                 <li><a  href="{% url 'question_answer' %}">回答一覧</a></li>
                </ul>
              </div>
            </nav>
@@ -63,6 +64,9 @@
            <li><a href="{% url 'login' %}">ログイン</a></li>
            <li><a href="{% url 'user_create' %}">アカウント作成</a></li>
            {% endif %}
+           <li><a  href="{% url 'question_box' %}" class="collapsible-header"><i class="material-icons">forum</i>質問箱</a></li>
+           <li><a  href="{% url 'question_answer' %}" class="collapsible-header"><i class="material-icons">school</i>回答一覧</a></li>
+           <li><a href="{% url 'explanation' %}" class="collapsible-header"><i class="material-icons">settings</i>サイト概要</a></li>
               <li>
                 <a class="collapsible-header"><i class="material-icons">insert_chart</i>ブログ</a>
                 <div class="collapsible-body">
@@ -100,8 +104,6 @@
                   </ul>
                 </div>
               </li>
-              <li><a  href="{% url 'question_box' %}">質問箱</a></li>
-              <li><a href="{% url 'explanation' %}">サイト概要</a></li>
 
 
          </ul>

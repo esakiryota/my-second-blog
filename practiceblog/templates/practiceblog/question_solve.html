@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Doodle</title>
+    <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="{% static 'css/materialize.min.css' %}"  media="screen,projection"/>
+    <link href="{% static 'css/materialize.css' %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+    </script>
+    <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML">
+    </script>
+    <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
+    <style media="screen">
+      #mycanvas {
+        border: 10px solid #999;
+        cursor: crosshair;
+        position: absolute;
+        left:  5%;
+        top: 100px;
+        z-index: 0;
+      }
+      #pen {
+        position: fixed;
+        left: 50%;
+        width: 50%;
+        z-index: 1;
+      }
+      #form {
+        position: fixed;
+        width: 80%;
+        bottom: 1px;
+      }
+      #question {
+        border: 10px solid #999;
+        position: absolute;
+        width: 400px;
+        height: 1200px;
+        top: 100px;
+      }
+      #download {
+        display: none;
+      }
+      /* #penColor {
+        position: fixed;
+        left: 50%;
+      } */
+    </style>
+  </head>
+  <body>
+    <div class="fixed-action-btn">
+  <a class="btn-floating btn-large red">
+    <i class="large material-icons">mode_edit</i>
+  </a>
+  <ul>
+    <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
+    <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
+    <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
+    <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li>
+    <li><a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a></li>
+    <li><a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a></li>
+    <li><a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a></li>
+    <li><a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a></li>
+    <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
+    <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
+    <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
+  </ul>
+</div>
+    <a id="download" href="#" download="canvas.png">ダウンロード</a>
+    <div class="container" style="margin-top: 20px; font-size: 18px;">
+      <div class="row">
+        <div class="col s1">
+          <i class="material-icons">comment</i>
+        </div>
+        <div class="col s11">
+          {{ image.comment }}
+        </div>
+      </div>
+    </div>
+    <canvas width="702" height="1482" id="mycanvas" class="">
+      Canvasに対応したブラウザを用意してください。
+    </canvas>
+      <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
+        {% csrf_token %}
+        <div class="container">
+          <div class="row">
+            <div class="file-field input-field col m4">
+              <div class="btn">
+                <span>File</span>
+                {{ form.image }}
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+            <div class="col m4">
+              {{ form.title }}
+            </div>
+            <div class="col m4">
+              {{ form.cate }}
+            </div>
+            <div class="input-field col s12">
+             {{ form.comment }}
+              <label for="textarea2">メッセージ</label>
+            </div>
+          </div>
+          </div>
+      </form>
+      {{ image.image.url|json_script:"image-data" }}
+  </body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="{% static 'js/materialize.js' %}"></script>
+  <script src="{% static 'js/init.js' %}"></script>
+  <script>
+  $(function() {
+    var canvas = document.getElementById('mycanvas');
+    if (!canvas || !canvas.getContext) return false;
+    var ctx = canvas.getContext('2d');
+
+    var startX,
+        startY,
+        x,
+        y,
+        borderWidth = 10,
+        isDrowing = false;
+
+
+    $('#mycanvas').mousedown(function(e) {
+      isDrowing = true;
+      startX = e.pageX - $(this).offset().left - borderWidth;
+      startY = e.pageY - $(this).offset().top - borderWidth;
+    })
+    .mousemove(function(e) {
+      if (!isDrowing) return;
+      x = e.pageX - $(this).offset().left - borderWidth;
+      y = e.pageY - $(this).offset().top - borderWidth;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      startX = x;
+      startY = y;
+    })
+    .mouseup(function(e) {
+      isDrowing = false;
+    })
+    .mouseleave(function(e) {
+      isDrowing = false;
+    });
+
+    canvas.addEventListener("touchstart", function (e) {
+      isDrowing = true;
+      e.preventDefault();
+      startX = e.pageX - $(this).offset().left - borderWidth;
+      startY = e.pageY - $(this).offset().top - borderWidth;
+    }, {passive: false})
+
+    canvas.addEventListener("touchmove", function (e) {
+      e.preventDefault();
+      if (!isDrowing) return;
+      x = e.pageX - $(this).offset().left - borderWidth;
+      y = e.pageY - $(this).offset().top - borderWidth;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      startX = x;
+      startY = y;
+    }, {passive: false});
+
+    canvas.addEventListener("touchend", function (e) {
+      isDrowing = false;
+    });
+
+
+    $('#erase').click(function() {
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = "20";
+    })
+
+    $('#penStyle').click(function() {
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = "1";
+    })
+
+
+    $('#zoom_in').click(function() {
+      $('#mycanvas').css("zoom","125%");
+    })
+
+    $('#zoom_out').click(function() {
+      $('#mycanvas').css("zoom","75%");
+      })
+
+    $('#undo').click(function() {
+      $('#mycanvas').css("zoom","100%");
+      })
+
+    $('#store').click(function(e) {
+      if (!confirm('本当に保存しますか？')) return;
+      e.preventDefault();
+      var canvas = document.getElementById('mycanvas');
+      var base64 = canvas.toDataURL();
+      document.getElementById("download").href = base64;
+      document.getElementById("download").click();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    $('#send').click(function(e) {
+      e.preventDefault();
+      var form = document.getElementById('form');
+      form.submit();
+    })
+
+    $('#up').click(function(e) {
+      scrollBy(0,-100);
+    })
+
+    $('#down').click(function(e) {
+      scrollBy(0,100);
+    })
+
+    $('#left').click(function(e) {
+      scrollBy(-100,0);
+    })
+
+    $('#right').click(function(e) {
+      scrollBy(100,0);
+    })
+
+    var value = JSON.parse(document.getElementById('image-data').textContent);
+
+    var img = new Image();
+    img.src = value;
+
+    img.onload = function(){
+    ctx.drawImage(img, 0, 0, 702,  1482);
+  };
+  });
+  </script>
+</html>

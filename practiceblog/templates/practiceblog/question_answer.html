@@ -6,11 +6,11 @@
   </div>
   <nav style="margin-top: 40px;" class="text-darken-2">
   <div class="nav-wrapper red lighten-3">
-  <a href="#!" class="brand-logo" style="font-size: 15px;">質問箱</a>
+  <a href="#!" class="brand-logo" style="font-size: 15px;">回答一覧</a>
   </div>
   </nav>
   {% for post in posts %}
-  <a href="{% url 'question_solve' pk=post.pk %}">
+  <a href="{% url 'question_look' pk=post.pk %}">
   <div class="card grey lighten-5 hoverable">
     <div class="card-content black-text">
       <div class="chip" >{{ post.cate}}</div>
@@ -24,15 +24,15 @@
 {% endfor %}
 <ul class="pagination center">
   {% if posts.has_previous %}
-      <li class="disabled"><a href="{% url 'question_box' %}/1"><i class="material-icons">chevron_left</i></a></li>
-      <li class="waves-effect"><a href="{% url 'question_box' %}/{{posts.previous_page_number}}">{{posts.previous_page_number}}</a></li>
+      <li class="disabled"><a href="{% url 'question_answer' %}/1"><i class="material-icons">chevron_left</i></a></li>
+      <li class="waves-effect"><a href="{% url 'question_answer' %}/{{posts.previous_page_number}}">{{posts.previous_page_number}}</a></li>
   {% endif %}
   <span class="current">
-    <li class="active"><a href="{% url 'question_box' %}/{{posts.number}}">{{posts.number}}</a></li>
+    <li class="active"><a href="{% url 'question_answer' %}/{{posts.number}}">{{posts.number}}</a></li>
   </span>
   {% if posts.has_next %}
-      <li class="waves-effect"><a href="{% url 'question_box' %}/{{posts.next_page_number}}">{{posts.next_page_number}}</a></li>
-      <li class="waves-effect"><a href="{% url 'question_box' %}/{{posts.paginator.num_pages}}"><i class="material-icons">chevron_right</i></a></li>
+      <li class="waves-effect"><a href="{% url 'question_answer' %}/{{posts.next_page_number}}">{{posts.next_page_number}}</a></li>
+      <li class="waves-effect"><a href="{% url 'question_answer' %}/{{posts.paginator.num_pages}}"><i class="material-icons">chevron_right</i></a></li>
       <!-- <a href="{% url 'post_list' %}{{posts.paginator.num_pages}}">last&raquo;</a> -->
   {% endif %}
 </ul>

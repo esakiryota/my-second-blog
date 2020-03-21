@@ -32,4 +32,11 @@ urlpatterns = [
     path('explanation', views.explanation, name='explanation'),
     path('question_box', views.question_box, name='question_box'),
     path('question_box/<int:num>/', views.question_box, name='question_box'),
+    path('question_make', views.question_make, name='question_make'),
+    path('question_solve', views.question_solve, name='question_solve'),
+    path('question_solve/<int:pk>/', views.question_solve, name='question_solve'),
+    path('question_answer', views.question_answer, name='question_answer'),
+    path('question_answer/<int:num>/', views.question_answer, name='question_answer'),
+    path('question_look', views.question_look, name='question_look'),
+    path('question_look/<int:pk>/', views.question_look, name='question_look'),
 ]
