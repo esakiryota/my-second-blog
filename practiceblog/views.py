@@ -24,7 +24,12 @@ from django.core.signing import BadSignature, SignatureExpired, loads, dumps
 from django.http import Http404, HttpResponseBadRequest
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.contrib.auth import logout
 import requests
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'registration/logout.html')
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')

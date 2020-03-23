@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.post_list, name='post_list'),
     path('find/<str>/<int:num>/', views.find, name='find'),
+    path('logout', views.logout_view, name='logout'),
     path('find/', views.find, name='find'),
     path('category/', views.category, name='category'),
     path('category/<str>', views.category, name='category'),
