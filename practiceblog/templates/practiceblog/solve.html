@@ -52,16 +52,37 @@
       #download {
         display: none;
       }
-      .hidden {
+      .#hidden {
         display: none;
       }
-      /* #penColor {
+      #up {
         position: fixed;
+        top: 0;
         left: 50%;
-      } */
+      }
+      #down {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+      }
+      #left {
+        position: fixed;
+        top: 50%;
+        left: 0;
+      }
+      #right{
+        position: fixed;
+        top: 50%;
+        right: 0;
+      }
+
     </style>
   </head>
   <body>
+    <li><a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a></li>
+    <li><a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a></li>
+    <li><a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a></li>
+    <li><a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a></li>
     <div class="fixed-action-btn">
   <a class="btn-floating btn-large red">
     <i class="large material-icons">mode_edit</i>
@@ -71,10 +92,6 @@
     <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
     <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
     <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li>
-    <li><a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a></li>
-    <li><a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a></li>
-    <li><a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a></li>
-    <li><a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a></li>
     <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
     <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
     <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
@@ -177,7 +194,7 @@
     $('#undo').click(function() {
       $('#mycanvas').css("zoom","100%");
       })
-      
+
       $('#up').click(function(e) {
         scrollBy(0,-100);
       })
