@@ -35,8 +35,14 @@ def explanation(request):
     return render(request, 'practiceblog/explanation.html')
 
 def question_box(request, num=1):
-    question_box = QuestionBox.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(question_box, 3)
+    question_box = QuestionBox.objects.filter(bool=False).filter(user_name="noname").filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    page = Paginator(question_box, 10)
+    return render(request, 'practiceblog/question_box.html', {"posts": page.get_page(num)})
+
+def question_box_indiv(request, num=1):
+    user_name = request.user
+    question_box = QuestionBox.objects.filter(bool=False).filter(user_name=user_name).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    page = Paginator(question_box, 10)
     return render(request, 'practiceblog/question_box.html', {"posts": page.get_page(num)})
 
 def question_make(request):
@@ -65,13 +71,20 @@ def question_solve(request, pk):
         images.published_date = timezone.now()
         images.questionId = pk
         images.save()
+        subject = "質問箱"
+        message = "回答が返ってきました！\nhttp://esakiryota.pythonanywhere.com/question_answer"
+        from_email = 'esaki1217@gmail.com'
+        recipient_list = [image.author.email]
+        send_mail(subject, message, from_email, recipient_list)
+        image.bool = True
+        image.save()
         return redirect('question_box')
     return render(request, 'practiceblog/question_solve.html',  params)
 
 def question_answer(request, num=1):
     username = request.user
-    question_answer = QuestionSolve.objects.filter(user_name=username).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(question_answer, 3)
+    question_answer = QuestionSolve.objects.filter(bool=False).filter(user_name=username).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    page = Paginator(question_answer, 10)
     return render(request, 'practiceblog/question_answer.html', {"posts": page.get_page(num)})
 
 def question_look(request, pk):
@@ -83,17 +96,24 @@ def question_look(request, pk):
     };
     if (request.method == 'POST'):
         req_form = QuestionBoxForm(request.POST, request.FILES)
+        bool = request.POST.get('bool')
         images = req_form.save(commit=False)
+        if (bool):
+            images.bool = True
         images.author = request.user
         images.user_name = image.author.username
         images.published_date = timezone.now()
         images.questionId = pk
         images.save()
+        subject = "質問箱"
+        message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
+        from_email = 'esaki1217@gmail.com'
+        recipient_list = [image.author.email]
+        send_mail(subject, message, from_email, recipient_list)
+        image.bool = True
+        image.save()
         return redirect('question_box')
     return render(request, 'practiceblog/question_look.html',  params)
-
-
-
 
 def post_list(request, num=1):
     if (request.method == 'POST'):

@@ -119,17 +119,23 @@
                 <input class="file-path validate" type="text">
               </div>
             </div>
-            <div class="col m4">
+            <div class="col s4">
               {{ form.title }}
             </div>
-            <div class="col m4">
+            <div class="col s4">
               {{ form.cate }}
             </div>
-            <div class="input-field col s12">
+            <div class="input-field col s9">
              {{ form.comment }}
               <label for="textarea2">メッセージ</label>
             </div>
-          </div>
+            <div class="col s3">
+              <label for="solve">
+                <input type="checkbox" value=True  name="bool" id="solve">
+                <span>解決</span>
+              </label>
+            </div>
+           </div>
           </div>
       </form>
       {{ image.image.url|json_script:"image-data" }}
