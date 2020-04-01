@@ -20,6 +20,7 @@
     <script type="text/javascript"
     src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML">
     </script>
+    <script src="https://cdn.rawgit.com/blueimp/JavaScript-Load-Image/v2.6.2/js/load-image.all.min.js"></script>
     <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
     <style media="screen">
       #mycanvas {
@@ -140,6 +141,9 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="{% static 'js/materialize.js' %}"></script>
   <script src="{% static 'js/init.js' %}"></script>
+  <script src="{% static 'js/load-image.all.min.js' %}"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+
   <script>
   $(function() {
     var canvas = document.getElementById('mycanvas');
@@ -258,12 +262,12 @@
     })
 
     var value = JSON.parse(document.getElementById('image-data').textContent);
+    var file = document.getElementById('image-data')
 
     var img = new Image();
     img.src = value;
-
     img.onload = function(){
-    ctx.drawImage(img, 0, 0, 702,  1482);
+    ctx.drawImage(img, 0, 0, 702, 1482);
   };
   });
   </script>

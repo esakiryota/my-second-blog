@@ -141,6 +141,7 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="{% static 'js/materialize.js' %}"></script>
   <script src="{% static 'js/init.js' %}"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
   <script>
   $(function() {
     var canvas = document.getElementById('mycanvas');
@@ -275,6 +276,50 @@
         $('#right').click(function(e) {
           scrollBy(100,0);
         })
+
+    var fileform = document.getElementById('id_image')
+
+    fileform.addEventListener("change", async function(e) {
+      if (e.target.files[0]){
+        let imgfile = e.target.files[0];
+        let orientation = await getOrientation(imgfile);
+        console.log(orientation)
+        var setorientation = setAngle(orientation);
+        imgfile.exifdata.Orientation = setorientation;
+        let orientation2 = await getOrientation(imgfile);
+        console.log(orientation2)
+      }
+    })
+
+    function getOrientation(imgFile){
+    return new Promise( (resolve, reject) => {
+        EXIF.getData(imgFile, function() {
+            resolve(imgFile.exifdata.Orientation);
+            //取得したimgFile.exifdata.Orientationに対し、function内で処理を進めることも可能
+        });
+    });
+  }
+
+  function setAngle(orientation){
+    switch(orientation){
+    case 1:    //回転なし
+        angle = 1;
+        break;
+    case 3:    //元画像を180度回転しているので、180度回転させて元に戻す。
+        angle = 1;
+        break;
+    case 6:    //元画像を270度回転しているので、90度回転させて元に戻す。
+        angle = 1;
+        break;
+    case 8:    //元画像を90度回転しているので、270度回転させて元に戻す。
+        angle = 1;
+        break;
+    default:
+        angle = 1;
+        break;
+    }
+    return angle;
+}
   });
   </script>
 </html>
