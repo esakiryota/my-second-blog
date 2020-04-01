@@ -303,19 +303,19 @@
   function setAngle(orientation){
     switch(orientation){
     case 1:    //回転なし
-        angle = 1;
+        angle = 3;
         break;
     case 3:    //元画像を180度回転しているので、180度回転させて元に戻す。
-        angle = 1;
+        angle = 3;
         break;
     case 6:    //元画像を270度回転しているので、90度回転させて元に戻す。
-        angle = 1;
+        angle = 3;
         break;
     case 8:    //元画像を90度回転しているので、270度回転させて元に戻す。
-        angle = 1;
+        angle = 3;
         break;
     default:
-        angle = 1;
+        angle = 3;
         break;
     }
     return angle;

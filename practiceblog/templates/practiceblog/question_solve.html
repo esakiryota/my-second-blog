@@ -262,12 +262,18 @@
     })
 
     var value = JSON.parse(document.getElementById('image-data').textContent);
-    var file = document.getElementById('image-data')
+    const TO_RADIANS = Math.PI/180;
 
+    var orientation = {{ orientation }}
     var img = new Image();
     img.src = value;
     img.onload = function(){
-    ctx.drawImage(img, 0, 0, 702, 1482);
+    if (orientation == 3) {
+      ctx.rotate(90 * Math.PI / 180)
+      ctx.drawImage(img, 0, -702, 1482, 702);
+    } else {
+      ctx.drawImage(img, 0, 0, 702, 1482);
+    }
   };
   });
   </script>

@@ -26,6 +26,9 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.auth import logout
 import requests
+import sys
+from PIL import Image
+from PIL.ExifTags import TAGS
 
 def logout_view(request):
     logout(request)
@@ -52,6 +55,9 @@ def question_make(request):
         images = req_form.save(commit=False)
         images.author = request.user
         images.published_date = timezone.now()
+        im = Image.open(images.image)
+        orientation = get_exif_of_image(images.image).get('Orientation', 1)
+        print(orientation)
         images.save()
         return redirect('question_box')
     return render(request, 'practiceblog/question_make.html', {'form': form})
@@ -59,10 +65,16 @@ def question_make(request):
 def question_solve(request, pk):
     image = get_object_or_404(QuestionBox, pk=pk)
     form = QuestionSolveForm()
+    image_file = image.image
+    orientation = get_exif_of_image(image.image).get('Orientation', 1)
     params = {
     'form': form,
     'image': image,
+    'orientation': orientation,
     };
+    exif = get_exif_of_image(image.image)
+    print(exif)
+    # sys.exit()
     if (request.method == 'POST'):
         req_form = QuestionSolveForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
@@ -409,3 +421,28 @@ class UserCreateComplete(generic.TemplateView):
                     return super().get(request, **kwargs)
 
         return HttpResponseBadRequest()
+
+def get_exif_of_image(file):
+    im = Image.open(file)
+    try:
+        exif = im._getexif()
+    except AttributeError:
+        return {}
+
+    # タグIDそのままでは人が読めないのでデコードして
+    # テーブルに格納する
+
+    exif_table = {}
+    for tag_id, value in exif.items():
+        tag = TAGS.get(tag_id, tag_id)
+        exif_table[tag] = value
+
+    return exif_table
+
+def image_orientation_transpose(file):
+    im = Image.open(file)
+    orientation = get_exif_of_image(file).get('Orientation', 1)
+    if orientation == 1:
+        im = im.transpose(Image.ROTATE_90)
+    return im
+    # im.save(file)
