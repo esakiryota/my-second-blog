@@ -2,14 +2,14 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.utils import timezone
 from .models import Post
-from .models import Image
+from .models import ImageBox
 from .models import Question
 from .models import Solve
 from .models import Introduce
 from .models import QuestionBox
 from .models import QuestionSolve
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm, ImageForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm
+from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -227,12 +227,12 @@ def question(request):
     return render(request, 'practiceblog/question.html', {'form': form})
 
 def teacher(request, num=1):
-    data = Image.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    data = ImageBox.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
     page = Paginator(data, 3)
     return render(request, 'practiceblog/teacher.html', {'posts': page.get_page(num)})
 
 def test(request, pk):
-    form = ImageForm()
+    form = ImageBoxForm()
     question = get_object_or_404(Question, pk=pk)
     params = {
     'form': form,
@@ -245,7 +245,7 @@ def test(request, pk):
         message = 'テストをときました！url: http://esakiryota.pythonanywhere.com/teacher'
         payload = {"message" :  message}
         post = requests.post(api, headers = headers, params=payload)
-        req_form = ImageForm(request.POST, request.FILES)
+        req_form = ImageBoxForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
         images.published_date = timezone.now()
@@ -256,7 +256,7 @@ def test(request, pk):
     return render(request, 'practiceblog/test.html',  params)
 
 def answer(request, pk):
-    image = get_object_or_404(Image, pk=pk)
+    image = get_object_or_404(ImageBox, pk=pk)
     id = image.questionId
     question = get_object_or_404(Question, pk=id)
     form = SolveForm()
