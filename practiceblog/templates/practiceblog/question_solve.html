@@ -268,11 +268,11 @@
     var img = new Image();
     img.src = value;
     img.onload = function(){
-    if (orientation == 1) {
-      ctx.drawImage(img, 0, 0, 702, 1482);
-    } else {
+    if (orientation === 1) {
       ctx.rotate(90 * Math.PI / 180)
       ctx.drawImage(img, 0, -702, 1482, 702);
+    } else {
+      ctx.drawImage(img, 0, 0, 702, 1482);
     }
   };
   });
