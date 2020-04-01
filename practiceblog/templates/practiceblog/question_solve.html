@@ -271,7 +271,7 @@
     var img = new Image();
     img.src = value;
     img.onload = function(){
-    if (orientation === 3) {
+    if (orientation === 3 | orientation === 6) {
       ctx.rotate(90 * Math.PI / 180)
       ctx.drawImage(img, 0, -702, 1482, 702);
     } else {
