@@ -37,9 +37,8 @@
         z-index: 1;
       }
       #form {
-        position: fixed;
+        position: relative;
         width: 80%;
-        bottom: 1px;
       }
       #question {
         border: 10px solid #999;
@@ -74,40 +73,50 @@
     </style>
   </head>
   <body>
-    <a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a>
-    <a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a>
-    <a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a>
-    <a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a>
-    <div class="container">
-      <div class="row">
-        <div class="col" style="font-size: 50px;">
-          <a class="btn disabled">
-          <span id="time">30</span>
-          <span>:</span>
-          <span id="sec">00</span>
-        </a>
+    <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#test1">テスト</a></li>
+        <li class="tab col s3"><a href="#test2">提出</a></li>
+      </ul>
+    </div>
+    <div id="test1" class="col s12">
+      <a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a>
+      <a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a>
+      <a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a>
+      <a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a>
+      <div class="container">
+        <div class="row">
+          <div class="col" style="font-size: 50px;">
+            <a class="btn disabled">
+            <span id="time">30</span>
+            <span>:</span>
+            <span id="sec">00</span>
+          </a>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="fixed-action-btn">
-  <a class="btn-floating btn-large red">
-    <i class="large material-icons">mode_edit</i>
-  </a>
-  <ul>
-    <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
-    <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
-    <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
-    <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li>
-    <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
-    <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
-    <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
-  </ul>
-</div>
-    <a id="download" href="#" download="canvas.png">ダウンロード</a>
+      <div class="fixed-action-btn">
+    <a class="btn-floating btn-large red">
+      <i class="large material-icons">mode_edit</i>
+    </a>
+    <ul>
+      <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
+      <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
+      <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
+      <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li>
+      <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
+      <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
+      <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
+    </ul>
+  </div>
+      <a id="download" href="#" download="canvas.png">ダウンロード</a>
 
-    <canvas width="980" height="2500" id="mycanvas" class="">
-      Canvasに対応したブラウザを用意してください。
-    </canvas>
+      <canvas width="980" height="2500" id="mycanvas" class="">
+        Canvasに対応したブラウザを用意してください。
+      </canvas>
+    </div>
+    <div id="test2" class="col s12">
       <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
         {% csrf_token %}
         <div class="container">
@@ -128,8 +137,13 @@
               {{ form.cate }}
             </div>
           </div>
+          <div class="row">
+            <a class="btn" id="send" href=""><i class="material-icons">send</i> 提出</a>
+          </div>
           </div>
       </form>
+    </div>
+  </div>
       {{ question.image.url|json_script:"image-data" }}
       {{ question.time|json_script:"time" }}
   </body>
@@ -141,6 +155,7 @@
   <script src="{% static 'js/init.js' %}"></script>
   <script>
   $(function() {
+    M.AutoInit();
     var canvas = document.getElementById('mycanvas');
     if (!canvas || !canvas.getContext) return false;
     var ctx = canvas.getContext('2d');

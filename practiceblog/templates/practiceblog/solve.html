@@ -113,6 +113,7 @@
   <script src="{% static 'js/init.js' %}"></script>
   <script>
   $(function() {
+    M.AutoInit();
     var canvas = document.getElementById('mycanvas');
     if (!canvas || !canvas.getContext) return false;
     var ctx = canvas.getContext('2d');
