@@ -59,7 +59,9 @@ def question_make(request):
         images.cate = category
         im = Image.open(images.image)
         orientation = get_exif_of_image(images.image).get('Orientation', 1)
+        exif = get_exif_of_image(images.image)
         print(orientation)
+        print(exif)
         api = "https://notify-api.line.me/api/notify"
         #テストtoken
         token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
