@@ -60,8 +60,10 @@ def question_make(request):
         im = Image.open(images.image)
         orientation = get_exif_of_image(images.image).get('Orientation', 1)
         exif = get_exif_of_image(images.image)
+        # image_orientation_transpose(images.image.path)
         print(orientation)
         print(exif)
+        print(images.image.path)
         api = "https://notify-api.line.me/api/notify"
         #テストtoken
         token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
@@ -70,6 +72,7 @@ def question_make(request):
         payload = {"message" :  message}
         post = requests.post(api, headers = headers, params=payload)
         images.save()
+        image_orientation_transpose(images.image.path)
         return redirect('question_box')
     return render(request, 'practiceblog/question_make.html', {'form': form})
 
@@ -458,7 +461,7 @@ def get_exif_of_image(file):
 def image_orientation_transpose(file):
     im = Image.open(file)
     orientation = get_exif_of_image(file).get('Orientation', 1)
-    if orientation == 1:
+    if orientation == 3:
         im = im.transpose(Image.ROTATE_90)
-    return im
-    # im.save(file)
+    # return im
+    im.save(file)
