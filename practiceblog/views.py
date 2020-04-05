@@ -461,7 +461,7 @@ def get_exif_of_image(file):
 def image_orientation_transpose(file):
     im = Image.open(file)
     orientation = get_exif_of_image(file).get('Orientation', 1)
-    if orientation == 3:
+    if orientation == 6:
         im = im.transpose(Image.ROTATE_90)
     # return im
     im.save(file)
