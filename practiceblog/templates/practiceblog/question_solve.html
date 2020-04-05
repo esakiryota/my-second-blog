@@ -132,10 +132,21 @@
               </div>
             </div>
             <div class="col m4">
+                <label>タイトル</label>
               {{ form.title }}
             </div>
             <div class="col m4">
-              {{ form.cate }}
+              <div class="input-field col s12">
+                <select name="subject">
+                  <option value="指定なし" disabled selected>科目</option>
+                  <option value="数学">数学</option>
+                  <option value="英語">英語</option>
+                  <option value="国語">国語</option>
+                  <option value="理科">理科</option>
+                  <option value="社会">社会</option>
+                </select>
+                <label>科目選択</label>
+              </div>
             </div>
             <div class="input-field col s12">
              {{ form.comment }}
@@ -143,7 +154,7 @@
             </div>
           </div>
           <div class="row">
-            <a class="btn" id="send" href=""><i class="material-icons">send</i> 提出</a>
+            <a class="btn" id="send"><i class="material-icons">send</i> 提出</a>
           </div>
           </div>
       </form>
@@ -156,6 +167,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="{% static 'js/materialize.js' %}"></script>
+  <script src="{% static 'js/select.js' %}"></script>
   <script src="{% static 'js/materialize.min.js' %}"></script>
   <script src="{% static 'js/init.js' %}"></script>
   <script src="{% static 'js/load-image.all.min.js' %}"></script>

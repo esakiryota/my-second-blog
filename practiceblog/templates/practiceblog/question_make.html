@@ -99,7 +99,7 @@
       <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
       <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
       <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
-      <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li>
+      <!-- <li><a class="btn-floating green" id="send" href=""><i class="material-icons">send</i></a></li> -->
       <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
       <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
       <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
@@ -127,10 +127,21 @@
               </div>
             </div>
             <div class="col m3">
+              <label>タイトル</label>
               {{ form.title }}
             </div>
             <div class="col m3">
-              {{ form.cate }}
+              <div class="input-field col s12">
+                <select name="subject">
+                  <option value="指定なし" disabled selected>科目</option>
+                  <option value="数学">数学</option>
+                  <option value="英語">英語</option>
+                  <option value="国語">国語</option>
+                  <option value="理科">理科</option>
+                  <option value="社会">社会</option>
+                </select>
+                <label>科目選択</label>
+              </div>
             </div>
             <div class="col m2">
               {{ form.time }}
@@ -141,7 +152,7 @@
             </div>
           </div>
           <div class="row">
-            <a class="btn" id="send" href=""><i class="material-icons">send</i> 提出</a>
+            <a class="btn" id="send"><i class="material-icons">send</i> 提出</a>
           </div>
           </div>
       </form>

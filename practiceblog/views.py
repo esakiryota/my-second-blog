@@ -51,13 +51,22 @@ def question_box_indiv(request, num=1):
 def question_make(request):
     form = QuestionBoxForm()
     if (request.method == 'POST'):
+        category = request.POST.get('subject')
         req_form = QuestionBoxForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
         images.published_date = timezone.now()
+        images.cate = category
         im = Image.open(images.image)
         orientation = get_exif_of_image(images.image).get('Orientation', 1)
         print(orientation)
+        api = "https://notify-api.line.me/api/notify"
+        #テストtoken
+        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        headers = {"Authorization" : "Bearer "+ token}
+        message = "質問がきました"
+        payload = {"message" :  message}
+        post = requests.post(api, headers = headers, params=payload)
         images.save()
         return redirect('question_box')
     return render(request, 'practiceblog/question_make.html', {'form': form})
@@ -77,11 +86,13 @@ def question_solve(request, pk):
     # sys.exit()
     if (request.method == 'POST'):
         req_form = QuestionSolveForm(request.POST, request.FILES)
+        category = request.POST.get('subject')
         images = req_form.save(commit=False)
         images.author = request.user
         images.user_name = image.author.username
         images.published_date = timezone.now()
         images.questionId = pk
+        images.cate = category
         images.save()
         subject = "質問箱"
         message = "回答が返ってきました！\nhttp://esakiryota.pythonanywhere.com/question_answer"
@@ -433,10 +444,13 @@ def get_exif_of_image(file):
     # テーブルに格納する
 
     exif_table = {}
-    for tag_id, value in exif.items():
-        tag = TAGS.get(tag_id, tag_id)
-        exif_table[tag] = value
 
+    try:
+        for tag_id, value in exif.items():
+            tag = TAGS.get(tag_id, tag_id)
+            exif_table[tag] = value
+    except AttributeError:
+        return exif_table
     return exif_table
 
 def image_orientation_transpose(file):

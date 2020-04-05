@@ -45,13 +45,13 @@ class QuestionBoxForm(forms.ModelForm):
 
     class Meta:
         model = QuestionBox
-        fields = ('cate', 'title', 'image', 'comment', 'bool')
+        fields = ('title', 'image', 'comment', 'bool')
 
 class QuestionSolveForm(forms.ModelForm):
 
     class Meta:
         model = QuestionSolve
-        fields = ('cate', 'title', 'image', 'comment')
+        fields = ('title', 'image', 'comment')
 
 class UserCreateForm(UserCreationForm):
 
