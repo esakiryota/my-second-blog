@@ -267,6 +267,7 @@ def test(request, pk):
         images.published_date = timezone.now()
         images.questionId = pk
         images.save()
+        image_orientation_transpose(images.image.path)
         return redirect('student')
 
     return render(request, 'practiceblog/test.html',  params)
