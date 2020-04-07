@@ -20,9 +20,14 @@ class Post(models.Model):
         return self.title
 
 class ImageBox(models.Model):
+    CATE = (
+        ('数学', '数学'),
+        ('英語', '英語'),
+        ('理科', '理科'),
+    )
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    cate = models.CharField(max_length=200, default='some category')
+    title = models.CharField(max_length=200, default="タイトル")
+    cate = models.CharField(max_length=200, choices=CATE, default="科目")
     questionId = models.IntegerField(default=0)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
@@ -36,9 +41,14 @@ class ImageBox(models.Model):
         return self.title
 
 class Question(models.Model):
+    CATE = (
+        ('数学', '数学'),
+        ('英語', '英語'),
+        ('理科', '理科'),
+    )
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    cate = models.CharField(max_length=200, default='some category')
+    title = models.CharField(max_length=200, default="タイトル")
+    cate = models.CharField(max_length=200,choices=CATE,  default='数学')
     time = models.IntegerField(default=30)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
@@ -52,9 +62,14 @@ class Question(models.Model):
         return self.title
 
 class Solve(models.Model):
+    CATE = (
+        ('数学', '数学'),
+        ('英語', '英語'),
+        ('理科', '理科'),
+    )
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    user_name = models.CharField(max_length=200, default='esakiryota')
+    title = models.CharField(max_length=200, default="タイトル")
+    user_name = models.CharField(max_length=200,choices=CATE, default='数学')
     cate = models.CharField(max_length=200, default='some category')
     questionId = models.IntegerField(default=0)
     created_date = models.DateTimeField(default=timezone.now)
