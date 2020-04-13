@@ -1,7 +1,7 @@
 {% load static %}
 <html>
     <head>
-        <title>MyBlog</title>
+        <title>勉強部屋</title>
         <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
@@ -21,7 +21,7 @@
            <nav>
              <div class="nav-wrapper">
                <!-- <a href="/" class="">MyBlog</a> -->
-               <a href="/" class="brand-logo">RPT</a>
+               <a href="/" class="brand-logo">study room</a>
                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                <ul class="right hide-on-med-and-down">
                  {% if user.is_authenticated %}
@@ -94,7 +94,6 @@
                         {% if perms.practiceblog.add_solve %}
                         <li><a  href="{% url 'teacher' %}"><i class="material-icons">face</i>先生</a>
                         </li>
-                        <li class="no-padding"><a  href="{% url 'introduce_all' %}" class="collapsible-header"><i class="material-icons">people</i>一覧</a></li>
                         {% else %}
                         <div class="collapsible">
                           <li class="">
@@ -107,13 +106,15 @@
                         </div>
                       </li>
                     </div>
-                    <li class="no-padding"><a  href="{% url 'introduce' %}" class="collapsible-header"><i class="material-icons">people</i>紹介</a></li>
-                        {% endif %}
+                    {% endif %}
                   </ul>
                 </div>
               </li>
-
-
+              {% if perms.practiceblog.add_solve %}
+              <li class="no-padding"><a  href="{% url 'introduce_all' %}" class="collapsible-header"><i class="material-icons">people</i>一覧</a></li>
+              {% else %}
+              <li class="no-padding"><a  href="{% url 'introduce' %}" class="collapsible-header"><i class="material-icons">people</i>紹介</a></li>
+              {% endif %}
          </ul>
         </header>
           <div class="content container">
@@ -138,7 +139,7 @@
                         </div>
                         <div class="col s8">
                           <span class="card-title">リョータ(写真右)</span>
-                          <p>東京工業大学3年生<br>左の写真はM1グランプリに出て、見事一回戦敗退する前の写真</p>
+                          <p>東京工業大学4年生<br>このサイトの管理人</p>
                         </div>
                       </div>
                     </div>
