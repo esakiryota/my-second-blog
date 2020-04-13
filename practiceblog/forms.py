@@ -45,7 +45,7 @@ class QuestionBoxForm(forms.ModelForm):
 
     class Meta:
         model = QuestionBox
-        fields = ('title', 'image', 'comment', 'bool')
+        fields = ('cate', 'title', 'image', 'comment', 'bool')
 
 class QuestionSolveForm(forms.ModelForm):
 

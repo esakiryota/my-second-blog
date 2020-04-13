@@ -98,10 +98,16 @@ class Introduce(models.Model):
         return self.name
 
 class QuestionBox(models.Model):
+    CATE = (
+        ('数学', '数学'),
+        ('英語', '英語'),
+        ('理科', '理科'),
+        ('その他', 'その他'),
+    )
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, default='タイトル')
     user_name = models.CharField(max_length=200, default='noname')
-    cate = models.CharField(max_length=200, default='some category')
+    cate = models.CharField(max_length=200,choices=CATE, default='数学')
     comment = models.CharField(max_length=300, default='ここにコメントがかかれます')
     bool = models.BooleanField(verbose_name='',default=False)
     created_date = models.DateTimeField(default=timezone.now)
