@@ -26,6 +26,14 @@ SECRET_KEY = 'v$i)dx-^kosepd-h@(q5!=0_skau-!x7-lw0@4dipn#r^%)*m%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+try:
+    from .local_settings import *
+except ImportError:
+    pass
+
+if not DEBUG:
+    import django_heroku
+    django_heroku.settings(locals())
 
 # Application definition
 
