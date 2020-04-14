@@ -100,7 +100,7 @@ def question_solve(request, pk):
         images.cate = category
         images.save()
         subject = "質問箱"
-        message = "回答が返ってきました！\nhttp://esakiryota.pythonanywhere.com/question_answer"
+        message = "回答が返ってきました！\nhttps://ryotastudy.herokuapp.com/question_answer"
         from_email = 'esaki1217@gmail.com'
         recipient_list = [image.author.email]
         send_mail(subject, message, from_email, recipient_list)
@@ -134,7 +134,7 @@ def question_look(request, pk):
         images.questionId = pk
         images.save()
         subject = "質問箱"
-        message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
+        message = "個人への質問がきました！\nhttps://ryotastudy.herokuapp.com/question_box_indiv"
         from_email = 'esaki1217@gmail.com'
         recipient_list = [image.author.email]
         send_mail(subject, message, from_email, recipient_list)
@@ -231,7 +231,7 @@ def question(request):
         api = "https://notify-api.line.me/api/notify"
         token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
         headers = {"Authorization" : "Bearer "+ token}
-        message = '新しいテストを発行しました！url: http://esakiryota.pythonanywhere.com/student'
+        message = '新しいテストを発行しました！url: https://ryotastudy.herokuapp.com/student'
         payload = {"message" :  message}
         post = requests.post(api, headers = headers, params=payload)
         req_form = QuestionForm(request.POST, request.FILES)
@@ -258,7 +258,7 @@ def test(request, pk):
         api = "https://notify-api.line.me/api/notify"
         token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
         headers = {"Authorization" : "Bearer "+ token}
-        message = 'テストをときました！url: http://esakiryota.pythonanywhere.com/teacher'
+        message = 'テストをときました！url: https://ryotastudy.herokuapp.com/teacher'
         payload = {"message" :  message}
         post = requests.post(api, headers = headers, params=payload)
         req_form = ImageBoxForm(request.POST, request.FILES)
@@ -286,7 +286,7 @@ def answer(request, pk):
         api = "https://notify-api.line.me/api/notify"
         token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
         headers = {"Authorization" : "Bearer "+ token}
-        message = '採点しました！url: http://esakiryota.pythonanywhere.com/teacher'
+        message = '採点しました！url: https://ryotastudy.herokuapp.com/teacher'
         payload = {"message" :  message}
         post = requests.post(api, headers = headers, params=payload)
         req_form = SolveForm(request.POST, request.FILES)
