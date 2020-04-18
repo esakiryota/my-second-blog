@@ -125,18 +125,14 @@ def question_look(request, pk):
         req_form = QuestionBoxForm(request.POST, request.FILES)
         bool = request.POST.get('bool')
         images = req_form.save(commit=False)
+        images.author = request.user
+        images.user_name = image.author.username
+        images.published_date = timezone.now()
+        images.questionId = pk
         if (bool):
             images.bool = True
-            images.author = request.user
-            images.user_name = image.author.username
-            images.published_date = timezone.now()
-            images.questionId = pk
             images.save()
         else:
-            images.author = request.user
-            images.user_name = image.author.username
-            images.published_date = timezone.now()
-            images.questionId = pk
             images.save()
             image_orientation_transpose(images.image.path)
             subject = "質問箱"
