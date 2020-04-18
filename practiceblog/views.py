@@ -131,6 +131,7 @@ def question_look(request, pk):
         images.user_name = image.author.username
         images.published_date = timezone.now()
         images.questionId = pk
+        image_orientation_transpose(images.image.path)
         images.save()
         subject = "質問箱"
         message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
