@@ -122,10 +122,16 @@ class QuestionBox(models.Model):
         return self.title
 
 class QuestionSolve(models.Model):
+    CATE = (
+        ('数学', '数学'),
+        ('英語', '英語'),
+        ('理科', '理科'),
+        ('その他', 'その他'),
+    )
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, default='タイトル')
     user_name = models.CharField(max_length=200, default='noname')
-    cate = models.CharField(max_length=200, default='some category')
+    cate = models.CharField(max_length=200,choices=CATE, default='数学')
     comment = models.CharField(max_length=300, default='ここにコメントをお願いします。')
     bool = models.BooleanField(verbose_name='',default=False)
     questionId = models.IntegerField(default=0)

@@ -51,7 +51,7 @@ class QuestionSolveForm(forms.ModelForm):
 
     class Meta:
         model = QuestionSolve
-        fields = ('title', 'image', 'comment')
+        fields = ('title', 'image', 'comment', 'cate')
 
 class UserCreateForm(UserCreationForm):
 

@@ -89,13 +89,11 @@ def question_solve(request, pk):
     # sys.exit()
     if (request.method == 'POST'):
         req_form = QuestionSolveForm(request.POST, request.FILES)
-        category = request.POST.get('subject')
         images = req_form.save(commit=False)
         images.author = request.user
         images.user_name = image.author.username
         images.published_date = timezone.now()
         images.questionId = pk
-        images.cate = category
         images.save()
         image_orientation_transpose(images.image.path)
         subject = "質問箱"
