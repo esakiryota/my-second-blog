@@ -127,18 +127,23 @@ def question_look(request, pk):
         images = req_form.save(commit=False)
         if (bool):
             images.bool = True
-        images.author = request.user
-        images.user_name = image.author.username
-        images.published_date = timezone.now()
-        images.questionId = pk
-        images.save()
-        if (bool != True):
+            images.author = request.user
+            images.user_name = image.author.username
+            images.published_date = timezone.now()
+            images.questionId = pk
+            images.save()
+        else:
+            images.author = request.user
+            images.user_name = image.author.username
+            images.published_date = timezone.now()
+            images.questionId = pk
+            images.save()
             image_orientation_transpose(images.image.path)
-        subject = "質問箱"
-        message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
-        from_email = 'esaki1217@gmail.com'
-        recipient_list = [image.author.email]
-        send_mail(subject, message, from_email, recipient_list)
+            subject = "質問箱"
+            message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
+            from_email = 'esaki1217@gmail.com'
+            recipient_list = [image.author.email]
+            send_mail(subject, message, from_email, recipient_list)
         image.bool = True
         image.save()
         return redirect('question_box')
