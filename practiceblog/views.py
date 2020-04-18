@@ -132,7 +132,8 @@ def question_look(request, pk):
         images.published_date = timezone.now()
         images.questionId = pk
         images.save()
-        image_orientation_transpose(images.image.path)
+        if (bool == False):
+            image_orientation_transpose(images.image.path)
         subject = "質問箱"
         message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
         from_email = 'esaki1217@gmail.com'
