@@ -131,15 +131,14 @@ def question_look(request, pk):
         images.questionId = pk
         if (bool):
             images.bool = True
-            images.save()
-        else:
-            images.save()
+        images.save()
+        if (bool != 'True'):
             image_orientation_transpose(images.image.path)
-            subject = "質問箱"
-            message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
-            from_email = 'esaki1217@gmail.com'
-            recipient_list = [image.author.email]
-            send_mail(subject, message, from_email, recipient_list)
+        subject = "質問箱"
+        message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
+        from_email = 'esaki1217@gmail.com'
+        recipient_list = [image.author.email]
+        send_mail(subject, message, from_email, recipient_list)
         image.bool = True
         image.save()
         return redirect('question_box')
