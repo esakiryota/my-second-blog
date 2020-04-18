@@ -59,7 +59,7 @@ def question_make(request):
         im = Image.open(images.image)
         orientation = get_exif_of_image(images.image).get('Orientation', 1)
         exif = get_exif_of_image(images.image)
-        # image_orientation_transpose(images.image.path)
+        image_orientation_transpose(images.image.path)
         print(orientation)
         print(exif)
         print(images.image.path)
