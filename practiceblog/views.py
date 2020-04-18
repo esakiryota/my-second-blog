@@ -56,7 +56,6 @@ def question_make(request):
         images = req_form.save(commit=False)
         images.author = request.user
         images.published_date = timezone.now()
-        images.cate = category
         im = Image.open(images.image)
         orientation = get_exif_of_image(images.image).get('Orientation', 1)
         exif = get_exif_of_image(images.image)
