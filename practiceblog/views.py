@@ -59,7 +59,6 @@ def question_make(request):
         im = Image.open(images.image)
         orientation = get_exif_of_image(images.image).get('Orientation', 1)
         exif = get_exif_of_image(images.image)
-        image_orientation_transpose(images.image.path)
         print(orientation)
         print(exif)
         print(images.image.path)
@@ -98,6 +97,7 @@ def question_solve(request, pk):
         images.questionId = pk
         images.cate = category
         images.save()
+        image_orientation_transpose(images.image.path)
         subject = "質問箱"
         message = "回答が返ってきました！\nhttp://esakiryota.pythonanywhere.com/question_answer"
         from_email = 'esaki1217@gmail.com'
@@ -131,8 +131,8 @@ def question_look(request, pk):
         images.user_name = image.author.username
         images.published_date = timezone.now()
         images.questionId = pk
-        image_orientation_transpose(images.image.path)
         images.save()
+        image_orientation_transpose(images.image.path)
         subject = "質問箱"
         message = "個人への質問がきました！\nhttp://esakiryota.pythonanywhere.com/question_box_indiv"
         from_email = 'esaki1217@gmail.com'
