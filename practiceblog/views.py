@@ -209,14 +209,42 @@ def find(request, num=1, str='cate'):
     return render(request, 'practiceblog/find.html', params)
 
 def student(request, num=1):
+    form = QuestionForm()
     test = Question.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    solve = Solve.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
     page = Paginator(test, 3)
     params = {
     'tests': page.get_page(num),
-    'solves': solve,
+    'form': form,
     }
     return render(request, 'practiceblog/student.html', params)
+
+def find_test(request, num=1, str="高校１年_新規_一般_"):
+    if (request.method == 'POST'):
+        search = request.POST.get('find')
+        grade = request.POST.get('grade')
+        new_old = request.POST.get('new_old')
+        indi_pub = request.POST.get('indi_pub')
+        str = grade + '_' + new_old + '_' + indi_pub + '_' + search
+        return redirect('find_test', str=str, num=1)
+    else:
+        array_str = str.split('_')
+        grade = array_str[0]
+        new_old = array_str[1]
+        indi_pub = array_str[2]
+        search = array_str[3]
+        if (len(search)):
+            data = Question.objects.filter(Q(title__contains=search)|Q(title__contains=search)).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+        else:
+            data = Question.objects.filter(Q(grade__contains=grade)&Q(new_old__contains=new_old)&Q(indi_pub__contains=indi_pub)).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    form = QuestionForm()
+    page = Paginator(data, 10)
+    params = {
+    'tests': page.get_page(num),
+    'form': form,
+    'str': str,
+    }
+    return render(request, 'practiceblog/find_test.html', params)
+
 
 def result(request, num=1):
     author = request.user.username
