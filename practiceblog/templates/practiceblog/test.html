@@ -222,33 +222,33 @@
       isDrowing = false;
     });
 
-    canvas.addEventListener("touchstart", function (e) {
-      if (idswitch.checked) {
-        isDrowing = false;
-      } else {
-        isDrowing = true;
-      }
-      e.preventDefault();
-      startX = e.pageX - $(this).offset().left - borderWidth;
-      startY = e.pageY - $(this).offset().top - borderWidth;
-    }, {passive: false})
-
-    canvas.addEventListener("touchmove", function (e) {
-      e.preventDefault();
-      if (!isDrowing) return;
-      x = e.pageX - $(this).offset().left - borderWidth;
-      y = e.pageY - $(this).offset().top - borderWidth;
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      startX = x;
-      startY = y;
-    }, {passive: false});
-
-    canvas.addEventListener("touchend", function (e) {
+    if (idswitch.checked) {
       isDrowing = false;
-    });
+    } else {
+      canvas.addEventListener("touchstart", function (e) {
+        isDrowing = true;
+        e.preventDefault();
+        startX = e.pageX - $(this).offset().left - borderWidth;
+        startY = e.pageY - $(this).offset().top - borderWidth;
+      }, {passive: false})
+
+      canvas.addEventListener("touchmove", function (e) {
+        e.preventDefault();
+        if (!isDrowing) return;
+        x = e.pageX - $(this).offset().left - borderWidth;
+        y = e.pageY - $(this).offset().top - borderWidth;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        startX = x;
+        startY = y;
+      }, {passive: false});
+
+      canvas.addEventListener("touchend", function (e) {
+        isDrowing = false;
+      });
+    };
 
 
     $('#erase').click(function() {
