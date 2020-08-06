@@ -192,17 +192,14 @@
     }
     idswitch.addEventListener('change', draw);
 
-
-
-
     $('#mycanvas').mousedown(function(e) {
       if (idswitch.checked) {
-        isDrowing = false;
+        e.preventDefault();
       } else {
         isDrowing = true;
+        startX = e.pageX - $(this).offset().left - borderWidth;
+        startY = e.pageY - $(this).offset().top - borderWidth;
       }
-      startX = e.pageX - $(this).offset().left - borderWidth;
-      startY = e.pageY - $(this).offset().top - borderWidth;
     })
     .mousemove(function(e) {
       if (!isDrowing) return;
@@ -222,17 +219,21 @@
       isDrowing = false;
     });
 
-    if (idswitch.checked) {
-      isDrowing = false;
-    } else {
       canvas.addEventListener("touchstart", function (e) {
+        if (idswitch.checked) {
+          e.preventDefault();
+        } else {
         isDrowing = true;
         e.preventDefault();
         startX = e.pageX - $(this).offset().left - borderWidth;
         startY = e.pageY - $(this).offset().top - borderWidth;
+      }
       }, {passive: false})
 
       canvas.addEventListener("touchmove", function (e) {
+        if (idswitch.checked) {
+          e.preventDefault();
+        } else {
         e.preventDefault();
         if (!isDrowing) return;
         x = e.pageX - $(this).offset().left - borderWidth;
@@ -243,12 +244,12 @@
         ctx.stroke();
         startX = x;
         startY = y;
+      }
       }, {passive: false});
 
       canvas.addEventListener("touchend", function (e) {
         isDrowing = false;
       });
-    };
 
 
     $('#erase').click(function() {
