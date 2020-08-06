@@ -76,6 +76,15 @@
         right: 0;
       }
 
+      #switch {
+        position: fixed;
+        top: 95%;
+        right: 80%;
+      }
+      #switchlabel {
+        font-size: 20px;
+      }
+
     </style>
   </head>
   <body>
@@ -96,6 +105,14 @@
     <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
     <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
   </ul>
+</div>
+<div class="switch" id="switch">
+<label id="switchlabel">
+  On
+  <input type="checkbox" id="idswitch">
+  <span class="lever"></span>
+  Off
+</label>
 </div>
     <a id="download" href="#" download="canvas.png">ダウンロード</a>
     <canvas width="700" height="1785" id="mycanvas" class="">
@@ -125,11 +142,26 @@
         borderWidth = 10,
         isDrowing = false;
 
+        var idswitch = document.getElementById("idswitch");
+
+        function draw() {
+          if (idswitch.checked) {
+            alert('書き込みモードOff');
+          } else {
+            alert('書き込みモードOn');
+          }
+        }
+        idswitch.addEventListener('change', draw);
+
 
     $('#mycanvas').mousedown(function(e) {
-      isDrowing = true;
-      startX = e.pageX - $(this).offset().left - borderWidth;
-      startY = e.pageY - $(this).offset().top - borderWidth;
+      if (idswitch.checked) {
+        e.preventDefault();
+      } else {
+        isDrowing = true;
+        startX = e.pageX - $(this).offset().left - borderWidth;
+        startY = e.pageY - $(this).offset().top - borderWidth;
+      }
     })
     .mousemove(function(e) {
       if (!isDrowing) return;
@@ -150,13 +182,18 @@
     });
 
     canvas.addEventListener("touchstart", function (e) {
+      if (idswitch.checked) {
+      } else {
       isDrowing = true;
       e.preventDefault();
       startX = e.pageX - $(this).offset().left - borderWidth;
       startY = e.pageY - $(this).offset().top - borderWidth;
+    }
     }, {passive: false})
 
     canvas.addEventListener("touchmove", function (e) {
+      if (idswitch.checked) {
+      } else {
       e.preventDefault();
       if (!isDrowing) return;
       x = e.pageX - $(this).offset().left - borderWidth;
@@ -167,6 +204,7 @@
       ctx.stroke();
       startX = x;
       startY = y;
+    }
     }, {passive: false});
 
     canvas.addEventListener("touchend", function (e) {
