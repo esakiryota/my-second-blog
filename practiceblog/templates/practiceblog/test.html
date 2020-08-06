@@ -221,7 +221,6 @@
 
       canvas.addEventListener("touchstart", function (e) {
         if (idswitch.checked) {
-          e.preventDefault();
         } else {
         isDrowing = true;
         e.preventDefault();
@@ -232,7 +231,6 @@
 
       canvas.addEventListener("touchmove", function (e) {
         if (idswitch.checked) {
-          e.preventDefault();
         } else {
         e.preventDefault();
         if (!isDrowing) return;
