@@ -70,6 +70,11 @@
         top: 50%;
         right: 0;
       }
+      #switch {
+        position: fixed;
+        top: 95%;
+        right: 80%;
+      }
     </style>
   </head>
   <body>
@@ -116,6 +121,14 @@
         Canvasに対応したブラウザを用意してください。
       </canvas>
     </div>
+    <div class="switch" id="switch">
+    <label>
+      On
+      <input type="checkbox" id="idswitch">
+      <span class="lever"></span>
+      Off
+    </label>
+  </div>
     <div id="test2" class="col s12">
       <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
         {% csrf_token %}
@@ -168,9 +181,26 @@
         borderWidth = 10,
         isDrowing = false;
 
+    var idswitch = document.getElementById("idswitch");
+
+    function draw() {
+      if (idswitch.checked) {
+        alert('書き込みモードOff');
+      } else {
+        alert('書き込みモードOn');
+      }
+    }
+    idswitch.addEventListener('change', draw);
+
+
+
 
     $('#mycanvas').mousedown(function(e) {
-      isDrowing = true;
+      if (idswitch.checked) {
+        isDrowing = false;
+      } else {
+        isDrowing = true;
+      }
       startX = e.pageX - $(this).offset().left - borderWidth;
       startY = e.pageY - $(this).offset().top - borderWidth;
     })
@@ -193,7 +223,11 @@
     });
 
     canvas.addEventListener("touchstart", function (e) {
-      isDrowing = true;
+      if (idswitch.checked) {
+        isDrowing = false;
+      } else {
+        isDrowing = true;
+      }
       e.preventDefault();
       startX = e.pageX - $(this).offset().left - borderWidth;
       startY = e.pageY - $(this).offset().top - borderWidth;
