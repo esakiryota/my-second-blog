@@ -151,7 +151,7 @@ def post_list(request, num=1):
     else:
         form = FindForm()
         data = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(data, 3)
+    page = Paginator(data, 10)
     params = {
     'form': form,
     'posts': page.get_page(num),
@@ -161,7 +161,7 @@ def post_list(request, num=1):
 
 def category(request, num=1, str='cate'):
     data = Post.objects.filter(cate__contains=str).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(data, 3)
+    page = Paginator(data, 10)
     params = {
     'str': str,
     'posts': page.get_page(num),
@@ -199,7 +199,7 @@ def find(request, num=1, str='cate'):
     else:
         form = FindForm()
         data = Post.objects.filter(Q(title__contains=str)|Q(cate__contains=str)).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(data, 3)
+    page = Paginator(data, 10)
     params = {
     'title': 'Hello',
     'form': form,
@@ -211,7 +211,7 @@ def find(request, num=1, str='cate'):
 def student(request, num=1):
     form = QuestionForm()
     test = Question.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(test, 3)
+    page = Paginator(test, 10)
     params = {
     'tests': page.get_page(num),
     'form': form,
@@ -249,7 +249,7 @@ def find_test(request, num=1, str="高校１年_新規_一般_"):
 def result(request, num=1):
     author = request.user.username
     solve = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(solve, 3)
+    page = Paginator(solve, 10)
     return render(request, 'practiceblog/result.html', {"solves": page.get_page(num)})
 
 def question(request):
@@ -271,7 +271,7 @@ def question(request):
 
 def teacher(request, num=1):
     data = ImageBox.objects.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    page = Paginator(data, 3)
+    page = Paginator(data, 10)
     return render(request, 'practiceblog/teacher.html', {'posts': page.get_page(num)})
 
 def test(request, pk):
@@ -374,7 +374,7 @@ def introduce(request):
 
 def teacherIntroduce(request, num=1):
     data = Introduce.objects.filter(intro=False).order_by('created_date').reverse()
-    page = Paginator(data, 3)
+    page = Paginator(data, 10)
     if (request.method == 'POST'):
         pk = request.POST.get('intro_id')
         user_name = request.user.username
