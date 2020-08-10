@@ -50,7 +50,7 @@
       #download {
         display: none;
       }
-      #up {
+      /* #up {
         position: fixed;
         top: 0;
         left: 50%;
@@ -69,7 +69,7 @@
         position: fixed;
         top: 50%;
         right: 0;
-      }
+      } */
       #switch {
         position: fixed;
         top: 2%;
@@ -89,10 +89,10 @@
       </ul>
     </div>
     <div id="test1" class="col s12">
-      <a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a>
+      <!-- <a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a>
       <a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a>
       <a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a>
-      <a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a>
+      <a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a> -->
       <div class="container">
         <div class="row">
           <div class="col" style="font-size: 50px;">
@@ -292,21 +292,21 @@
       form.submit();
     })
 
-    $('#up').click(function(e) {
-      scrollBy(0,-100);
-    })
-
-    $('#down').click(function(e) {
-      scrollBy(0,100);
-    })
-
-    $('#left').click(function(e) {
-      scrollBy(-100,0);
-    })
-
-    $('#right').click(function(e) {
-      scrollBy(100,0);
-    })
+    // $('#up').click(function(e) {
+    //   scrollBy(0,-100);
+    // })
+    //
+    // $('#down').click(function(e) {
+    //   scrollBy(0,100);
+    // })
+    //
+    // $('#left').click(function(e) {
+    //   scrollBy(-100,0);
+    // })
+    //
+    // $('#right').click(function(e) {
+    //   scrollBy(100,0);
+    // })
     var timer = {{ question.time }};
 
     function Timer() {
