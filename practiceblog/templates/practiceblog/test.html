@@ -50,6 +50,9 @@
       #download {
         display: none;
       }
+      #test_time, #test_start {
+        display: none;
+      }
       /* #up {
         position: fixed;
         top: 0;
@@ -78,9 +81,19 @@
       #switchlabel {
         font-size: 20px;
       }
+      .point_conductor {
+        pointer-events: none;
+      }
+      /* #content_body {
+        pointer-events: none;
+      } */
     </style>
   </head>
-  <body>
+  {% if test_conductor %}
+  <body id="content_body" class="point_conductor">
+  {% else %}
+  <body style="pointer-events: none;">
+  {% endif %}
     <div class="row">
     <div class="col s12">
       <ul class="tabs">
@@ -89,6 +102,34 @@
       </ul>
     </div>
     <div id="test1" class="col s12">
+  {% if test_conductor %}
+      <a class="waves-effect waves-light btn modal-trigger" href="#modal1" id="test_time">テスト時間</a>
+
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4 id="start_date">あと{{ elasped_time }}秒で開始します。</h4>
+      <h4 id="start_date">開始時刻 {{ limited_time_zone }}</h4>
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="test_start">開始</a>
+    </div>
+  </div>
+  {% else %}
+  <a class="waves-effect waves-light btn modal-trigger" href="#modal2" id="test_time">テスト時間</a>
+
+  <!-- Modal Structure -->
+  <div id="modal2" class="modal">
+    <div class="modal-content">
+      <h4 id="start_date2">テストは終わりました。</h4>
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    </div>
+    <div class="modal-footer">
+  <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="test_start">開始</a>
+  </div>
+  </div>
+  {% endif %}
       <!-- <a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a>
       <a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a>
       <a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a>
@@ -173,6 +214,21 @@
   <script>
   $(function() {
     M.AutoInit();
+    document.getElementById("test_time").click();
+    var elti = {{ elasped_time }}
+    function elstim() {
+      var i = 0;
+      var min = elti-1;
+      var timerId = setInterval(function(){
+        $('#start_date').text(`あと${min}秒で開始します。`);
+        if (min == 0) {
+          document.getElementById("test_start").click();
+          $('#content_body').removeClass('point_conductor');
+        }
+        min -= 1;
+        }, 1000)
+    }
+    elstim();
     var canvas = document.getElementById('mycanvas');
     if (!canvas || !canvas.getContext) return false;
     var ctx = canvas.getContext('2d');

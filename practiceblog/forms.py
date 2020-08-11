@@ -33,7 +33,7 @@ class QuestionForm(forms.ModelForm):
     find = forms.CharField(label='検索', required=False)
     class Meta:
         model = Question
-        fields = ('cate', 'title', 'image', 'time', 'grade', 'new_old', 'indi_pub')
+        fields = ('cate', 'title', 'image', 'time', 'grade', 'new_old', 'indi_pub', 'limited_time')
 
 class SolveForm(forms.ModelForm):
 

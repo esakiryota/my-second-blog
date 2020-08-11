@@ -277,9 +277,25 @@ def teacher(request, num=1):
 def test(request, pk):
     form = ImageBoxForm()
     question = get_object_or_404(Question, pk=pk)
+    nowtime = timezone.now()
+    str_elasped_time = 0
+    limited_time_zone = question.limited_time
+    test_conductor = True
+    time_loss = nowtime-limited_time_zone
+    if (question.limited_time > nowtime) :
+        elasped_time = question.limited_time-nowtime
+        str_elasped_time = elasped_time.seconds
+    elif ( time_loss.seconds > 30*60 ):
+        test_conductor = False
+    else :
+        str_elasped_time = 5;
     params = {
     'form': form,
     'question': question,
+    'elasped_time': str_elasped_time,
+    'nowtime': nowtime,
+    'limited_time_zone': limited_time_zone,
+    'test_conductor': test_conductor,
     }
     if (request.method == 'POST'):
         api = "https://notify-api.line.me/api/notify"
