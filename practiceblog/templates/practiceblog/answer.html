@@ -107,12 +107,8 @@
                 <input class="file-path validate" type="text">
               </div>
             </div>
-            <div class="col m4">
-              {{ form.title }}
-            </div>
-            <div class="col m4">
-              {{ form.cate }}
-            </div>
+            <input type="hidden" name="title" value="{{ image_title }}">
+            <input type="hidden" name="cate" value="{{ image_cate }}">
             <div class="col m4">
               {{ form.score }}
             </div>

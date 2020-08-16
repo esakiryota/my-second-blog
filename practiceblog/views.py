@@ -280,12 +280,14 @@ def test(request, pk):
     nowtime = timezone.now()
     str_elasped_time = 0
     limited_time_zone = question.limited_time
+    question_title = question.title + '_' + request.user.username
+    question_cate = question.cate
     test_conductor = True
     time_loss = nowtime-limited_time_zone
     if (question.limited_time > nowtime) :
         elasped_time = question.limited_time-nowtime
         str_elasped_time = elasped_time.seconds
-    elif ( time_loss.seconds > 30*60 ):
+    elif ( time_loss.seconds > 60*60 ):
         test_conductor = False
     else :
         str_elasped_time = 5;
@@ -296,10 +298,15 @@ def test(request, pk):
     'nowtime': nowtime,
     'limited_time_zone': limited_time_zone,
     'test_conductor': test_conductor,
+    'question_title': question_title,
+    'question_cate': question_cate,
     }
     if (request.method == 'POST'):
         api = "https://notify-api.line.me/api/notify"
-        token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
+        #家庭教師token
+        # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
+        #テストtoken
+        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
         headers = {"Authorization" : "Bearer "+ token}
         message = 'テストをときました！url: http://esakiryota.pythonanywhere.com/teacher'
         payload = {"message" :  message}
@@ -309,6 +316,8 @@ def test(request, pk):
         images.author = request.user
         images.published_date = timezone.now()
         images.questionId = pk
+        images.title = request.POST.get('title')
+        images.cate = request.POST.get('cate')
         images.save()
         image_orientation_transpose(images.image.path)
         return redirect('student')
@@ -318,16 +327,24 @@ def test(request, pk):
 def answer(request, pk):
     image = get_object_or_404(ImageBox, pk=pk)
     id = image.questionId
+    image_title = image.title + '_採点後'
+    image_cate = image.cate
+    id = image.questionId
     question = get_object_or_404(Question, pk=id)
     form = SolveForm()
     params = {
     'form': form,
     'image': image,
     'question': question,
+    'image_title': image_title,
+    'image_cate': image_cate,
     };
     if (request.method == 'POST'):
         api = "https://notify-api.line.me/api/notify"
-        token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
+        #家庭教師token
+        # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
+        #テストtoken
+        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
         headers = {"Authorization" : "Bearer "+ token}
         message = '採点しました！url: http://esakiryota.pythonanywhere.com/teacher'
         payload = {"message" :  message}
@@ -338,6 +355,8 @@ def answer(request, pk):
         images.user_name = image.author.username
         images.published_date = timezone.now()
         images.questionId = id
+        images.title = request.POST.get("title")
+        images.cate = request.POST.get("cate")
         images.save()
         return redirect('teacher')
     return render(request, 'practiceblog/answer.html',  params)

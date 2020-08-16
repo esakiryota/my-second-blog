@@ -27,7 +27,7 @@ class ImageBoxForm(forms.ModelForm):
 
     class Meta:
         model = ImageBox
-        fields = ('cate', 'title', 'image')
+        fields = ('image', )
 
 class QuestionForm(forms.ModelForm):
     find = forms.CharField(label='検索', required=False)
@@ -39,7 +39,7 @@ class SolveForm(forms.ModelForm):
 
     class Meta:
         model = Solve
-        fields = ('cate', 'title', 'image', 'score')
+        fields = ('image', 'score')
 
 class QuestionBoxForm(forms.ModelForm):
 
