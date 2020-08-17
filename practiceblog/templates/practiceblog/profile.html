@@ -1,4 +1,41 @@
 {% extends 'practiceblog/base.html' %}
-<h1>プロフィール</h1>
 {% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      名前
+    </div>
+    <div class="col">
+      {{ author }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      タイプ
+    </div>
+    <div class="col">
+      生徒
+    </div>
+  </div>
+</div>
+<div class="container">
+  <table class="responsive-table">
+        <thead>
+          <tr>
+              <th>タイトル</th>
+              <th>教科</th>
+              <th>点数</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in data %}
+          <tr>
+            <td>{{ post.title }}</td>
+            <td>{{ post.cate }}</td>
+            <td>{{ post.score }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+</div>
 {% endblock %}

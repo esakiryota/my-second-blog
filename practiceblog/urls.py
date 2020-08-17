@@ -44,4 +44,5 @@ urlpatterns = [
     path('question_answer/<int:num>/', views.question_answer, name='question_answer'),
     path('question_look', views.question_look, name='question_look'),
     path('question_look/<int:pk>/', views.question_look, name='question_look'),
+    path('profile', views.profile, name='profile'),
 ]

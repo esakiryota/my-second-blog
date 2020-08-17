@@ -371,6 +371,15 @@ def solve(request, pk):
     }
     return render(request, 'practiceblog/solve.html',  params)
 
+def profile(request):
+    author = request.user.username
+    data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    params = {
+    'author': author,
+    'data': data,
+    }
+    return render(request, 'practiceblog/profile.html', params)
+
 def introduce(request):
     if (request.method == 'POST'):
         name = request.POST.get('name')

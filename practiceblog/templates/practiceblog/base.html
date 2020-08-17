@@ -61,6 +61,7 @@
            {% if user.is_authenticated %}
            <li>こんにちは、{{user.username}}さん</li>
            <li><a  href="{% url 'logout' %}" class="collapsible-header"><i class="material-icons">logout</i>ログアウト</a></li>
+           <li><a  href="{% url 'profile' %}" class="collapsible-header"><i class="material-icons">logout</i>プロフィール</a></li>
            {% else %}
            <li><a href="{% url 'login' %}" class="collapsible-header"><i class="material-icons">exit_to_app</i>ログイン</a></li>
            <li><a href="{% url 'user_create' %}" class="collapsible-header"><i class="material-icons">add_box</i>アカウント作成</a></li>
