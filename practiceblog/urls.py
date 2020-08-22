@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+# app_name = 'study_room'
+
 urlpatterns = [
     path('', views.post_list, name='post_list'),
     path('find/<str>/<int:num>/', views.find, name='find'),
@@ -45,4 +47,5 @@ urlpatterns = [
     path('question_look', views.question_look, name='question_look'),
     path('question_look/<int:pk>/', views.question_look, name='question_look'),
     path('profile', views.profile, name='profile'),
+    # path('profile/plot', views.img_plot, name='img_plot'),
 ]

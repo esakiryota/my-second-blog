@@ -1,25 +1,17 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
-<div class="container">
+<!-- <div class="container" style="">
   <div class="row">
     <div class="col">
-      名前
+      名前:
     </div>
     <div class="col">
       {{ author }}
     </div>
   </div>
-  <div class="row">
-    <div class="col">
-      タイプ
-    </div>
-    <div class="col">
-      生徒
-    </div>
-  </div>
-</div>
-<div class="container">
-  <table class="responsive-table">
+</div> -->
+<!-- <div class="container">
+  <table class="responsive-table striped">
         <thead>
           <tr>
               <th>タイトル</th>
@@ -37,5 +29,59 @@
           {% endfor %}
         </tbody>
       </table>
-</div>
+</div> -->
+<canvas id="myChart"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script>
+    var ctx1 = document.getElementById("myChart");
+    var ctx2 = document.getElementById("myLineChart");
+    var array = {{data_json|safe}}
+    var labels = [];
+    var score = [];
+    array.forEach(function (value, index, array) {
+      labels.push(value[1]);
+      score.push(value[2]);
+  });
+  console.log(labels, score)
+  var myChart = new Chart(ctx1, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: '数学',
+          data: score,
+          borderColor: "rgba(255,0,0,1)",
+          backgroundColor: "rgba(0,0,0,0)"
+        },
+
+      ],
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'テストの点数'
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            suggestedMax: 102,
+            suggestedMin: 0,
+            stepSize: 10,
+            callback: function(value, index, values){
+              return  value +  '点'
+            }
+          }
+        }],
+        xAxes: [{ // ★ 推奨オプション
+          ticks: {
+            autoSkip: false, // 狭くてもラベルを省略しない
+            maxRotation: 0,  // 縦書きなので縦向きに固定
+            minRotation: 0,
+          }
+        }],
+      },
+    }
+  });
+    </script>
 {% endblock %}

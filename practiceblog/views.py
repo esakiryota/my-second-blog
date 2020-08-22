@@ -29,10 +29,26 @@ import requests
 import sys
 from PIL import Image
 from PIL.ExifTags import TAGS
+from django.http import HttpResponse
+from django.shortcuts import render
+import json
 
 def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
+
+def profile(request):
+    author = request.user.username
+    data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    data_json = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse().values_list("pk", "title", "score")
+    data_json_list = list(data_json)
+    data_json  = json.dumps(data_json_list)
+    params = {
+    'author': author,
+    'data': data,
+    'data_json': data_json,
+    }
+    return render(request, 'practiceblog/profile.html', params)
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
@@ -370,15 +386,6 @@ def solve(request, pk):
     'question': question,
     }
     return render(request, 'practiceblog/solve.html',  params)
-
-def profile(request):
-    author = request.user.username
-    data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    params = {
-    'author': author,
-    'data': data,
-    }
-    return render(request, 'practiceblog/profile.html', params)
 
 def introduce(request):
     if (request.method == 'POST'):
