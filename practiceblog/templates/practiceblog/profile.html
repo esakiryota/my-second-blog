@@ -31,26 +31,77 @@
       </table>
 </div> -->
 <canvas id="myChart"></canvas>
+<canvas id="myChart2"></canvas>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
     <script>
     var ctx1 = document.getElementById("myChart");
-    var ctx2 = document.getElementById("myLineChart");
-    var array = {{data_json|safe}}
-    var labels = [];
-    var score = [];
-    array.forEach(function (value, index, array) {
-      labels.push(value[1]);
-      score.push(value[2]);
+    var ctx2 = document.getElementById("myChart2");
+    var array_math = {{data_json_math|safe}}
+    var array_english = {{data_json_english|safe}}
+    var labels1 = [];
+    var score1 = [];
+    var cate1 = [];
+    array_math.forEach(function (value, index, array_math) {
+      labels1.push(value[1]);
+      score1.push(value[2]);
+      cate1.push(value[0]);
   });
-  console.log(labels, score)
+    var labels2 = [];
+    var score2 = [];
+    var cate2 = [];
+    array_english.forEach(function (value, index, array_math) {
+      labels2.push(value[1]);
+      score2.push(value[2]);
+      cate2.push(value[0]);
+  });
   var myChart = new Chart(ctx1, {
     type: 'line',
     data: {
-      labels: labels,
+      labels: labels1,
       datasets: [
         {
           label: '数学',
-          data: score,
+          data: score1,
+          borderColor: "rgba(0,0,255,1)",
+          backgroundColor: "rgba(0,0,0,0)"
+        },
+
+      ],
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'テストの点数'
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            suggestedMax: 102,
+            suggestedMin: 0,
+            stepSize: 10,
+            callback: function(value, index, values){
+              return  value +  '点'
+            }
+          }
+        }],
+        xAxes: [{ // ★ 推奨オプション
+          ticks: {
+            autoSkip: false, // 狭くてもラベルを省略しない
+            maxRotation: 0,  // 縦書きなので縦向きに固定
+            minRotation: 0,
+          }
+        }],
+      },
+    }
+  });
+  var myChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: labels2,
+      datasets: [
+        {
+          label: '英語',
+          data: score2,
           borderColor: "rgba(255,0,0,1)",
           backgroundColor: "rgba(0,0,0,0)"
         },

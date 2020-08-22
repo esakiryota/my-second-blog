@@ -40,13 +40,17 @@ def logout_view(request):
 def profile(request):
     author = request.user.username
     data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    data_json = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse().values_list("pk", "title", "score")
-    data_json_list = list(data_json)
-    data_json  = json.dumps(data_json_list)
+    data_json_math = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).filter(cate__contains="数学").order_by('published_date').reverse().all()[:7].values_list("cate", "title", "score")
+    data_json_english = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).filter(cate__contains="英語").order_by('published_date').reverse().all()[:7].values_list("cate", "title", "score")
+    data_json_list_math = list(data_json_math)
+    data_json_english = list(data_json_english)
+    data_json_list_math  = json.dumps(data_json_list_math)
+    data_json_english  = json.dumps(data_json_english)
     params = {
     'author': author,
     'data': data,
-    'data_json': data_json,
+    'data_json_math': data_json_list_math,
+    'data_json_english': data_json_english,
     }
     return render(request, 'practiceblog/profile.html', params)
 
