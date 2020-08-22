@@ -61,7 +61,7 @@
            {% if user.is_authenticated %}
            <li>こんにちは、{{user.username}}さん</li>
            <li><a  href="{% url 'logout' %}" class="collapsible-header"><i class="material-icons">logout</i>ログアウト</a></li>
-           <li><a  href="{% url 'profile' %}" class="collapsible-header"><i class="material-icons">logout</i>プロフィール</a></li>
+           <li><a  href="{% url 'profile' %}" class="collapsible-header"><i class="material-icons">assignment_ind</i>プロフィール</a></li>
            {% else %}
            <li><a href="{% url 'login' %}" class="collapsible-header"><i class="material-icons">exit_to_app</i>ログイン</a></li>
            <li><a href="{% url 'user_create' %}" class="collapsible-header"><i class="material-icons">add_box</i>アカウント作成</a></li>
@@ -97,16 +97,9 @@
                         </li>
                         {% else %}
                         <div class="collapsible">
-                          <li class="">
-                        <a class="collapsible-header"><i class="material-icons">insert_emoticon</i>生徒</a>
-                        <div class="collapsible-body">
-                          <ul>
-                            <li><a href="{% url 'student' %}"><i class="material-icons">import_contacts</i>テスト</a></li>
-                            <li><a href="{% url 'result' %}"><i class="material-icons">local_library</i>結果</a></li>
-                          </ul>
-                        </div>
-                      </li>
-                    </div>
+                                <li><a href="{% url 'student' %}"><i class="material-icons">import_contacts</i>問題</a></li>
+                                <li><a href="{% url 'result' %}"><i class="material-icons">local_library</i>結果</a></li>
+                            </div>
                     {% endif %}
                   </ul>
                 </div>
