@@ -275,12 +275,12 @@ def result(request, num=1):
 def question(request):
     form = QuestionForm()
     if (request.method == 'POST'):
-        api = "https://notify-api.line.me/api/notify"
-        token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
-        headers = {"Authorization" : "Bearer "+ token}
-        message = '新しいテストを発行しました！url: http://esakiryota.pythonanywhere.com/student'
-        payload = {"message" :  message}
-        post = requests.post(api, headers = headers, params=payload)
+        # api = "https://notify-api.line.me/api/notify"
+        # token = "7oLUU1AEdegSvF3nbU7LvTcCN4Rfdmo6Qo9JsTyNr9M"
+        # headers = {"Authorization" : "Bearer "+ token}
+        # message = '新しいテストを発行しました！url: http://esakiryota.pythonanywhere.com/student'
+        # payload = {"message" :  message}
+        # post = requests.post(api, headers = headers, params=payload)
         req_form = QuestionForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
@@ -322,15 +322,15 @@ def test(request, pk):
     'question_cate': question_cate,
     }
     if (request.method == 'POST'):
-        api = "https://notify-api.line.me/api/notify"
+        # api = "https://notify-api.line.me/api/notify"
         #家庭教師token
         # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
         #テストtoken
-        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
-        headers = {"Authorization" : "Bearer "+ token}
-        message = 'テストをときました！url: http://esakiryota.pythonanywhere.com/teacher'
-        payload = {"message" :  message}
-        post = requests.post(api, headers = headers, params=payload)
+        # token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        # headers = {"Authorization" : "Bearer "+ token}
+        # message = 'テストをときました！url: http://esakiryota.pythonanywhere.com/teacher'
+        # payload = {"message" :  message}
+        # post = requests.post(api, headers = headers, params=payload)
         req_form = ImageBoxForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
@@ -360,15 +360,15 @@ def answer(request, pk):
     'image_cate': image_cate,
     };
     if (request.method == 'POST'):
-        api = "https://notify-api.line.me/api/notify"
+        # api = "https://notify-api.line.me/api/notify"
         #家庭教師token
         # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
         #テストtoken
-        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
-        headers = {"Authorization" : "Bearer "+ token}
-        message = '採点しました！url: http://esakiryota.pythonanywhere.com/teacher'
-        payload = {"message" :  message}
-        post = requests.post(api, headers = headers, params=payload)
+        # token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        # headers = {"Authorization" : "Bearer "+ token}
+        # message = '採点しました！url: http://esakiryota.pythonanywhere.com/teacher'
+        # payload = {"message" :  message}
+        # post = requests.post(api, headers = headers, params=payload)
         req_form = SolveForm(request.POST, request.FILES)
         images = req_form.save(commit=False)
         images.author = request.user
