@@ -254,11 +254,13 @@
     });
 
     image_move.addEventListener("touchstart", function (e) {
+      e.preventDefault();
       move_point = true
       image_y = e.pageY
     }, {passive: false})
 
     image_move.addEventListener("touchmove", function (e) {
+      e.preventDefault();
       if (!move_point) return;
       image_y = e.pageY
       height = window.innerHeight
