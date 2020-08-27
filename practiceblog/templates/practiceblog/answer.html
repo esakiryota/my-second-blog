@@ -244,6 +244,12 @@
       image_y = e.pageY
       height = window.innerHeight
       image_height = height - image_y + 35
+      if (image_height > height-100) {
+        image_height = height-100
+      }
+      if (image_height < 100) {
+        image_height = 100
+      }
       $('#down_image').css('height',image_height);
     })
     .mouseup(function(e) {
@@ -265,6 +271,12 @@
       image_y = e.pageY
       height = window.innerHeight
       image_height = height - image_y + 35
+      if (image_height > height-100) {
+        image_height = height-100
+      }
+      if (image_height < 100) {
+        image_height = 100
+      }
       $('#down_image').css('height',image_height);
     }, {passive: false});
 
