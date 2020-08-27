@@ -105,10 +105,6 @@
       <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
       <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
       <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
-      <!-- <li><a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a></li>
-      <li><a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a></li>
-      <li><a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a></li>
-      <li><a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a></li> -->
       <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
       <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
       <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
@@ -160,6 +156,10 @@
   </label>
 </div>
   <div class="down" id="down_image">
+    <!-- <button type="button" name="button" id="image_move">位置変え</button> -->
+    <!-- <a class="waves-effect waves-light btn" id="image_move">位置変え</a> -->
+     <!-- <a class="btn-floating btn-large grey lighten-1" id="image_move" style="left: 50%;"><i class="material-icons">import_export</i></a> -->
+     <a class="btn-floating btn-large grey lighten-1" id="image_move" style="left: 50%;"><i class="material-icons">unfold_more</i></a>
     <img src="" alt="" id="question_image">
   </div>
       </div>
@@ -218,6 +218,9 @@
 
     ctx.strokeStyle = "red";
 
+    var move_point = false,
+        image_y;
+
     var idswitch = document.getElementById("idswitch");
 
     function draw() {
@@ -228,6 +231,47 @@
       }
     }
     idswitch.addEventListener('change', draw);
+
+    var question_image =  document.getElementById('question_image');
+
+    $('#image_move').mousedown(function(e){
+      move_point = true
+      image_y = e.pageY
+    })
+    .mousemove(function(e) {
+      if (!move_point) return;
+      image_y = e.pageY
+      height = window.innerHeight
+      image_height = height - image_y + 35
+      $('#down_image').css('height',image_height);
+    })
+    .mouseup(function(e) {
+      move_point = false;
+    })
+    .mouseleave(function(e) {
+      move_point = false;
+    });
+
+    $('#image_move').bind('touchstart', function(e){
+      move_point = true
+      image_y = e.pageY
+    })
+    .bind('touchmove',function(e) {
+      if (!move_point) return;
+      image_y = e.pageY
+      height = window.innerHeight
+      image_height = height - image_y + 35
+      $('#down_image').css('height',image_height);
+    })
+    .bind('touchend',function(e) {
+      move_point = false;
+    })
+    .mouseleave(function(e) {
+      move_point = false;
+    });
+
+
+
 
 
     $('#mycanvas').mousedown(function(e) {
@@ -344,7 +388,6 @@
 
     var value = JSON.parse(document.getElementById('image-data').textContent);
     var value_question = JSON.parse(document.getElementById('question-data').textContent);
-    var question_image =  document.getElementById('question_image');
 
     question_image.src = value_question;
     var img = new Image();
