@@ -233,6 +233,7 @@
     idswitch.addEventListener('change', draw);
 
     var question_image =  document.getElementById('question_image');
+    var image_move =  document.getElementById('image_move');
 
     $('#image_move').mousedown(function(e){
       move_point = true
@@ -252,20 +253,22 @@
       move_point = false;
     });
 
-    $('#image_move').bind('touchstart', function(e){
+    image_move.addEventListener("touchstart", function (e) {
       move_point = true
       image_y = e.pageY
-    })
-    .bind('touchmove',function(e) {
+    }, {passive: false})
+
+    image_move.addEventListener("touchmove", function (e) {
       if (!move_point) return;
       image_y = e.pageY
       height = window.innerHeight
       image_height = height - image_y + 35
       $('#down_image').css('height',image_height);
-    })
-    .bind('touchend',function(e) {
+    }, {passive: false});
+
+    image_move.addEventListener("touchend", function (e) {
       move_point = false;
-    })
+    });
 
 
 
