@@ -219,7 +219,9 @@
     ctx.strokeStyle = "red";
 
     var move_point = false,
-        image_y;
+        image_y
+        y;
+
 
     var idswitch = document.getElementById("idswitch");
 
@@ -242,8 +244,10 @@
     .mousemove(function(e) {
       if (!move_point) return;
       image_y = e.pageY
+      y = window.pageYOffset;
       height = window.innerHeight
-      image_height = height - image_y + 35
+      // image_height = height - image_y + 35
+      image_height = height - image_y + y + 35
       if (image_height > height-100) {
         image_height = height-100
       }
@@ -269,8 +273,10 @@
       e.preventDefault();
       if (!move_point) return;
       image_y = e.pageY
+      y = window.pageYOffset;
       height = window.innerHeight
-      image_height = height - image_y + 35
+      // image_height = height - image_y + 35
+      image_height = height - image_y + y + 35
       if (image_height > height-100) {
         image_height = height-100
       }
