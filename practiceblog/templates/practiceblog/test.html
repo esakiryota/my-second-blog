@@ -64,6 +64,21 @@
       .point_conductor {
         pointer-events: none;
       }
+
+      #down_image {
+        position: fixed;
+        background-color: white;
+        width: 100%;
+        height: 33%;
+        right: 0;
+        overflow: auto;
+        bottom: 0;
+        border-top: 10px solid #C0C0C0;
+        box-shadow: 0 10px 40px 0 rgba(0, 0, 0, .5);
+      }
+      #question_image {
+        width: 100%;
+      }
     </style>
   </head>
   {% if test_conductor %}
@@ -149,6 +164,10 @@
         Off
       </label>
     </div>
+    <div class="down" id="down_image">
+       <a class="btn-floating btn-large grey lighten-1" id="image_move" style="left: 50%; position: fixed;"><i class="material-icons">unfold_more</i></a>
+      <img src="" alt="" id="question_image" style="margin-top: 50px;">
+    </div>
     </div>
     <div id="test2" class="col s12">
       <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
@@ -212,6 +231,64 @@
         y,
         borderWidth = 10,
         isDrowing = false;
+
+    var move_point = false,
+        image_y
+        y;
+
+    var question_image =  document.getElementById('question_image');
+    var image_move =  document.getElementById('image_move');
+
+    $('#image_move').mousedown(function(e){
+      move_point = true
+      image_y = e.pageY
+    })
+    .mousemove(function(e) {
+      if (!move_point) return;
+      image_y = e.pageY
+      y = window.pageYOffset;
+      height = window.innerHeight
+      image_height = height - image_y + y + 35
+      if (image_height > height-100) {
+        image_height = height-100
+      }
+      if (image_height < 100) {
+        image_height = 100
+      }
+      $('#down_image').css('height',image_height);
+    })
+    .mouseup(function(e) {
+      move_point = false;
+    })
+    .mouseleave(function(e) {
+      move_point = false;
+    });
+
+    image_move.addEventListener("touchstart", function (e) {
+      e.preventDefault();
+      move_point = true
+      image_y = e.pageY
+    }, {passive: false})
+
+    image_move.addEventListener("touchmove", function (e) {
+      e.preventDefault();
+      if (!move_point) return;
+      image_y = e.pageY
+      y = window.pageYOffset;
+      height = window.innerHeight
+      image_height = height - image_y + y + 35
+      if (image_height > height-100) {
+        image_height = height-100
+      }
+      if (image_height < 100) {
+        image_height = 100
+      }
+      $('#down_image').css('height',image_height);
+    }, {passive: false});
+
+    image_move.addEventListener("touchend", function (e) {
+      move_point = false;
+    });
 
     var idswitch = document.getElementById("idswitch");
 
@@ -370,11 +447,12 @@
     var value = JSON.parse(document.getElementById('image-data').textContent);
 
     var img = new Image();
-    img.src = value;
+    // img.src = value;
+    question_image.src = value;
 
-    img.onload = function(){
-    ctx.drawImage(img, 0, 0, 700,  1785);
-  };
+  //   img.onload = function(){
+  //   ctx.drawImage(img, 0, 0, 700,  1785);
+  // };
   });
   </script>
 </html>

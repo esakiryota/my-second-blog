@@ -156,9 +156,6 @@
   </label>
 </div>
   <div class="down" id="down_image">
-    <!-- <button type="button" name="button" id="image_move">位置変え</button> -->
-    <!-- <a class="waves-effect waves-light btn" id="image_move">位置変え</a> -->
-     <!-- <a class="btn-floating btn-large grey lighten-1" id="image_move" style="left: 50%;"><i class="material-icons">import_export</i></a> -->
      <a class="btn-floating btn-large grey lighten-1" id="image_move" style="left: 50%; position: fixed;"><i class="material-icons">unfold_more</i></a>
     <img src="" alt="" id="question_image" style="margin-top: 50px;">
   </div>
@@ -246,7 +243,6 @@
       image_y = e.pageY
       y = window.pageYOffset;
       height = window.innerHeight
-      // image_height = height - image_y + 35
       image_height = height - image_y + y + 35
       if (image_height > height-100) {
         image_height = height-100
@@ -275,7 +271,6 @@
       image_y = e.pageY
       y = window.pageYOffset;
       height = window.innerHeight
-      // image_height = height - image_y + 35
       image_height = height - image_y + y + 35
       if (image_height > height-100) {
         image_height = height-100
