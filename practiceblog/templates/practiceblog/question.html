@@ -24,7 +24,7 @@
     <meta http-equiv="X-UA-Compatible" CONTENT="IE=EmulateIE7" />
     <style media="screen">
       #mycanvas {
-        border: 10px solid #999;
+        border: 5px solid #999;
         cursor: crosshair;
         position: absolute;
         left: 5%;
@@ -80,6 +80,19 @@
       #switchlabel {
         font-size: 20px;
       }
+      /* #insert_text {
+        position: fixed;
+        left: 0%;
+        top: 90%;
+      } */
+      #form_set {
+        position: fixed;
+        left: 5%;
+        top: 75%;
+      }
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -91,10 +104,6 @@
       </ul>
     </div>
     <div id="test1" class="col s12">
-      <a class="btn-floating green" id="up"><i class="material-icons">expand_less</i></a>
-      <a class="btn-floating green" id="down"><i class="material-icons">expand_more</i></a>
-      <a class="btn-floating green" id="left"><i class="material-icons">navigate_before</i></a>
-      <a class="btn-floating green" id="right"><i class="material-icons">navigate_next</i></a>
       <div class="fixed-action-btn">
     <a class="btn-floating btn-large red">
       <i class="large material-icons">mode_edit</i>
@@ -103,10 +112,7 @@
       <li><a class="btn-floating red" id="store" href=""><i class="material-icons">file_download</i></a></li>
       <li><a class="btn-floating yellow darken-1" id="erase"><i class="material-icons">cancel</i></a></li>
       <li><a class="btn-floating yellow darken-1" id="penStyle"><i class="material-icons">mode_edit</i></a></li>
-      <li><a class="btn-floating green" id="zoom_in"><i class="material-icons">zoom_in</i></a></li>
-      <li><a class="btn-floating green" id="zoom_out"><i class="material-icons">zoom_out</i></a></li>
-      <li><a class="btn-floating green" id="undo"><i class="material-icons">undo</i></a></li>
-    </ul>
+      <li><a class="btn-floating yellow darken-1" id="write_text"><i class="material-icons">format_bold</i></a></li>
   </div>
       <a id="download" href="#" download="canvas.png">ダウンロード</a>
 
@@ -122,6 +128,23 @@
         Off
       </label>
     </div>
+      <div class="container hidden" id="form_set">
+        <div class="row">
+          <a class="btn col s1" id="insert_text"><i class="material-icons">send</i></a>
+          <input type="text" name="" id="test_content" class="col s6" placeholder="Text"/>
+          <p style="font-size: 20px;">X: <span id="position_x"></span> Y: <span id="position_y"></span></p>
+        </div>
+        <div class="row">
+          <p class="range-field col s6">
+            <label for="font-size">文字サイズ</label>
+            <input type="range" id="font-size" min="0" max="100" value="30"/>
+          </p>
+          <p class="range-field col s6">
+            <label for="font-size">幅</label>
+            <input type="range" id="width-size" min="400" max="680" value="600"/>
+        </p>
+        </div>
+      </div>
     </div>
     <div id="test2" class="col s12">
       <form class="" method="POST" id="form" enctype="multipart/form-data" id="form">
@@ -134,7 +157,7 @@
                 {{ form.image }}
               </div>
               <div class="file-path-wrapper">
-                <input class="file-path validate" type="text">
+                <input class="file-path validate" type="text" value="text">
               </div>
             </div>
             <div class="col m3">
@@ -203,6 +226,34 @@
         }
         idswitch.addEventListener('change', draw);
 
+    $('#write_text').click(function() {
+      $("#form_set").toggleClass("hidden");
+    });
+
+
+    $('#insert_text').click(function() {
+      var test_content = $('#test_content').val();
+      var font_content = $('#font-size').val();
+      ctx.font = `${font_content}px serif`;
+      var font_width = Number($('#width-size').val());
+      var font_count = test_content.length;
+      var text_width = font_count*font_content;
+      var pre_count = 0;
+      var text_startX = startX
+      var text_startY = startY;
+      var count = Math.floor(font_width/font_content);
+      for (let i_count = 0; font_count > i_count; i_count+= count ) {
+        var result = test_content.substring( pre_count, pre_count + count );
+        ctx.fillText(result, text_startX, startY);
+        pre_count += count;
+        startY += Number(font_content);
+        console.log(pre_count);
+        console.log(count);
+        console.log(startY);
+      };
+      $("#test_content").val("");
+    })
+
 
     $('#mycanvas').mousedown(function(e) {
       if (idswitch.checked) {
@@ -211,6 +262,8 @@
         isDrowing = true;
         startX = e.pageX - $(this).offset().left - borderWidth;
         startY = e.pageY - $(this).offset().top - borderWidth;
+        $('#position_x').text(startX);
+        $('#position_y').text(startY);
       }
     })
     .mousemove(function(e) {
@@ -286,19 +339,6 @@
           ctx.lineWidth = "1";
         })
 
-
-        $('#zoom_in').click(function() {
-          $('#mycanvas').css("zoom","125%");
-        })
-
-        $('#zoom_out').click(function() {
-          $('#mycanvas').css("zoom","75%");
-          })
-
-        $('#undo').click(function() {
-          $('#mycanvas').css("zoom","100%");
-          })
-
     $('#store').click(function(e) {
       if (!confirm('本当に保存しますか？')) return;
       e.preventDefault();
@@ -316,23 +356,6 @@
       var form = document.getElementById('form');
       form.submit();
     })
-
-
-        $('#up').click(function(e) {
-          scrollBy(0,-100);
-        })
-
-        $('#down').click(function(e) {
-          scrollBy(0,100);
-        })
-
-        $('#left').click(function(e) {
-          scrollBy(-100,0);
-        })
-
-        $('#right').click(function(e) {
-          scrollBy(100,0);
-        })
   });
   </script>
 </html>
