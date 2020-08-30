@@ -291,6 +291,8 @@
       e.preventDefault();
       startX = e.pageX - $(this).offset().left - borderWidth;
       startY = e.pageY - $(this).offset().top - borderWidth;
+      $('#position_x').text(startX);
+      $('#position_y').text(startY);
     }
     }, {passive: false})
 
