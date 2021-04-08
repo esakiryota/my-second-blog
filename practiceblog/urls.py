@@ -47,5 +47,7 @@ urlpatterns = [
     path('question_look', views.question_look, name='question_look'),
     path('question_look/<int:pk>/', views.question_look, name='question_look'),
     path('profile', views.profile, name='profile'),
+    path('connect', views.connect, name='connect'),
+    path('connectOn/<int:pk>/', views.connectOn, name='connectOn'),
     # path('profile/plot', views.img_plot, name='img_plot'),
 ]

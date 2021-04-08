@@ -8,8 +8,9 @@ from .models import Solve
 from .models import Introduce
 from .models import QuestionBox
 from .models import QuestionSolve
+from .models import TeacherStudent
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm
+from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm, TeacherStudentForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -53,6 +54,25 @@ def profile(request):
     'data_json_english': data_json_english,
     }
     return render(request, 'practiceblog/profile.html', params)
+
+def connect(request):
+    teachers = User.objects.filter(groups__name='先生')
+    user_pk = request.user.pk
+    my_teachers_list = TeacherStudent.objects.filter(user_student=user_pk)
+    return render(request, 'practiceblog/connect.html', {"teachers": teachers})
+
+def connectOn(request, pk):
+    req_form = TeacherStudentForm()
+    user_pk = request.user.pk
+
+    images = req_form.save(commit=False)
+    images.user_teacher = pk
+    images.user_student = request.user.pk
+    images.teacher_student = pk + '_' + request.user.pk
+    images.published_date = timezone.now()
+    images.save()
+    return redirect('profile')
+
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
@@ -439,9 +459,9 @@ def teacherIntroduce(request, num=1):
         intro_model.save()
         api = "https://notify-api.line.me/api/notify"
         #家庭教師token
-        # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
+        token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
         #テストtoken
-        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        # token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
         headers = {"Authorization" : "Bearer "+ token}
         message = "{0} が {1}の案件を応募しました。".format(user_name, intro_name)
         payload = {"message" :  message}

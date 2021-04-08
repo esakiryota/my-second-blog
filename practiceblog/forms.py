@@ -6,6 +6,7 @@ from .models import Question
 from .models import Solve
 from .models import QuestionBox
 from .models import QuestionSolve
+from .models import TeacherStudent
 
 from django.contrib.auth.forms import (
     AuthenticationForm, UserCreationForm
@@ -68,3 +69,8 @@ class UserCreateForm(UserCreationForm):
         email = self.cleaned_data['email']
         User.objects.filter(email=email, is_active=True).delete()
         return email
+
+class TeacherStudentForm(forms.ModelForm):
+    class Meta:
+        model = TeacherStudent
+        fields = ('user_teacher', 'user_student', 'teacher_student')

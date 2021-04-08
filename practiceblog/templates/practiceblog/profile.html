@@ -1,37 +1,14 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
-<!-- <div class="container" style="">
-  <div class="row">
-    <div class="col">
-      名前:
-    </div>
-    <div class="col">
-      {{ author }}
-    </div>
-  </div>
-</div> -->
-<!-- <div class="container">
-  <table class="responsive-table striped">
-        <thead>
-          <tr>
-              <th>タイトル</th>
-              <th>教科</th>
-              <th>点数</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for post in data %}
-          <tr>
-            <td>{{ post.title }}</td>
-            <td>{{ post.cate }}</td>
-            <td>{{ post.score }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-</div> -->
 <canvas id="myChart"></canvas>
 <canvas id="myChart2"></canvas>
+<div class="">
+  先生名
+</div>
+<div class="">
+  亮太
+</div>
+<a href="{% url 'connect' %}">先生選択</a>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
     <script>
     var ctx1 = document.getElementById("myChart");

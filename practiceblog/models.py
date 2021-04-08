@@ -166,3 +166,17 @@ class QuestionSolve(models.Model):
 
     def __str__(self):
         return self.title
+
+class TeacherStudent(models.Model):
+    teacher_student = models.CharField(max_length=200, default='先生_生徒')
+    user_teacher = models.IntegerField(default=0)
+    user_student = models.IntegerField(default=0)
+    created_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.teacher_student
