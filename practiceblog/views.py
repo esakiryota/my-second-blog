@@ -64,7 +64,7 @@ def connect(request):
 def connectOn(request, pk):
     req_form = TeacherStudentForm()
     user_pk = request.user.pk
-
+    
     images = req_form.save(commit=False)
     images.user_teacher = pk
     images.user_student = request.user.pk
@@ -437,9 +437,9 @@ def introduce(request):
 
         api = "https://notify-api.line.me/api/notify"
         #家庭教師token
-        token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
+        # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
         #テストtoken
-        # token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
         headers = {"Authorization" : "Bearer "+ token}
         message = "\n[生徒情報]\n{0} {1} {2}\n[場所]\n{3}\n[曜日]\n{4}\n[開始時間]\n{5}\n[授業時間]\n{6}\n[希望性別]\n{7}\n[初回日程候補]\n{8} {9}\n{10} {11}\n{12} {13}\n[備考]\n{14}".format(name, grade, sex,place,  week, start_time, class_time, hope_sex, first_date1, first_time1, first_date2, first_time2 , first_date3,first_time3, something)
         payload = {"message" :  message}
@@ -459,9 +459,9 @@ def teacherIntroduce(request, num=1):
         intro_model.save()
         api = "https://notify-api.line.me/api/notify"
         #家庭教師token
-        token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
+        # token = "n8KpP4gWh2mkRbnVObxope3sVjCq5ldlTU4KYOeCDV5"
         #テストtoken
-        # token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
+        token = "rP3uTpG8LSuWANK1Dw9CSmU9Ss8TSGimvhANTM7i5Hh"
         headers = {"Authorization" : "Bearer "+ token}
         message = "{0} が {1}の案件を応募しました。".format(user_name, intro_name)
         payload = {"message" :  message}
