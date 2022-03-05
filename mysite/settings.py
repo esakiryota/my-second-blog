@@ -130,7 +130,7 @@ STATICFILES_DIRS = (
 )
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 # MEDIA_URL = '/pics/'
 # MEDIA_ROOT = BASE_DIR
