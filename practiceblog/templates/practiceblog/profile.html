@@ -1,14 +1,25 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
+
+<div class="col s12 m7">
+  <h2 class="header">プロフィール</h2>
+  <div class="card horizontal">
+    <div class="card-image">
+      <i class="material-icons">assignment_ind</i>
+    </div>
+    <div class="card-stacked">
+      <div class="card-content">
+        名前：{{user.username}}<br>
+        メールアドレス：{{user.email}}<br>
+        始めた時期：{{user.created_at}}
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <canvas id="myChart"></canvas>
 <canvas id="myChart2"></canvas>
-<div class="">
-  先生名
-</div>
-<div class="">
-  亮太
-</div>
-<a href="{% url 'connect' %}">先生選択</a>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
     <script>
     var ctx1 = document.getElementById("myChart");

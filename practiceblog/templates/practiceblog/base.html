@@ -35,14 +35,12 @@
                <ul class="right hide-on-med-and-down">
                  {% if user.is_authenticated %}
                  <li>こんにちは、{{user.username}}さん</li>
+                 <li><a  href="{% url 'logout' %}">ログアウト</a></li>
+                 <li><a  href="{% url 'profile' %}">プロフィール</a></li>
                  {% else %}
                  <li><a href="{% url 'post_list' %}">ログイン</a></li>
                  <li><a href="{% url 'user_create' %}">アカウント作成</a></li>
                  {% endif %}
-                 <li><a href="{% url 'post_list' %}">全て</a></li>
-                 <li><a href="{% url 'category' %}プログラミング/1">プログラミング</a></li>
-                 <li><a href="{% url 'category' %}生活/1">生活</a></li>
-                 <li><a href="{% url 'category' %}筋トレ/1">筋トレ</a></li>
                  {% if perms.practiceblog.add_solve %}
                  <li><a  href="{% url 'introduce_all' %}">一覧</a></li>
                  <li><a  href="{% url 'teacher' %}">先生</a></li>
@@ -51,8 +49,7 @@
                  <li><a href="{% url 'result' %}">結果</a></li>
                  <li><a  href="{% url 'introduce' %}">紹介</a></li>
                  {% endif %}
-                 <li><a  href="{% url 'question_box' %}">質問箱</a></li>
-                 <li><a  href="{% url 'question_answer' %}">回答一覧</a></li>
+                 <li><a href="{% url 'explanation' %}">サイト概要</a></li>
                </ul>
              </div>
            </nav>
@@ -75,32 +72,20 @@
            <li><a href="{% url 'login' %}" class="collapsible-header"><i class="material-icons">exit_to_app</i>ログイン</a></li>
            <li><a href="{% url 'user_create' %}" class="collapsible-header"><i class="material-icons">add_box</i>アカウント作成</a></li>
            {% endif %}
-           <li><a  class="collapsible-header"><i class="material-icons">forum</i>質問箱</a>
+           <li><a href="{% url 'user_create' %}" class="collapsible-header"><i class="material-icons">school</i>授業</a></li>
+           <!-- <li><a  class="collapsible-header"><i class="material-icons">forum</i>質問箱</a>
              <div class="collapsible-body">
                <ul>
                  <li><a href="{% url 'question_box' %}"><i class="material-icons">apps</i>公開</a></li>
                  <li><a href="{% url 'question_box_indiv' %}"><i class="material-icons">desktop_mac</i>個人</a></li>
                </ul>
              </div>
-           </li>
-           <li><a  href="{% url 'question_answer' %}" class="collapsible-header"><i class="material-icons">school</i>回答一覧</a></li>
-           <li><a href="{% url 'explanation' %}" class="collapsible-header"><i class="material-icons">settings</i>サイト概要</a></li>
-              <li>
-                <a class="collapsible-header"><i class="material-icons">insert_chart</i>ブログ</a>
-                <div class="collapsible-body">
-                  <ul>
-                    <li><a href="{% url 'post_list' %}"><i class="material-icons">apps</i>全て</a></li>
-                    <li><a href="{% url 'category' %}プログラミング"><i class="material-icons">desktop_mac</i>プログラミング</a></li>
-                    <li><a href="{% url 'category' %}生活"><i class="material-icons">date_range</i>生活</a></li>
-                    <li><a href="{% url 'category' %}筋トレ"><i class="material-icons">accessibility</i>筋トレ</a></li>
-                  </ul>
-                </div>
-              </li>
+           </li> -->
+           <!-- <li><a  href="{% url 'question_answer' %}" class="collapsible-header"><i class="material-icons">school</i>回答一覧</a></li> -->
               <li>
                 <a class="collapsible-header"><i class="material-icons">border_color</i>テスト</a>
                 <div class="collapsible-body">
                   <ul>
-
                         {% if perms.practiceblog.add_solve %}
                         <li><a  href="{% url 'teacher' %}"><i class="material-icons">face</i>先生</a>
                         </li>
@@ -113,11 +98,12 @@
                   </ul>
                 </div>
               </li>
-              {% if perms.practiceblog.add_solve %}
+              <li><a href="{% url 'explanation' %}" class="collapsible-header"><i class="material-icons">settings</i>サイト概要</a></li>
+              <!-- {% if perms.practiceblog.add_solve %}
               <li class="no-padding"><a  href="{% url 'introduce_all' %}" class="collapsible-header"><i class="material-icons">people</i>一覧</a></li>
               {% else %}
               <li class="no-padding"><a  href="{% url 'introduce' %}" class="collapsible-header"><i class="material-icons">people</i>紹介</a></li>
-              {% endif %}
+              {% endif %} -->
          </ul>
         </header>
           <div class="content container">
