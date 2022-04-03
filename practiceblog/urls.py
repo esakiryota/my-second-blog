@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from .views import UserViewSet, SolveViewSet
+from rest_framework import routers
 
 # app_name = 'study_room'
 
@@ -49,5 +51,10 @@ urlpatterns = [
     path('profile', views.profile, name='profile'),
     path('connect', views.connect, name='connect'),
     path('connectOn/<int:pk>/', views.connectOn, name='connectOn'),
+    path('profile/<int:num>/', views.profile, name='profile'),
     # path('profile/plot', views.img_plot, name='img_plot'),
 ]
+
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'solves', SolveViewSet)

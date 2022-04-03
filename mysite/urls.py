@@ -15,12 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.auth import views
+from practiceblog.urls import router as practiceblog_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', views.LoginView.as_view(), name='login'),
     path('', include('practiceblog.urls')),
+    url(r'^api/', include(practiceblog_router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

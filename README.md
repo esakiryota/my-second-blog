@@ -8,6 +8,10 @@ master branchはheroku用
 
 
 # README
+```
+pip install djangorestframework
+pip install django-filter
+```
 
 ## 環境構築
 
@@ -16,3 +20,10 @@ $ python3 -m venv myvenv
 $ source myvenv/bin/activate
 $ python manage.py runserver
 ```
+
+## AWSでの設定
+インスタンスを停止→再起動する時、
+```
+$ systemctl start mariadb
+```
+を行い、mariadbを再起動させる必要がある。

@@ -33,25 +33,42 @@ from PIL.ExifTags import TAGS
 from django.http import HttpResponse
 from django.shortcuts import render
 import json
+from datetime import date, datetime
+from .serializer import UserSerializer, SolveSerializer
+import django_filters
+from rest_framework import viewsets
+from django_filters import rest_framework as filters
 
 def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
 
-def profile(request):
+def json_serial(obj):
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError ("Type %s not serializable" % type(obj))
+
+def profile(request, num=1):
     author = request.user.username
     data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    data_json_math = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).filter(cate__contains="数学").order_by('published_date').reverse().all()[:7].values_list("cate", "title", "score")
-    data_json_english = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).filter(cate__contains="英語").order_by('published_date').reverse().all()[:7].values_list("cate", "title", "score")
-    data_json_list_math = list(data_json_math)
-    data_json_english = list(data_json_english)
-    data_json_list_math  = json.dumps(data_json_list_math)
-    data_json_english  = json.dumps(data_json_english)
+    tests = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse().all()[:7].values_list("id","cate", "title", "score", "created_date")
+    page = Paginator(tests, 3)
+    test_list = page.get_page(num)
+    math_list = []
+    english_list = []
+    for test in test_list:
+        if test[1] == "数学":
+            math_list.append(test)
+        if test[1] == "英語":
+            english_list.append(test)
+    data_json_list_math  = json.dumps(math_list, default=json_serial)
+    data_json_english  = json.dumps(english_list, default=json_serial)
     params = {
     'author': author,
     'data': data,
     'data_json_math': data_json_list_math,
     'data_json_english': data_json_english,
+    'tests': page.get_page(num),
     }
     return render(request, 'practiceblog/profile.html', params)
 
@@ -568,3 +585,20 @@ def image_orientation_transpose(file):
         im = im.transpose(Image.ROTATE_270)
     # return im
     im.save(file)
+
+class CustomFilter(filters.FilterSet):
+    start_created_date = filters.DateTimeFilter(field_name='created_date', lookup_expr='gt')
+    end_created_date = filters.DateTimeFilter(field_name='created_date', lookup_expr='lt')
+    class Meta:
+        model = Solve
+        fields = ['start_created_date', 'end_created_date'] #定義したフィルタを列挙
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class SolveViewSet(viewsets.ModelViewSet):
+    queryset = Solve.objects.all()
+    serializer_class = SolveSerializer
+    filter_fields = ('cate', 'title')
+    filter_class = CustomFilter
