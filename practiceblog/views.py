@@ -10,7 +10,7 @@ from .models import QuestionBox
 from .models import QuestionSolve
 from .models import TeacherStudent
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm, TeacherStudentForm
+from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm, TeacherStudentForm, SolveForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -38,6 +38,7 @@ from .serializer import UserSerializer, SolveSerializer
 import django_filters
 from rest_framework import viewsets
 from django_filters import rest_framework as filters
+from django.utils import six 
 
 def logout_view(request):
     logout(request)
@@ -48,10 +49,44 @@ def json_serial(obj):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
 
-def profile(request, num=1):
+def search_alg(arg):
+    searchArg = {}
+    for k, v in arg.items():
+        if v[0] == "" or k == 'csrfmiddlewaretoken':
+            continue
+        searchArg[k] = v
+    return searchArg
+
+def profile(request, str="str", num=1):
     author = request.user.username
-    data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    tests = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse().all()[:7].values_list("id","cate", "title", "score", "created_date")
+    data = Solve.objects.filter(user_name=author)
+    cate = ""
+    title = ""
+    if (request.method == 'POST'):
+        post_dict = dict(six.iterlists(request.POST))
+        print(search_alg(post_dict))
+        seach = search_alg(post_dict)
+        request.session["form_value"] = seach
+        for k, v in seach.items():
+            if k == "cate":
+                data = data.filter(cate__contains=v[0])
+                cate = v[0]
+            if k == "title":
+                data = data.filter(title__contains=v[0])
+                title = v[0]
+    elif 'form_value' in request.session:
+        seach = request.session['form_value']
+        for k, v in seach.items():
+            if k == "cate":
+                data = data.filter(cate__contains=v[0])
+                cate = v[0]
+            if k == "title":
+                data = data.filter(title__contains=v[0])
+                title = v[0]
+    else:
+        data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    data = data.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    tests = data.all()[:7].values_list("id","cate", "title", "score", "created_date")
     page = Paginator(tests, 3)
     test_list = page.get_page(num)
     math_list = []
@@ -63,14 +98,22 @@ def profile(request, num=1):
             english_list.append(test)
     data_json_list_math  = json.dumps(math_list, default=json_serial)
     data_json_english  = json.dumps(english_list, default=json_serial)
+    form = SolveForm(initial={"cate": cate, "title": title})
     params = {
     'author': author,
     'data': data,
     'data_json_math': data_json_list_math,
     'data_json_english': data_json_english,
     'tests': page.get_page(num),
+    'form': form,
     }
     return render(request, 'practiceblog/profile.html', params)
+
+def board_list(request):
+    return render(request, 'practiceblog/board_list.html')
+
+def board(request):
+    return render(request, 'practiceblog/board.html')
 
 def connect(request):
     teachers = User.objects.filter(groups__name='先生')
@@ -592,6 +635,23 @@ class CustomFilter(filters.FilterSet):
     class Meta:
         model = Solve
         fields = ['start_created_date', 'end_created_date'] #定義したフィルタを列挙
+
+# class CustomPagination(pagination.PageNumberPagination):
+#     def get_paginated_response(self, data):
+#         return Response({
+#             'links': {
+#                 'next': self.get_next_link(),
+#                 'previous': self.get_previous_link()
+#             },
+#             'count': self.page.paginator.count,
+#             'results': data
+#         })
+import rest_framework
+
+class StandardResultsSetPagination(rest_framework.pagination.LimitOffsetPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

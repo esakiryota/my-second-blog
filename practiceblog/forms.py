@@ -7,6 +7,7 @@ from .models import Solve
 from .models import QuestionBox
 from .models import QuestionSolve
 from .models import TeacherStudent
+from .models import Solve
 
 from django.contrib.auth.forms import (
     AuthenticationForm, UserCreationForm
@@ -54,6 +55,16 @@ class QuestionSolveForm(forms.ModelForm):
         model = QuestionSolve
         fields = ('title', 'image', 'comment', 'cate')
 
+CATEGORIES = (
+    ('', ''),
+    ('英語', '英語'),
+    ('数学', '数学'),
+)
+
+class SolveForm(forms.Form):
+    cate = forms.ChoiceField(label='カテゴリ', choices=CATEGORIES, required=False)
+    title = forms.CharField(label='タイトル', max_length=64, required=False)
+
 class UserCreateForm(UserCreationForm):
 
     class Meta:
@@ -74,3 +85,4 @@ class TeacherStudentForm(forms.ModelForm):
     class Meta:
         model = TeacherStudent
         fields = ('user_teacher', 'user_student', 'teacher_student')
+

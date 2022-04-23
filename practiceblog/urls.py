@@ -52,7 +52,10 @@ urlpatterns = [
     path('connect', views.connect, name='connect'),
     path('connectOn/<int:pk>/', views.connectOn, name='connectOn'),
     path('profile/<int:num>/', views.profile, name='profile'),
+    path('profile/<str>/<int:num>/', views.profile, name='profile'),
     # path('profile/plot', views.img_plot, name='img_plot'),
+    path('board_list', views.board_list, name='board_list'),
+    path('board', views.board, name='board'),
 ]
 
 router = routers.DefaultRouter()
