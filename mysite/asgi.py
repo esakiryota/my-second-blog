@@ -6,6 +6,7 @@ from channels.http import AsgiHandler
 from channels.routing import ProtocolTypeRouter, URLRouter
 import chat.routing
 
+ASGI_APPLICATION = 'mysite.asgi.application'
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 django.setup()
 
