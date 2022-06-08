@@ -26,16 +26,45 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json['message']
 
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message
-            }
-        )
+        if 'message' in text_data_json:
+            message = text_data_json['message']
+            # Send message to room group
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message
+                }
+            )
+        elif 'draw' in text_data_json:
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'draw',
+                    "d": "", 
+		   	        "fill": text_data_json["fill"],
+		 	        "stroke": text_data_json["stroke"],
+			        "stroke-width": "3",
+			        "stroke-linecap": "round"
+                }
+            )
+        elif 'drawing' in text_data_json:
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'drawing',
+                    "d": text_data_json["d"]
+                }
+            )
+        elif 'clear' in text_data_json:
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'clear'
+                }
+            )
+
 
     # Receive message from room group
     def chat_message(self, event):
@@ -45,3 +74,13 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': message
         }))
+
+    def draw(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def drawing(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def clear(self, event):
+        self.send(text_data=json.dumps(event))
+        
