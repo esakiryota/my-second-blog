@@ -16,3 +16,8 @@ $ python3 -m venv myvenv
 $ source myvenv/bin/activate
 $ python manage.py runserver
 ```
+
+## redis server 起動
+```
+$ docker run -p 6379:6379 -d redis:5
+```
