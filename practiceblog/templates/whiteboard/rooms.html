@@ -1,0 +1,38 @@
+{% extends 'practiceblog/base.html' %}
+{% block content %}
+<nav style="margin-top: 40px;" class="text-darken-2">
+    <div class="nav-wrapper red lighten-3">
+        <a href="#!" class="brand-logo" style="font-size: 15px;">授業部屋</a>
+    </div>
+</nav>
+<a href="">
+    <div class="card grey lighten-5 hoverable">
+      <div class="card-content black-text">
+        <span class="card-title">ルーム1</span>
+      </div>
+      <div class="card-action black-text" style="font-size: 10px;">
+          2月11日 10:00:00
+      </div>
+    </div>
+  </a>
+<div class="fixed-action-btn">
+    <a href="#modal1" class="btn-floating btn-large waves-effect waves-light red modal-trigger"><i
+            class="material-icons">add</i></a>
+</div>
+<!-- <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Modal</a> -->
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+    <div class="modal-content">
+        <h4>ルームを作成する</h4>
+        <p>ルーム名</p>
+        <input placeholder="例:授業1" type="text"/>
+        <p>パスワード</p>
+        <input placeholder="password" type="text"/>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">キャンセル</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">作成</a>
+    </div>
+</div>
+{% endblock %}

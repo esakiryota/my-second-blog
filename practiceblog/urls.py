@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .api import apis
 
 # app_name = 'study_room'
 
@@ -50,4 +51,9 @@ urlpatterns = [
     path('connect', views.connect, name='connect'),
     path('connectOn/<int:pk>/', views.connectOn, name='connectOn'),
     # path('profile/plot', views.img_plot, name='img_plot'),
+    # 勉強部屋
+    path('rooms', views.rooms, name='rooms'),
+    path('rooms/<str:room_name>/', views.room, name='room'),
+    path('rooms/api/<str:room_name>/update',  apis.updateRoom, name='updateRoom'),
+    path('rooms/api/<str:room_name>/load',  apis.loadRoom, name='loadRoom')
 ]

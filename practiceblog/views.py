@@ -77,6 +77,14 @@ def connectOn(request, pk):
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
 
+def rooms(request):
+    return render(request, 'whiteboard/rooms.html')
+
+def room(request, room_name):
+    return render(request, 'whiteboard/room.html', {
+        'room_name': room_name
+    })
+
 def question_box(request, num=1):
     question_box = QuestionBox.objects.filter(bool=False).filter(user_name="noname").filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
     page = Paginator(question_box, 10)
@@ -502,6 +510,8 @@ class UserCreate(generic.CreateView):
 
 
         return redirect('user_create_done')
+
+
 
 class UserCreateDone(generic.TemplateView):
     """ユーザー仮登録したよ"""
