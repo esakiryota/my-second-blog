@@ -26,13 +26,52 @@
     <div class="modal-content">
         <h4>ルームを作成する</h4>
         <p>ルーム名</p>
-        <input placeholder="例:授業1" type="text"/>
+        <input placeholder="例:授業1" type="text" name="room_name" id="room_name"/>
         <p>パスワード</p>
-        <input placeholder="password" type="text"/>
+        <input placeholder="password" type="text" name="password" id="password"/>
     </div>
     <div class="modal-footer">
         <a href="#!" class="modal-close waves-effect waves-green btn-flat">キャンセル</a>
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat">作成</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="create_room">作成</a>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script>
+     $(function () {
+        const roomsSocket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/rooms/room_list/'
+            );
+        roomsSocket.onclose = function (e) {
+                console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#room_name').focus();
+        document.querySelector('#room_name').onkeyup = function (e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#create_room').click();
+            }
+        };
+
+        document.querySelector('#create_room').onclick = function (e) {
+            const room_name = document.querySelector('#room_name').value;
+            const password = document.querySelector('#password').value;
+            console.log("click");
+            roomsSocket.send(JSON.stringify({
+                    "type": "room_list",
+                    'room_name': room_name,
+                    'password' : password
+            }));
+            document.querySelector('#room_name').value = '';
+            document.querySelector('#password').value = '';
+        };
+
+        roomsSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            console.log(data);
+        }
+     })
+</script>
+
 {% endblock %}

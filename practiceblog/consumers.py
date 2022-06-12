@@ -28,14 +28,16 @@ class ChatConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         type = text_data_json['type']
 
-        if type == "message":
-            message = text_data_json['message']
+        if type == "room_list":
+            room_name = text_data_json['room_name']
+            password = text_data_json['password']
             # Send message to room group
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
-                    'type': 'chat_message',
-                    'message': message
+                    'type': 'room_list',
+                    'room_name': room_name,
+                    'password': password
                 }
             )
         elif type == "draw":
@@ -68,13 +70,8 @@ class ChatConsumer(WebsocketConsumer):
 
 
     # Receive message from room group
-    def chat_message(self, event):
-        message = event['message']
-
-        # Send message to WebSocket
-        self.send(text_data=json.dumps({
-            'message': message
-        }))
+    def room_list(self, event):
+        self.send(text_data=json.dumps(event))
 
     def draw(self, event):
         self.send(text_data=json.dumps(event))
