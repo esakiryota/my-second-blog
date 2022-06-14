@@ -44,7 +44,7 @@
             }
             const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
-            const chatSocket = new WebSocket(
+            const roomSocket = new WebSocket(
                 'ws://'
                 + window.location.host
                 + '/ws/rooms/'
@@ -85,7 +85,7 @@
             }
             function loadRoom() {
                 const apiUrl =
-                    '/chat/api/'
+                    '/rooms/api/'
                     + roomName
                     + '/load'
                 const afterDrawFunc = function (response) {
@@ -97,25 +97,8 @@
 
             loadRoom()
 
-            chatSocket.onclose = function (e) {
+            roomSocket.onclose = function (e) {
                 console.error('Chat socket closed unexpectedly');
-            };
-
-            document.querySelector('#chat-message-input').focus();
-            document.querySelector('#chat-message-input').onkeyup = function (e) {
-                if (e.keyCode === 13) {  // enter, return
-                    document.querySelector('#chat-message-submit').click();
-                }
-            };
-
-            document.querySelector('#chat-message-submit').onclick = function (e) {
-                const messageInputDom = document.querySelector('#chat-message-input');
-                const message = messageInputDom.value;
-                chatSocket.send(JSON.stringify({
-                    "type": "message",
-                    'message': message
-                }));
-                messageInputDom.value = '';
             };
 
             function ajax(data, url, type, doneFunc) {
@@ -192,7 +175,7 @@
                     "stroke-linecap": "round" //線の端を丸める
                 }
 
-                chatSocket.send(JSON.stringify(browserDrawData));
+                roomSocket.send(JSON.stringify(browserDrawData));
                 drawingData.push(browserDrawData);
 
                 var linetoX = [], //描画点の横座標の初期化
@@ -213,7 +196,7 @@
                         "d": linetoStr
                     }
 
-                    chatSocket.send(JSON.stringify(browserDrawingData));
+                    roomSocket.send(JSON.stringify(browserDrawingData));
                     cntMoveto++; //カウンターをセット
                 });
 
@@ -223,7 +206,7 @@
                 $("#drawingCanvas").off("mousemove"); //pathの描画を終了
                 console.log(drawingData);
                 const apiUrl =
-                    '/chat/api/'
+                    '/rooms/api/'
                     + roomName
                     + '/update'
                 const afterDrawFunc = function (response) {
@@ -235,10 +218,10 @@
             //CLEARボタンをクリックしたら、SVGを空にする
             $(".clear").click(function () {
                 const clear = { 'type' : "clear"}
-                chatSocket.send(JSON.stringify(clear));
+                roomSocket.send(JSON.stringify(clear));
                 drawingData.push(clear);
                 const apiUrl =
-                    '/chat/api/'
+                    '/rooms/api/'
                     + roomName
                     + '/update'
                 const afterDrawFunc = function (response) {
@@ -249,7 +232,7 @@
 
 
 
-            chatSocket.onmessage = function (e) {
+            roomSocket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
                 var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 if (data.type === "draw") {

@@ -192,4 +192,4 @@ class RoomList(models.Model):
         self.save()
 
     def __str__(self):
-        return self.teacher_student
+        return self.room_name

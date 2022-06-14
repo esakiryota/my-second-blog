@@ -5,16 +5,20 @@
         <a href="#!" class="brand-logo" style="font-size: 15px;">授業部屋</a>
     </div>
 </nav>
-<a href="">
-    <div class="card grey lighten-5 hoverable">
-      <div class="card-content black-text">
-        <span class="card-title">ルーム1</span>
-      </div>
-      <div class="card-action black-text" style="font-size: 10px;">
-          2月11日 10:00:00
-      </div>
-    </div>
-  </a>
+<div id="room_list">
+    {% for room in room_list %}
+    <a id="{{ room.url_token }}" class="room" href="/rooms/{{room.url_token}}">
+        <div class="card grey lighten-5 hoverable">
+            <div class="card-content black-text">
+                <span class="card-title">{{ room.room_name }}</span>
+            </div>
+            <div class="card-action black-text" style="font-size: 10px;">
+                {{ room.created_date}}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
 <div class="fixed-action-btn">
     <a href="#modal1" class="btn-floating btn-large waves-effect waves-light red modal-trigger"><i
             class="material-icons">add</i></a>
@@ -26,9 +30,9 @@
     <div class="modal-content">
         <h4>ルームを作成する</h4>
         <p>ルーム名</p>
-        <input placeholder="例:授業1" type="text" name="room_name" id="room_name"/>
+        <input placeholder="例:授業1" type="text" name="room_name" id="room_name" />
         <p>パスワード</p>
-        <input placeholder="password" type="text" name="password" id="password"/>
+        <input placeholder="password" type="text" name="password" id="password" />
     </div>
     <div class="modal-footer">
         <a href="#!" class="modal-close waves-effect waves-green btn-flat">キャンセル</a>
@@ -37,21 +41,14 @@
 </div>
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script>
-     $(function () {
+    $(function () {
         const roomsSocket = new WebSocket(
-                'ws://'
-                + window.location.host
-                + '/ws/rooms/room_list/'
-            );
+            'ws://'
+            + window.location.host
+            + '/ws/rooms/room_list/'
+        );
         roomsSocket.onclose = function (e) {
-                console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#room_name').focus();
-        document.querySelector('#room_name').onkeyup = function (e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#create_room').click();
-            }
+            console.error('Chat socket closed unexpectedly');
         };
 
         document.querySelector('#create_room').onclick = function (e) {
@@ -59,19 +56,47 @@
             const password = document.querySelector('#password').value;
             console.log("click");
             roomsSocket.send(JSON.stringify({
-                    "type": "room_list",
-                    'room_name': room_name,
-                    'password' : password
+                "type": "room_list",
+                'room_name': room_name,
+                'password': password
             }));
+            console.log("souisnn");
             document.querySelector('#room_name').value = '';
             document.querySelector('#password').value = '';
         };
 
+        let rooms = document.getElementsByClassName("room");
+
         roomsSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             console.log(data);
+            // 部屋が作成された場合、前に追加していく
+            const room_name = data.room_name
+            const room_list_propaty = document.getElementById('room_list')
+            const before_content = document.createElement('a');
+            before_content.setAttribute('id', data.url_token);
+            before_content.setAttribute('class', "room");
+            before_content.setAttribute('href', "/rooms/" + data.url_token);
+            if (room_list_propaty.childElementCount > 0) {
+                fist_room = room_list_propaty.children[0];
+                fist_room.before(before_content);
+            } else {
+                room_list_propaty.appendChild(before_content);
+            }
+            const room_content = `
+        <div class="card grey lighten-5 hoverable">
+          <div class="card-content black-text">
+            <span class="card-title">${room_name}</span>
+          </div>
+          <div class="card-action black-text" style="font-size: 10px;">
+              2月11日 10:00:00
+          </div>
+        </div>
+        `
+            before_content.innerHTML += room_content
+            rooms = document.getElementsByClassName("room");
         }
-     })
+    })
 </script>
 
 {% endblock %}

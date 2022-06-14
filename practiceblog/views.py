@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.utils import timezone
-from .models import Post
+from .models import Post, RoomList
 from .models import ImageBox
 from .models import Question
 from .models import Solve
@@ -78,11 +78,17 @@ def explanation(request):
     return render(request, 'practiceblog/explanation.html')
 
 def rooms(request):
-    return render(request, 'whiteboard/rooms.html')
+    data = RoomList.objects.order_by('created_date').reverse()
+    return render(request, 'whiteboard/rooms.html',{
+        'room_list' : data
+    })
 
 def room(request, room_name):
+    data = RoomList.objects.order_by('created_date').reverse()
+    print(data)
     return render(request, 'whiteboard/room.html', {
-        'room_name': room_name
+        'room_name': room_name,
+        'room_list' : data
     })
 
 def question_box(request, num=1):

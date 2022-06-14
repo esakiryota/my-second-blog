@@ -2,6 +2,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from .repositories.roomListRepository import RoomListRepository
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -29,6 +30,7 @@ class ChatConsumer(WebsocketConsumer):
         type = text_data_json['type']
 
         if type == "room_list":
+            # print(text_data_json)
             room_name = text_data_json['room_name']
             password = text_data_json['password']
             # Send message to room group
@@ -71,7 +73,10 @@ class ChatConsumer(WebsocketConsumer):
 
     # Receive message from room group
     def room_list(self, event):
-        self.send(text_data=json.dumps(event))
+        rlrepos = RoomListRepository()
+        print(event)
+        result = rlrepos.insert(event)
+        self.send(text_data=json.dumps(result))
 
     def draw(self, event):
         self.send(text_data=json.dumps(event))
