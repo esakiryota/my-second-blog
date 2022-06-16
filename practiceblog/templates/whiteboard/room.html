@@ -9,9 +9,9 @@
 
 <body>
     <figure>
-        <svg id="drawingCanvas" width="958" height="480"></svg>
+        <svg id="drawingCanvas" width="958" height="2000"></svg>
     </figure>
-    <p>COLOR:
+    <p style="position: fixed; left: 10px; top: 10px; display: flex; flex-flow: column;">COLOR:
         <input type="color" class="color" value="#666666">
         <label><input type="radio" name="drawtype" value="line" checked> LINE</label>
         <label><input type="radio" name="drawtype" value="paint"> PAINT</label>
@@ -141,6 +141,29 @@
                 drawType = ""; //塗りつぶしの初期化
             drawingData = [];
             browserDrawingData = {};
+            svg_height = window.innerHeight;
+            svg_width = window.innerWidth;
+
+            function svgResize() {
+                window.addEventListener('scroll', () => {
+                    const allHeight = Math.max(
+                        document.body.scrollHeight, document.documentElement.scrollHeight,
+                        document.body.offsetHeight, document.documentElement.offsetHeight,
+                        document.body.clientHeight, document.documentElement.clientHeight
+                    );
+                    const mostBottom = allHeight - window.innerHeight;
+                    console.log("はっか");
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    if (scrollTop >= mostBottom) {
+                        var next_height = Number(svgElm.attr("height")) + 50
+                        svgElm.attr("height", `${next_height}`);
+                    }
+                });
+            }
+
+            svgResize();
+
+
 
             /* ドラッグ開始 */
             $("#drawingCanvas").mousedown(function (event) {
@@ -217,7 +240,7 @@
 
             //CLEARボタンをクリックしたら、SVGを空にする
             $(".clear").click(function () {
-                const clear = { 'type' : "clear"}
+                const clear = { 'type': "clear" }
                 roomSocket.send(JSON.stringify(clear));
                 drawingData.push(clear);
                 const apiUrl =
