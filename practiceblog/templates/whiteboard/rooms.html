@@ -48,7 +48,7 @@
             + '/ws/rooms/room_list/'
         );
         roomsSocket.onclose = function (e) {
-            console.error('Chat socket closed unexpectedly');
+            console.error('socket closed unexpectedly');
         };
 
         document.querySelector('#create_room').onclick = function (e) {
