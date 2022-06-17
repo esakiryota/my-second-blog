@@ -1,11 +1,8 @@
 from django.urls import path
 from . import views
-<<<<<<< HEAD
 from .views import UserViewSet, SolveViewSet
 from rest_framework import routers
-=======
 from .api import apis
->>>>>>> socket_chat
 
 # app_name = 'study_room'
 
