@@ -1,10 +1,8 @@
-<!-- chat/templates/chat/room.html -->
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8" />
-    <title>Chat Room</title>
+    <title>ホワイトボード</title>
 </head>
 
 <body>
@@ -98,7 +96,7 @@
             loadRoom()
 
             roomSocket.onclose = function (e) {
-                console.error('Chat socket closed unexpectedly');
+                console.error('socket closed unexpectedly');
             };
 
             function ajax(data, url, type, doneFunc) {
@@ -269,9 +267,7 @@
                     });
                 } else if (data.type === "drawing") {
                     svgElm.find("path:last").attr("d", data.d); //pathデータ(d属性)の値を更新
-                } else if (data.type === "message") {
-                    document.querySelector('#chat-log').value += (data.type + '\n');
-                } else if (data.type === "clear") {
+                }  else if (data.type === "clear") {
                     svgElm.html("");
                 }
             };

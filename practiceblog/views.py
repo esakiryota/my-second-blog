@@ -109,12 +109,6 @@ def profile(request, str="str", num=1):
     }
     return render(request, 'practiceblog/profile.html', params)
 
-def board_list(request):
-    return render(request, 'practiceblog/board_list.html')
-
-def board(request):
-    return render(request, 'practiceblog/board.html')
-
 def connect(request):
     teachers = User.objects.filter(groups__name='先生')
     user_pk = request.user.pk
