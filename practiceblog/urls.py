@@ -1,7 +1,11 @@
 from django.urls import path
 from . import views
+<<<<<<< HEAD
 from .views import UserViewSet, SolveViewSet
 from rest_framework import routers
+=======
+from .api import apis
+>>>>>>> socket_chat
 
 # app_name = 'study_room'
 
@@ -54,8 +58,11 @@ urlpatterns = [
     path('profile/<int:num>/', views.profile, name='profile'),
     path('profile/<str>/<int:num>/', views.profile, name='profile'),
     # path('profile/plot', views.img_plot, name='img_plot'),
-    path('board_list', views.board_list, name='board_list'),
-    path('board', views.board, name='board'),
+    # 勉強部屋
+    path('rooms', views.rooms, name='rooms'),
+    path('rooms/<str:room_name>/', views.room, name='room'),
+    path('rooms/api/<str:room_name>/update',  apis.updateRoom, name='updateRoom'),
+    path('rooms/api/<str:room_name>/load',  apis.loadRoom, name='loadRoom')
 ]
 
 router = routers.DefaultRouter()

@@ -27,3 +27,9 @@ $ python manage.py runserver
 $ systemctl start mariadb
 ```
 を行い、mariadbを再起動させる必要がある。
+
+
+## redis server 起動
+```
+$ docker run -p 6379:6379 -d redis:5
+```

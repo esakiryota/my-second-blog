@@ -26,4 +26,5 @@ urlpatterns = [
     path('accounts/login/', views.LoginView.as_view(), name='login'),
     path('', include('practiceblog.urls')),
     url(r'^api/', include(practiceblog_router.urls)),
+    path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

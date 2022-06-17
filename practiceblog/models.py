@@ -180,3 +180,16 @@ class TeacherStudent(models.Model):
 
     def __str__(self):
         return self.teacher_student
+
+class RoomList(models.Model):
+    room_name = models.CharField(max_length=200, default='先生_生徒')
+    url_token = models.CharField(max_length=30, null=False)
+    password = models.CharField(max_length=200, null=True)
+    created_date = models.DateTimeField(default=timezone.now)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.room_name

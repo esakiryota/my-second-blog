@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.utils import timezone
-from .models import Post
+from .models import Post, RoomList
 from .models import ImageBox
 from .models import Question
 from .models import Solve
@@ -136,6 +136,20 @@ def connectOn(request, pk):
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
+
+def rooms(request):
+    data = RoomList.objects.order_by('created_date').reverse()
+    return render(request, 'whiteboard/rooms.html',{
+        'room_list' : data
+    })
+
+def room(request, room_name):
+    data = RoomList.objects.order_by('created_date').reverse()
+    print(data)
+    return render(request, 'whiteboard/room.html', {
+        'room_name': room_name,
+        'room_list' : data
+    })
 
 def question_box(request, num=1):
     question_box = QuestionBox.objects.filter(bool=False).filter(user_name="noname").filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
@@ -562,6 +576,8 @@ class UserCreate(generic.CreateView):
 
 
         return redirect('user_create_done')
+
+
 
 class UserCreateDone(generic.TemplateView):
     """ユーザー仮登録したよ"""
