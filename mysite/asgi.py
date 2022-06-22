@@ -1,14 +1,15 @@
 import os
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 import django
+django.setup()
+
 from channels.auth import AuthMiddlewareStack
 from channels.http import AsgiHandler
 from channels.routing import ProtocolTypeRouter, URLRouter
+# from django.core.asgi import get_asgi_application
 import practiceblog.routing
 
 ASGI_APPLICATION = 'mysite.asgi.application'
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
-django.setup()
 
 application = ProtocolTypeRouter({
   "http": AsgiHandler(),
