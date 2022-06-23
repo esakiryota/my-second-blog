@@ -138,7 +138,7 @@ $ sudo apt install redis-server
 11. プロジェクトの権限を変更
 ```
 $ cd /myproject
-$ sudo chown -R ubuntu:ubuntu my-second-blog/
+$ sudo chown -R <user>:<group> my-second-blog/
 ```
 
 12. ipadressに接続し、表示を確認
