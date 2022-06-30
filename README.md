@@ -143,5 +143,9 @@ $ sudo chown -R <user>:<group> my-second-blog/
 
 12. ipadressに接続し、表示を確認
 
+## 細かな修正点
+・boards ディレクトリを作成しなければならない
+
+
 
 

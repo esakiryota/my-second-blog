@@ -35,4 +35,7 @@
  $(document).ready(function(){
     $('.modal').modal();
   });
+  (document).ready(function(){
+    $('.tap-target').tapTarget();
+  });
 })(jQuery); // end of jQuery name space

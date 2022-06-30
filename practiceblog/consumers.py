@@ -2,7 +2,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from .repositories.roomListRepository import RoomListRepository
-
+# リアルタイムで描写している
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -42,15 +42,17 @@ class ChatConsumer(WebsocketConsumer):
                 }
             )
         elif type == "draw":
+            print(text_data_json['id'])
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
                     'type': 'draw',
-                    "d": "", 
+                    "d": '', 
 		   	        "fill": text_data_json["fill"],
 		 	        "stroke": text_data_json["stroke"],
 			        "stroke-width": "3",
-			        "stroke-linecap": "round"
+			        "stroke-linecap": "round",
+                    "id": text_data_json["id"],
                 }
             )
         elif type == "drawing":
