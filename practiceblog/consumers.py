@@ -42,7 +42,6 @@ class ChatConsumer(WebsocketConsumer):
                 }
             )
         elif type == "draw":
-            print(text_data_json['id'])
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
@@ -61,6 +60,71 @@ class ChatConsumer(WebsocketConsumer):
                 {
                     'type': 'drawing',
                     "d": text_data_json["d"]
+                }
+            )
+        elif type == "delete":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'delete',
+                    "id": text_data_json["id"]
+                }
+            )
+        elif type == "moveContent":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'moveContent',
+                    "id": text_data_json["id"],
+                    "dx": text_data_json["dx"],
+                    "dy": text_data_json["dy"]
+                }
+            )
+        elif type == "image":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'image',
+                    "id": text_data_json["id"],
+                    "href": text_data_json["href"],
+                    "cx": text_data_json["cx"],
+                    "cy": text_data_json["cy"],
+                    "x": text_data_json["x"],
+                    "y": text_data_json["y"],
+                    "width": text_data_json["width"],
+                    "height": text_data_json["height"],
+                }
+            )
+        elif type == "textBox":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'textBox',
+                    "id": text_data_json["id"],
+                    "text": text_data_json["text"],
+                    "cx": text_data_json["cx"],
+                    "cy": text_data_json["cy"],
+                    "x": text_data_json["x"],
+                    "y": text_data_json["y"],
+                }
+            )
+        elif type == "writing":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'writing',
+                    "id": text_data_json["id"],
+                    "text": text_data_json["text"],
+                }
+            )
+        elif type == "resize":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'resize',
+                    "id": text_data_json["id"],
+                    "w": text_data_json["w"],
+                    "h": text_data_json["h"],
                 }
             )
         elif type == "clear":
@@ -86,5 +150,23 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
     
     def clear(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def delete(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def moveContent(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def image(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def textBox(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def writing(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def resize(self, event):
         self.send(text_data=json.dumps(event))
         

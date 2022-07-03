@@ -147,5 +147,10 @@ $ sudo chown -R <user>:<group> my-second-blog/
 ・boards ディレクトリを作成しなければならない
 
 
+## 開発中の注意事項
+・consumer.pyを編集した際には、一度daphneを停止して、もう一度起動する。
+
+
+
 
 

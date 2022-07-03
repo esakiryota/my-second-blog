@@ -120,8 +120,40 @@
                                 "stroke-width": "3", 
                                 "stroke-linecap": "round" 
                             });
+                            var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                            if (!pathElm.hasAttribute("transform")) {
+                                pathElm.transform.baseVal.appendItem(transform);
+                            }
+
+                            // var Matrix = target.transform.matrix;
+                            var Matrix = pathElm.transform.baseVal[0].matrix;
+                            Matrix.e = value.x;
+                            Matrix.f = value.y;
                             break;
-                        case "clear":
+                        case "image":
+                            var imageElm = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                            imageElm.setAttribute("href", value.href);
+                            imageElm.setAttribute("id", value.id);
+                            imageElm.setAttribute("width", value.width);
+                            imageElm.setAttribute("height", value.height);
+                            imageElm.setAttribute("x", value.cx);
+                            imageElm.setAttribute("y", value.cy);
+                            svgElm.append(imageElm);
+                            var transform = imageElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                            if (!imageElm.hasAttribute("transform")) {
+                                imageElm.transform.baseVal.appendItem(transform);
+                            }
+
+                            // var Matrix = target.transform.matrix;
+                            var Matrix = imageElm.transform.baseVal[0].matrix;
+                            Matrix.e = value.x;
+                            Matrix.f = value.y;
+                            break;
+                        case "textBox":
+                            createTextBox(value.cx, value.cy, value.x, value.y, value.id, value.text);
+                            console.log("textBox");
+                            break;
+                        case "":
                             svgElm.html("");
                             break;
                         default:
@@ -275,9 +307,13 @@
             var selected_elm = document.elementFromPoint(0, 0);
 
             function moveContent() {
+                var id = "";
+                var old_id = "";
                 $("#drawingCanvas").mousedown(function (event) {
                     if (pointerType === "moveContent") {
                         var target = document.elementFromPoint(event.pageX, event.pageY);
+                        console.log(target);
+                        id = target.id;
                         svgElm.css("cursor", "grab")
                         var mouse_move_x = 0;
                         mouse_move_y = 0;
@@ -294,6 +330,7 @@
                         // var Matrix = target.transform.matrix;
                         var Matrix = target.transform.baseVal[0].matrix;
                         if (target !== document.getElementById("drawingCanvas") && !target.classList.contains('catch')) {
+                            old_id = id
                             if (document.querySelectorAll(".catch")) {
                                 var rects = document.querySelectorAll(".catch");
                                 for (var i = 0; i < rects.length; i++) {
@@ -307,10 +344,7 @@
                             var h = box.height + 3;
                             var w = box.width + 3;
                             createRect(x, y, w, h, svgElm, "elm_rect", "none", "#42a5f5", 1);
-                            // createRect(x+w-5, y-5, 10, 10, svgElm, "mini_rect", "#42a5f5", 'white', 2);
-                            // createRect(x-5, y-5, 10, 10, svgElm, "mini_rect", "#42a5f5", 'white', 2);
                             createRect(x + w - 5, y + h - 5, 10, 10, svgElm, "mini_rect", "#42a5f5", 'white', 2);
-                            // createRect(x-5, y+h-5, 10, 10, svgElm, "mini_rect", "#42a5f5", 'white', 2);
                         }
                         var elm_rect = document.querySelector("#elm_rect");
                         var mini_rect = document.querySelector("#mini_rect");
@@ -332,14 +366,22 @@
                                 var y_length = mouse_moving_y - mouse_move_y;
                                 mouse_move_x = mouse_moving_x;
                                 mouse_move_y = mouse_moving_y;
-                                Matrix.e += x_length;
-                                Matrix.f += y_length;
+                                // Matrix.e += x_length;
+                                // Matrix.f += y_length;
+                                var sendData = {
+                                    "type": "moveContent",
+                                    "id" : id,
+                                    "dx" :  x_length,
+                                    "dy" : y_length
+                                }
+                                roomSocket.send(JSON.stringify(sendData));
                                 for (var i = 0; i < rects.length; i++) {
                                     rects[i].transform.baseVal[0].matrix.e += x_length
                                     rects[i].transform.baseVal[0].matrix.f += y_length
                                 }
                             }
                             if (target.classList.contains('catch')) {
+                                var resizeData = {};
                                 var aspect = selected_elm.width.baseVal.value / selected_elm.height.baseVal.value
                                 var mouse_moving_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
                                 var mouse_moving_y = parseInt(event.pageY - svgElm.position().top);
@@ -348,28 +390,41 @@
                                 mouse_move_x = mouse_moving_x;
                                 mouse_move_y = mouse_moving_y;
                                 var length_aspect = x_length / y_length;
+                                var w = 0;
+                                var h = 0;
                                 if (length_aspect < aspect) {
-                                    selected_elm.width.baseVal.value += y_length * aspect;
-                                    selected_elm.height.baseVal.value += y_length;
-                                    elm_rect.width.baseVal.value += y_length * aspect;
-                                    elm_rect.height.baseVal.value += y_length;
-                                    mini_rect.x.baseVal.value += y_length * aspect;
-                                    mini_rect.y.baseVal.value += y_length;
+                                    w = y_length * aspect;
+                                    h = y_length;
                                 } else {
-                                    selected_elm.width.baseVal.value += x_length;
-                                    selected_elm.height.baseVal.value += x_length / aspect;
-                                    elm_rect.width.baseVal.value += x_length;
-                                    elm_rect.height.baseVal.value += x_length / aspect;
-                                    mini_rect.x.baseVal.value += x_length;
-                                    mini_rect.y.baseVal.value += x_length / aspect;
+                                    w = x_length;
+                                    h = x_length / aspect;
                                 }
+                                resizeData = {
+                                    "type" : "resize",
+                                    "id" : old_id,
+                                    "w" : w,
+                                    "h" : h
+                                }
+                                roomSocket.send(JSON.stringify(resizeData));
+                                elm_rect.width.baseVal.value += w;
+                                elm_rect.height.baseVal.value += h;
+                                mini_rect.x.baseVal.value += w;
+                                mini_rect.y.baseVal.value += h;
                             }
                         });
                     }
                 }).mouseup(function (event) {
-                    if (pointerType === "moveContent") {
-                    svgElm.css('cursor', 'default');
+                    if (id !== "") {
+                        drawingData[old_id].x = document.getElementById(old_id).transform.baseVal[0].matrix.e;
+                        drawingData[old_id].y = document.getElementById(old_id).transform.baseVal[0].matrix.f;
+                        if (drawingData[old_id].width) {
+                            drawingData[old_id].width = document.getElementById(old_id).width.baseVal.value;
+                            drawingData[old_id].height = document.getElementById(old_id).height.baseVal.value;
+                        }
+                        saveBoardData();
                     }
+                    svgElm.css('cursor', 'default');
+                    $("#drawingCanvas").off("mousemove");
                 });
             }
 
@@ -379,25 +434,37 @@
                 $("#drawingCanvas").mousedown(function (event) {
                     if (pointerType === "eraser") {
                         var target = document.elementFromPoint(event.pageX, event.pageY);
-                        if (target !== document.getElementById("drawingCanvas")) { 
+                        if (target !== document.getElementById("drawingCanvas") && target_id !== "") { 
                             var target_id = target.id;
-                            target.remove();
-                            console.log(drawingData[target_id]);
+                            var sendData = {
+                                "type" : "delete",
+                                "id" : target_id
+                            }
+                            roomSocket.send(JSON.stringify(sendData));
                             delete drawingData[target_id];
-                            console.log(drawingData[target_id]);
                          }
                         $("#drawingCanvas").on("mousemove", function (evt) {
                             event.preventDefault()
                             var target = document.elementFromPoint(evt.pageX, evt.pageY);
                             var target_id = target.id;
                             if (target !== document.getElementById("drawingCanvas") && target_id !== "") {
-                                console.log(target_id);
-                                console.log(drawingData[target_id]);
-                                target.remove();
-                                delete drawingData[target_id];
-                                console.log(drawingData[target_id]);
+                                var target_id = target.id;
+                                var sendData = {
+                                    "type" : "delete",
+                                    "id" : target_id
+                            }
+                            roomSocket.send(JSON.stringify(sendData));
+                            delete drawingData[target_id];
                             }
                         });
+                        $("#drawingCanvas").on("mouseout", function (evt) {
+                            if (pointerType === "eraser") {
+                                console.log(drawingData);
+                                $("#drawingCanvas").off("mousemove");
+                                saveBoardData();
+                            }
+                        });
+
                     }
                 }).mouseup(function (event) {
                     if (pointerType === "eraser") {
@@ -418,9 +485,12 @@
                 input.setAttribute("autocomplete", "off");
 
                 var id = ""
+                var text = "";
+
                 $("#drawingCanvas").click(function (event) {
                     if (pointerType === "text") {
-                        var text_box = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        var sendTextData = {};
+                        var sendTextBoxData = {};
                         var x = parseInt(event.pageX - svgElm.position().left);
                         var y = parseInt(event.pageY - svgElm.position().top);
                         document.getElementById('board').appendChild(input);
@@ -429,26 +499,35 @@
                         input.style.top = y + 'px';
                         input.style.position = 'fixed';
                         input.focus();
-                        text_box.setAttribute("x", x);
-                        text_box.setAttribute("y", y);
-                        text_box.setAttribute("font-size", 20);
-                        text_box.setAttribute("fill", "#666666");
                         id = Math.random().toString(32).substring(2);
-                        text_box.id = id
-                        svgElm.append(text_box);
+                        createTextBox(x, y, 0, 0, id, text);
+                        sendTextBoxData.cx = x;
+                        sendTextBoxData.cy = y;
+                        sendTextBoxData.x = 0;
+                        sendTextBoxData.y = 0;
+                        sendTextBoxData.id = id;
+                        sendTextBoxData.text = text;
+                        sendTextBoxData.type = "textBox"
+                        drawingData[id] = sendTextBoxData;
+                        saveBoardData();
+                        roomSocket.send(JSON.stringify(sendTextBoxData));
+
                         input.addEventListener("keyup", function () {
                             if (curText !== this.value) {
-                                document.getElementById(id).textContent = input.value;
+                                console.log(drawingData);
+                                drawingData[id].text = input.value;
+                                sendTextData = {
+                                    "type": "writing",
+                                    "id" : id,
+                                    "text" : input.value
+                                }
+                                roomSocket.send(JSON.stringify(sendTextData));
                                 curText = input.value;
+                                saveBoardData();
                             }
                         })
                         input.addEventListener("blur", function () {
-                            input.removeEventListener("keyup", function () {
-                                if (curText !== this.value) {
-                                    document.getElementById(id).textContent = input.value;
-                                    curText = input.value;
-                                }
-                            })
+                            input.removeEventListener("keyup", function () {})
                             input.style.top = '-1000px';
                         })
                     } else {
@@ -459,11 +538,6 @@
             }
 
             textBox();
-
-            function textChangeHandler(evt, id) {
-
-            }
-
 
             function svgResize() {
                 window.addEventListener('scroll', () => {
@@ -493,11 +567,13 @@
                         browserDrawData = {
                             "id" : id,
                             'type': "draw",
-                            "d": "", //pathデータ
-                            "fill": "none", //塗りつぶし
-                            "stroke": strokeColor, //線の色
-                            "stroke-width": "3", //線の太さ
-                            "stroke-linecap": "round" //線の端を丸める
+                            "d": "",
+                            "fill": "none",
+                            "stroke": strokeColor,
+                            "stroke-width": "3",
+                            "stroke-linecap": "round", 
+                            "x" : 0,
+                            "y" : 0
                         }
 
                         console.log(browserDrawData.id);
@@ -586,46 +662,88 @@
             });
 
             const previewAndInsert = (files, x, y) => {
+                var id = ""
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const image = new Image();
-                    var image_elm = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                    var saveImageData = {};
                     image.onload = function () {
-                        image_elm.setAttribute("href", reader.result);
+                        id = Math.random().toString(32).substring(2);
+                        var href = reader.result;
+                        saveImageData.href = href;
+                        saveImageData.id = id;
+                        saveImageData.type = "image";
+                        var w = 0;
+                            h = 0;
                         if (this.width > 300 || this.height > 300) {
                             var aspect = this.width / this.height;
                             if (aspect > 1) {
-                                var w = 300;
-                                var h = 300 / aspect;
+                                w = 300;
+                                h = 300 / aspect;
                                 x -= w / 2;
                                 y -= h / 2;
-                                image_elm.setAttribute("width", w);
-                                image_elm.setAttribute("height", h);
-                                image_elm.setAttribute("x", x);
-                                image_elm.setAttribute("y", y);
                             } else {
-                                var w = 300;
-                                var h = 300 / aspect;
+                                w = 300;
+                                h = 300 / aspect;
                                 x -= w / 2;
                                 y -= h / 2;
-                                image_elm.setAttribute("width", w);
-                                image_elm.setAttribute("height", h);
-                                image_elm.setAttribute("x", x);
-                                image_elm.setAttribute("y", y);
                             }
                         } else {
+                            w = this.width;
+                            h = this.height;
                             x -= this.width / 2;
                             y -= this.height / 2;
-                            image_elm.setAttribute("width", this.width);
-                            image_elm.setAttribute("height", this.height);
-                            image_elm.setAttribute("x", x);
-                            image_elm.setAttribute("y", y);
-                        }
-                        document.getElementById('drawingCanvas').appendChild(image_elm);
+                         }
+                        console.log(`x: ${x}`);
+                        saveImageData.x = 0;
+                        saveImageData.y = 0;
+                        saveImageData.width = w;
+                        saveImageData.height = h;
+                        saveImageData.cx = x;
+                        saveImageData.cy = y;
+                        drawingData[id]= saveImageData;
+                        saveBoardData();
+                        roomSocket.send(JSON.stringify(saveImageData));
                     }
                     image.src = reader.result;
                 }
                 reader.readAsDataURL(files[0]);
+            }
+
+            function createImage(cx, cy, x, y,  w, h, href, id) {
+                var image_elm = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                image_elm.setAttribute("href", href);
+                image_elm.setAttribute("id", id);
+                image_elm.setAttribute("width", w);
+                image_elm.setAttribute("height", h);
+                image_elm.setAttribute("x", cx);
+                image_elm.setAttribute("y", cy);
+                var transform = image_elm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                if (!image_elm.hasAttribute("transform")) {
+                    image_elm.transform.baseVal.appendItem(transform);
+                }
+                var Matrix = image_elm.transform.baseVal[0].matrix;
+                Matrix.e += x;
+                Matrix.f += y;
+                document.getElementById('drawingCanvas').appendChild(image_elm);
+            }
+
+            function createTextBox(cx, cy, x, y, id, text) {
+                var text_box = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text_box.setAttribute("x", cx);
+                text_box.setAttribute("y", cy);
+                text_box.setAttribute("font-size", 20);
+                text_box.setAttribute("fill", "#666666");
+                text_box.setAttribute("id", id);
+                text_box.textContent = text;
+                var transform = text_box.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                if (!text_box.hasAttribute("transform")) {
+                    text_box.transform.baseVal.appendItem(transform);
+                }
+                var Matrix = text_box.transform.baseVal[0].matrix;
+                Matrix.e += x;
+                Matrix.f += y;
+                svgElm.append(text_box);
             }
 
 
@@ -656,7 +774,7 @@
             roomSocket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
                 var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                console.log(data);
+                console.log(data.type);
                 switch (data.type) {
                     case "draw":
                         svgElm.append(pathElm);
@@ -669,10 +787,43 @@
                             "stroke-width": "3", //線の太さ
                             "stroke-linecap": "round" //線の端を丸める
                         });
+                        break;
                     case "drawing":
                         svgElm.find("path:last").attr("d", data.d);
+                        break;
+                    case "delete":
+                        console.log(data.id);
+                        var target = document.getElementById(data.id);
+                        target.remove();
+                        break;
+                    case "moveContent":
+                        var target = document.getElementById(data.id);
+                        var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                        if (!target.hasAttribute("transform")) {
+                            target.transform.baseVal.appendItem(transform);
+                        }
+
+                            // var Matrix = target.transform.matrix;
+                        var Matrix = target.transform.baseVal[0].matrix;
+                        Matrix.e += data.dx;
+                        Matrix.f += data.dy;
+                        break;
+                    case "image":
+                        createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
+                        break;
+                    case "textBox":
+                        createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
+                        break;
+                    case "writing":
+                        document.getElementById(data.id).textContent = data.text;
+                        break;
+                    case "resize":
+                        document.getElementById(data.id).width.baseVal.value += data.w;
+                        document.getElementById(data.id).height.baseVal.value += data.h;
+                        break;
                     default:
                         console.log("no data");
+                        break;
                 }
             };
 
