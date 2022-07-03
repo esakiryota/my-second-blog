@@ -127,6 +127,14 @@ class ChatConsumer(WebsocketConsumer):
                     "h": text_data_json["h"],
                 }
             )
+        elif type == "shareData":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'shareData',
+                    "data": text_data_json["data"],
+                }
+            )
         elif type == "clear":
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
@@ -168,5 +176,8 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
 
     def resize(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def shareData(self, event):
         self.send(text_data=json.dumps(event))
         
