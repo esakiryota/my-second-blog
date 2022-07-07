@@ -267,6 +267,7 @@
                             break;
                     }
                 }).on(end_event, function (event) {
+                    event.preventDefault();
                     console.log("end");
                     switch (pointerType) {
                         case "draw":
