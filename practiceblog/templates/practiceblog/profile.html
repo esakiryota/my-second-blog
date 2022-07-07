@@ -1,15 +1,92 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
+
+<div class="col s12 m12">
+  <h2 class="header">プロフィール</h2>
+  <div class="card horizontal">
+    <div class="card-image">
+      <i class="material-icons">assignment_ind</i>
+    </div>
+    <div class="card-stacked">
+      <div class="card-content">
+        名前：{{user.username}}<br>
+        メールアドレス：{{user.email}}<br>
+        始めた時期：{{user.created_at}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col s12 m12">
+  <h2 class="header">テスト結果</h2>
+  <div>
+    <form class="" action="{% url 'profile' %}" method="post">
+      {% csrf_token %}
+      <div class="cintainer" style=" margin-top: 20px;">
+        <div class="row">
+          <div class="col s3">
+            {{ form.cate }}
+          </div>
+          <div class="col s3">
+            {{ form.title }}
+          </div>
+          <div class="col s3">
+            <button type="submit" name="button" class="waves-effect waves-light btn" id="submit">絞る</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="card horizontal">
+    <div class="card-stacked">
+      <div class="card-content">
+        <table class="highlight">
+          <thead>
+            <tr>
+                <th>テスト</th>
+                <th>教科</th>
+                <th>点数</th>
+                <th>日付</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for test in tests %}
+            <tr>
+              <td><a href="{% url 'solve' pk=test.0 %}">{{ test.2}}</a></td>
+              <td>{{ test.1 }}</td>
+              <td>{{ test.3 }}</td>
+              <td>{{ test.4 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="card-action">
+          <ul class="pagination center">
+            <!-- [{{tests.number}}/{{tests.paginator.num_pages}}] -->
+          {% if tests.has_previous %}
+              <li class="disabled"><a href="{% url 'profile' %}"><i class="material-icons">chevron_left</i></a></li>
+              <li class="waves-effect"><a href="{% url 'profile' %}/{{tests.previous_page_number}}">{{tests.previous_page_number}}</a></li>
+          {% endif %}
+          <span class="current">
+            <li class="active"><a href="{% url 'profile' %}/{{tests.number}}">{{tests.number}}</a></li>
+          </span>
+          {% if tests.has_next %}
+              <li class="waves-effect"><a href="{% url 'profile' %}/{{tests.next_page_number}}">{{tests.next_page_number}}</a></li>
+              <li class="waves-effect"><a href="{% url 'profile' %}/{{tests.paginator.num_pages}}"><i class="material-icons">chevron_right</i></a></li>
+              <!-- <a href="{% url 'post_list' %}{{tests.paginator.num_pages}}">last&raquo;</a> -->
+          {% endif %}
+        </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <canvas id="myChart"></canvas>
 <canvas id="myChart2"></canvas>
-<div class="">
-  先生名
-</div>
-<div class="">
-  亮太
-</div>
-<a href="{% url 'connect' %}">先生選択</a>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <script>
     var ctx1 = document.getElementById("myChart");
     var ctx2 = document.getElementById("myChart2");
@@ -18,29 +95,45 @@
     var labels1 = [];
     var score1 = [];
     var cate1 = [];
+    $.ajax({
+      url: '/api/solves/', //アクセスするURLかディレクトリ
+      type: 'get',
+      cache: false, //cacheを使うかどうか
+      dataType:'json', //data type scriptなどデータタイプの指定
+       //アクセスするときに必要なデータを 記載
+    })
+    .done(function(response) { //通信が成功したときのコールバックの処理を書く
+      console.log(response);
+    })
+    .fail(function(xhr) { //通信が失敗したときのコールバックの処理を書く
+    })
+    .always(function(xhr, msg) { //通信結果にかかわらず実行する処理を書く
+});
     array_math.forEach(function (value, index, array_math) {
-      labels1.push(value[1]);
-      score1.push(value[2]);
-      cate1.push(value[0]);
+      labels1.push(value[2]);
+      score1.push(value[3]);
+      cate1.push(value[1]);
   });
     var labels2 = [];
     var score2 = [];
     var cate2 = [];
-    array_english.forEach(function (value, index, array_math) {
-      labels2.push(value[1]);
-      score2.push(value[2]);
-      cate2.push(value[0]);
+    array_english.forEach(function (value, index, array_english) {
+      labels2.push(value[2]);
+      score2.push(value[3]);
+      cate2.push(value[1]);
   });
-  var myChart = new Chart(ctx1, {
+
+  function drawChart(ctx, name, color, bgColor, labels, score, cate) {
+    var myChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: labels1,
+      labels: labels,
       datasets: [
         {
-          label: '数学',
-          data: score1,
-          borderColor: "rgba(0,0,255,1)",
-          backgroundColor: "rgba(0,0,0,0)"
+          label: name,
+          data: score,
+          borderColor: color,
+          backgroundColor: bgColor
         },
 
       ],
@@ -65,51 +158,15 @@
           ticks: {
             autoSkip: false, // 狭くてもラベルを省略しない
             maxRotation: 0,  // 縦書きなので縦向きに固定
-            minRotation: 0,
+            minRotation: 30,
           }
         }],
       },
     }
   });
-  var myChart = new Chart(ctx2, {
-    type: 'line',
-    data: {
-      labels: labels2,
-      datasets: [
-        {
-          label: '英語',
-          data: score2,
-          borderColor: "rgba(255,0,0,1)",
-          backgroundColor: "rgba(0,0,0,0)"
-        },
+  }
 
-      ],
-    },
-    options: {
-      title: {
-        display: true,
-        text: 'テストの点数'
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            suggestedMax: 102,
-            suggestedMin: 0,
-            stepSize: 10,
-            callback: function(value, index, values){
-              return  value +  '点'
-            }
-          }
-        }],
-        xAxes: [{ // ★ 推奨オプション
-          ticks: {
-            autoSkip: false, // 狭くてもラベルを省略しない
-            maxRotation: 0,  // 縦書きなので縦向きに固定
-            minRotation: 0,
-          }
-        }],
-      },
-    }
-  });
+  drawChart(ctx1, "数学", "rgba(0,0,225,1)", "rgba(0,0,0,0)", labels1, score1, cate1)
+  drawChart(ctx2, "英語", "rgba(0,225,0,1)", "rgba(0,0,0,0)", labels2, score2, cate2)
     </script>
 {% endblock %}

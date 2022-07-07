@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.utils import timezone
-from .models import Post
+from .models import Post, RoomList
 from .models import ImageBox
 from .models import Question
 from .models import Solve
@@ -10,7 +10,7 @@ from .models import QuestionBox
 from .models import QuestionSolve
 from .models import TeacherStudent
 from django.shortcuts import render, get_object_or_404
-from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm, TeacherStudentForm
+from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm, TeacherStudentForm, SolveForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -33,25 +33,79 @@ from PIL.ExifTags import TAGS
 from django.http import HttpResponse
 from django.shortcuts import render
 import json
+from datetime import date, datetime
+from .serializer import UserSerializer, SolveSerializer
+import django_filters
+from rest_framework import viewsets
+from django_filters import rest_framework as filters
+from django.utils import six 
 
 def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
 
-def profile(request):
+def json_serial(obj):
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError ("Type %s not serializable" % type(obj))
+
+def search_alg(arg):
+    searchArg = {}
+    for k, v in arg.items():
+        if v[0] == "" or k == 'csrfmiddlewaretoken':
+            continue
+        searchArg[k] = v
+    return searchArg
+
+def profile(request, str="str", num=1):
     author = request.user.username
-    data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    data_json_math = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).filter(cate__contains="数学").order_by('published_date').reverse().all()[:7].values_list("cate", "title", "score")
-    data_json_english = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).filter(cate__contains="英語").order_by('published_date').reverse().all()[:7].values_list("cate", "title", "score")
-    data_json_list_math = list(data_json_math)
-    data_json_english = list(data_json_english)
-    data_json_list_math  = json.dumps(data_json_list_math)
-    data_json_english  = json.dumps(data_json_english)
+    data = Solve.objects.filter(user_name=author)
+    cate = ""
+    title = ""
+    if (request.method == 'POST'):
+        post_dict = dict(six.iterlists(request.POST))
+        print(search_alg(post_dict))
+        seach = search_alg(post_dict)
+        request.session["form_value"] = seach
+        for k, v in seach.items():
+            if k == "cate":
+                data = data.filter(cate__contains=v[0])
+                cate = v[0]
+            if k == "title":
+                data = data.filter(title__contains=v[0])
+                title = v[0]
+    elif 'form_value' in request.session:
+        seach = request.session['form_value']
+        for k, v in seach.items():
+            if k == "cate":
+                data = data.filter(cate__contains=v[0])
+                cate = v[0]
+            if k == "title":
+                data = data.filter(title__contains=v[0])
+                title = v[0]
+    else:
+        data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    data = data.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
+    tests = data.all()[:7].values_list("id","cate", "title", "score", "created_date")
+    page = Paginator(tests, 3)
+    test_list = page.get_page(num)
+    math_list = []
+    english_list = []
+    for test in test_list:
+        if test[1] == "数学":
+            math_list.append(test)
+        if test[1] == "英語":
+            english_list.append(test)
+    data_json_list_math  = json.dumps(math_list, default=json_serial)
+    data_json_english  = json.dumps(english_list, default=json_serial)
+    form = SolveForm(initial={"cate": cate, "title": title})
     params = {
     'author': author,
     'data': data,
     'data_json_math': data_json_list_math,
     'data_json_english': data_json_english,
+    'tests': page.get_page(num),
+    'form': form,
     }
     return render(request, 'practiceblog/profile.html', params)
 
@@ -76,6 +130,20 @@ def connectOn(request, pk):
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
+
+def rooms(request):
+    data = RoomList.objects.order_by('created_date').reverse()
+    return render(request, 'whiteboard/rooms.html',{
+        'room_list' : data
+    })
+
+def room(request, room_name):
+    data = RoomList.objects.order_by('created_date').reverse()
+    print(data)
+    return render(request, 'whiteboard/room.html', {
+        'room_name': room_name,
+        'room_list' : data
+    })
 
 def question_box(request, num=1):
     question_box = QuestionBox.objects.filter(bool=False).filter(user_name="noname").filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
@@ -503,6 +571,8 @@ class UserCreate(generic.CreateView):
 
         return redirect('user_create_done')
 
+
+
 class UserCreateDone(generic.TemplateView):
     """ユーザー仮登録したよ"""
     template_name = 'register/user_create_done.html'
@@ -568,3 +638,37 @@ def image_orientation_transpose(file):
         im = im.transpose(Image.ROTATE_270)
     # return im
     im.save(file)
+
+class CustomFilter(filters.FilterSet):
+    start_created_date = filters.DateTimeFilter(field_name='created_date', lookup_expr='gt')
+    end_created_date = filters.DateTimeFilter(field_name='created_date', lookup_expr='lt')
+    class Meta:
+        model = Solve
+        fields = ['start_created_date', 'end_created_date'] #定義したフィルタを列挙
+
+# class CustomPagination(pagination.PageNumberPagination):
+#     def get_paginated_response(self, data):
+#         return Response({
+#             'links': {
+#                 'next': self.get_next_link(),
+#                 'previous': self.get_previous_link()
+#             },
+#             'count': self.page.paginator.count,
+#             'results': data
+#         })
+import rest_framework
+
+class StandardResultsSetPagination(rest_framework.pagination.LimitOffsetPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class SolveViewSet(viewsets.ModelViewSet):
+    queryset = Solve.objects.all()
+    serializer_class = SolveSerializer
+    filter_fields = ('cate', 'title')
+    filter_class = CustomFilter
