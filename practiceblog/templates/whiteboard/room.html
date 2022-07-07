@@ -175,6 +175,7 @@
             function ajax(data, url, type, doneFunc) {
                 var csrf_token = getCookie("csrftoken");
                 var data = JSON.stringify(data);
+                console.log(csrf_token);
                 $.ajax({
                     url: url,
                     type: type,
@@ -196,7 +197,8 @@
                     }
 
                 }).fail(function (xhr, status, error) {
-                    console.log(status + ":" + error);
+                    console.log();
+                    console.log(status + ":" + error + ":" + xhr);
                 });
             }
 
