@@ -229,6 +229,14 @@
             svg_width = window.innerWidth;
             browserDrawData = {};
             id = "";
+            old_id = "";
+            
+            var input = document.createElement("input");
+                input.id = "textToolInput";
+                input.type = "text";
+                input.setAttribute("autocomplete", "off");
+            var text = "";
+            var curText = "";
 
             function main() {
                 $("#drawingCanvas").mousedown(function (event) {
@@ -239,6 +247,15 @@
                         case "moveScreen":
                             moveScreenByMousedown();
                             break;
+                        case "moveContent": 
+                            moveContentByMousedown();
+                            break;
+                        case "eraser": 
+                            eraserByMousedown();
+                            break;
+                        case "text": 
+                            textBoxMousedown();
+                            break;
                         default:
                             console.log("main");
                             break;
@@ -247,8 +264,19 @@
                     switch (pointerType) {
                         case "draw":
                             pencilByMouseup();
+                            break;
                         case "moveScreen":
                             moveScreenByMouseup();
+                            break;
+                        case "moveContent": 
+                            moveContentByMouseup();
+                            break;
+                        case "eraser": 
+                            eraserByMousedown();
+                            break;
+                        case "text": 
+                            textBoxMouseup();
+                            break;
                         default:
                             console.log("main");
                             break;
@@ -281,6 +309,7 @@
             }
 
             changePinterType();
+
             function moveScreenByMousedown() {
                 svgElm.css("cursor", "move")
                 var mouse_move_x = 0;
@@ -301,33 +330,7 @@
 
             function moveScreenByMouseup() {
                 console.log("finish");
-            }
-
-            function moveScreen() {
-                $("#drawingCanvas").mousedown(function (event) {
-                    if (pointerType === "moveScreen") {
-                        svgElm.css("cursor", "move")
-                        var mouse_move_x = 0;
-                        mouse_move_y = 0;
-                        mouse_move_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                        mouse_move_y = parseInt(event.pageY - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
-                        $("#drawingCanvas").on("mousemove", function (event) {
-                            // event.preventDefault();
-                            var mouse_moving_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                            var mouse_moving_y = parseInt(event.pageY - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
-                            var x_length = mouse_move_x - mouse_moving_x;
-                            var y_length = mouse_move_y - mouse_moving_y;
-                            mouse_move_x = mouse_moving_x;
-                            mouse_move_y = mouse_moving_y;
-                            scrollBy(x_length, y_length);
-                        });
-                    }
-                }).mouseup(function (event) {
-                    if (pointerType === "moveScreen") {
-                    console.log("finish");
-                    }
-                });
-
+                $("#drawingCanvas").off("mousemove");
             }
 
             function SVGMatrixCreate(a, b, c, d, e, f) {
@@ -344,113 +347,108 @@
 
             var selected_elm = document.elementFromPoint(0, 0);
 
-            function moveContent() {
-                var id = "";
-                var old_id = "";
-                $("#drawingCanvas").mousedown(function (event) {
-                    if (pointerType === "moveContent") {
-                        var target = document.elementFromPoint(event.pageX, event.pageY);
-                        id = target.id;
-                        svgElm.css("cursor", "grab")
-                        var mouse_move_x = 0;
-                        mouse_move_y = 0;
-                        mouse_move_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                        mouse_move_y = parseInt(event.pageY - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
-                        var dx = 0;
-                        dy = 0;
-                        // var Matrix = target.target.parentNode.createSVGTransform();
-                        var transform = target.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
-                        if (!target.hasAttribute("transform")) {
-                            target.transform.baseVal.appendItem(transform);
-                        }
+            function moveContentByMousedown() {
+                var target = document.elementFromPoint(event.pageX, event.pageY);
+                id = target.id;
+                svgElm.css("cursor", "grab")
+                var mouse_move_x = 0;
+                mouse_move_y = 0;
+                mouse_move_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
+                mouse_move_y = parseInt(event.pageY - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
+                var dx = 0;
+                dy = 0;
+                // var Matrix = target.target.parentNode.createSVGTransform();
+                var transform = target.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                if (!target.hasAttribute("transform")) {
+                    target.transform.baseVal.appendItem(transform);
+                }
 
-                        // var Matrix = target.transform.matrix;
-                        var Matrix = target.transform.baseVal[0].matrix;
-                        if (target !== document.getElementById("drawingCanvas") && !target.classList.contains('catch')) {
-                            old_id = id
-                            if (document.querySelectorAll(".catch")) {
-                                var rects = document.querySelectorAll(".catch");
-                                for (var i = 0; i < rects.length; i++) {
-                                    rects[i].remove();
-                                }
-                            }
-                            selected_elm = target;
-                            var box = target.getBBox();
-                            var x = box.x + Matrix.e - 1.5;
-                            var y = box.y + Matrix.f - 1.5;
-                            var h = box.height + 3;
-                            var w = box.width + 3;
-                            createRect(x, y, w, h, svgElm, "elm_rect", "none", "#42a5f5", 1);
-                            createRect(x + w - 5, y + h - 5, 10, 10, svgElm, "mini_rect", "#42a5f5", 'white', 2);
-                        }
-                        var elm_rect = document.querySelector("#elm_rect");
-                        var mini_rect = document.querySelector("#mini_rect");
-                        elm_rect.transform.baseVal.appendItem(transform);
-                        mini_rect.transform.baseVal.appendItem(transform);
-                        var elm_rect_matrix = elm_rect.transform.baseVal[0].matrix;
-                        var mini_rect_matrix = mini_rect.transform.baseVal[0].matrix;
+                // var Matrix = target.transform.matrix;
+                var Matrix = target.transform.baseVal[0].matrix;
+                if (target !== document.getElementById("drawingCanvas") && !target.classList.contains('catch')) {
+                    old_id = id
+                    if (document.querySelectorAll(".catch")) {
                         var rects = document.querySelectorAll(".catch");
                         for (var i = 0; i < rects.length; i++) {
-                            rects[i].transform.baseVal.appendItem(transform);
+                            rects[i].remove();
                         }
-                        $("#drawingCanvas").on("mousemove", function (event) {
-                            if (target !== document.getElementById("drawingCanvas") && !target.classList.contains('catch')) {
-                                svgElm.css('cursor', 'grabbing');
-                                var mouse_moving_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                                var mouse_moving_y = parseInt(event.pageY - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
-                                var x_length = mouse_moving_x - mouse_move_x;
-                                var y_length = mouse_moving_y - mouse_move_y;
-                                mouse_move_x = mouse_moving_x;
-                                mouse_move_y = mouse_moving_y;
-                                // Matrix.e += x_length;
-                                // Matrix.f += y_length;
-                                var sendData = {
-                                    "type": "moveContent",
-                                    "id" : id,
-                                    "dx" :  x_length,
-                                    "dy" : y_length
-                                }
-                                roomSocket.send(JSON.stringify(sendData));
-                                for (var i = 0; i < rects.length; i++) {
-                                    rects[i].transform.baseVal[0].matrix.e += x_length
-                                    rects[i].transform.baseVal[0].matrix.f += y_length
-                                }
-                            }
-                            if (target.classList.contains('catch')) {
-                                var resizeData = {};
-                                var aspect = selected_elm.width.baseVal.value / selected_elm.height.baseVal.value
-                                var mouse_moving_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                                var mouse_moving_y = parseInt(event.pageY - svgElm.position().top);
-                                var x_length = mouse_moving_x - mouse_move_x;
-                                var y_length = mouse_moving_y - mouse_move_y;
-                                mouse_move_x = mouse_moving_x;
-                                mouse_move_y = mouse_moving_y;
-                                var length_aspect = x_length / y_length;
-                                var w = 0;
-                                var h = 0;
-                                if (length_aspect < aspect) {
-                                    w = y_length * aspect;
-                                    h = y_length;
-                                } else {
-                                    w = x_length;
-                                    h = x_length / aspect;
-                                }
-                                resizeData = {
-                                    "type" : "resize",
-                                    "id" : old_id,
-                                    "w" : w,
-                                    "h" : h
-                                }
-                                roomSocket.send(JSON.stringify(resizeData));
-                                elm_rect.width.baseVal.value += w;
-                                elm_rect.height.baseVal.value += h;
-                                mini_rect.x.baseVal.value += w;
-                                mini_rect.y.baseVal.value += h;
-                            }
-                        });
                     }
-                }).mouseup(function (event) {
-                    if (id !== "") {
+                    selected_elm = target;
+                    var box = target.getBBox();
+                    var x = box.x + Matrix.e - 1.5;
+                    var y = box.y + Matrix.f - 1.5;
+                    var h = box.height + 3;
+                    var w = box.width + 3;
+                    createRect(x, y, w, h, svgElm, "elm_rect", "none", "#42a5f5", 1);
+                    createRect(x + w - 5, y + h - 5, 10, 10, svgElm, "mini_rect", "#42a5f5", 'white', 2);
+                }
+                var elm_rect = document.querySelector("#elm_rect");
+                var mini_rect = document.querySelector("#mini_rect");
+                elm_rect.transform.baseVal.appendItem(transform);
+                mini_rect.transform.baseVal.appendItem(transform);
+                var elm_rect_matrix = elm_rect.transform.baseVal[0].matrix;
+                var mini_rect_matrix = mini_rect.transform.baseVal[0].matrix;
+                var rects = document.querySelectorAll(".catch");
+                for (var i = 0; i < rects.length; i++) {
+                    rects[i].transform.baseVal.appendItem(transform);
+                }
+                $("#drawingCanvas").on("mousemove", function (event) {
+                    if (target !== document.getElementById("drawingCanvas") && !target.classList.contains('catch')) {
+                        svgElm.css('cursor', 'grabbing');
+                        var mouse_moving_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
+                        var mouse_moving_y = parseInt(event.pageY - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
+                        var x_length = mouse_moving_x - mouse_move_x;
+                        var y_length = mouse_moving_y - mouse_move_y;
+                        mouse_move_x = mouse_moving_x;
+                        mouse_move_y = mouse_moving_y;
+                        var sendData = {
+                            "type": "moveContent",
+                            "id": id,
+                            "dx": x_length,
+                            "dy": y_length
+                        }
+                        roomSocket.send(JSON.stringify(sendData));
+                        for (var i = 0; i < rects.length; i++) {
+                            rects[i].transform.baseVal[0].matrix.e += x_length
+                            rects[i].transform.baseVal[0].matrix.f += y_length
+                        }
+                    }
+                    if (target.classList.contains('catch')) {
+                        var resizeData = {};
+                        var aspect = selected_elm.width.baseVal.value / selected_elm.height.baseVal.value
+                        var mouse_moving_x = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
+                        var mouse_moving_y = parseInt(event.pageY - svgElm.position().top);
+                        var x_length = mouse_moving_x - mouse_move_x;
+                        var y_length = mouse_moving_y - mouse_move_y;
+                        mouse_move_x = mouse_moving_x;
+                        mouse_move_y = mouse_moving_y;
+                        var length_aspect = x_length / y_length;
+                        var w = 0;
+                        var h = 0;
+                        if (length_aspect < aspect) {
+                            w = y_length * aspect;
+                            h = y_length;
+                        } else {
+                            w = x_length;
+                            h = x_length / aspect;
+                        }
+                        resizeData = {
+                            "type": "resize",
+                            "id": old_id,
+                            "w": w,
+                            "h": h
+                        }
+                        roomSocket.send(JSON.stringify(resizeData));
+                        elm_rect.width.baseVal.value += w;
+                        elm_rect.height.baseVal.value += h;
+                        mini_rect.x.baseVal.value += w;
+                        mini_rect.y.baseVal.value += h;
+                    }
+                });
+            }
+
+            function moveContentByMouseup() {
+                if (id !== "") {
                         drawingData[old_id].x = document.getElementById(old_id).transform.baseVal[0].matrix.e;
                         drawingData[old_id].y = document.getElementById(old_id).transform.baseVal[0].matrix.f;
                         if (drawingData[old_id].width) {
@@ -458,18 +456,13 @@
                             drawingData[old_id].height = document.getElementById(old_id).height.baseVal.value;
                         }
                         saveBoardData();
-                    }
-                    svgElm.css('cursor', 'default');
-                    $("#drawingCanvas").off("mousemove");
-                });
+                }
+                svgElm.css('cursor', 'default');
+                $("#drawingCanvas").off("mousemove");
             }
 
-            moveContent()
-
-            function eraser() {
-                $("#drawingCanvas").mousedown(function (event) {
-                    if (pointerType === "eraser") {
-                        var target = document.elementFromPoint(event.pageX, event.pageY);
+            function eraserByMousedown() {
+                var target = document.elementFromPoint(event.pageX, event.pageY);
                         if (target !== document.getElementById("drawingCanvas") && target_id !== "") { 
                             var target_id = target.id;
                             var sendData = {
@@ -499,79 +492,62 @@
                                 saveBoardData();
                             }
                         });
-
-                    }
-                }).mouseup(function (event) {
-                    if (pointerType === "eraser") {
-                    console.log(drawingData);
-                    $("#drawingCanvas").off("mousemove");
-                    saveBoardData();
-                    }
-                });
             }
-            eraser();
+
+            function eraserByMouseup() {
+                console.log(drawingData);
+                $("#drawingCanvas").off("mousemove");
+                saveBoardData();
+            }
 
             var curText = "";
 
-            function textBox() {
-                var input = document.createElement("input");
-                input.id = "textToolInput";
-                input.type = "text";
-                input.setAttribute("autocomplete", "off");
-
-                var id = ""
-                var text = "";
-
-                $("#drawingCanvas").click(function (event) {
-                    if (pointerType === "text") {
-                        var sendTextData = {};
-                        var sendTextBoxData = {};
-                        var x = parseInt(event.pageX - svgElm.position().left);
-                        var y = parseInt(event.pageY - svgElm.position().top);
-                        document.getElementById('board').appendChild(input);
-                        input.value = "";
-                        input.style.left = x + 'px';
-                        input.style.top = y + 'px';
-                        input.style.position = 'fixed';
-                        input.focus();
-                        id = Math.random().toString(32).substring(2);
-                        createTextBox(x, y, 0, 0, id, text);
-                        sendTextBoxData.cx = x;
-                        sendTextBoxData.cy = y;
-                        sendTextBoxData.x = 0;
-                        sendTextBoxData.y = 0;
-                        sendTextBoxData.id = id;
-                        sendTextBoxData.text = text;
-                        sendTextBoxData.type = "textBox"
-                        drawingData[id] = sendTextBoxData;
-                        saveBoardData();
-                        roomSocket.send(JSON.stringify(sendTextBoxData));
-
-                        input.addEventListener("keyup", function () {
-                            if (curText !== this.value) {
-                                drawingData[id].text = input.value;
-                                sendTextData = {
-                                    "type": "writing",
-                                    "id" : id,
-                                    "text" : input.value
-                                }
-                                roomSocket.send(JSON.stringify(sendTextData));
-                                curText = input.value;
-                                saveBoardData();
-                            }
-                        })
-                        input.addEventListener("blur", function () {
-                            input.removeEventListener("keyup", function () {})
-                            input.style.top = '-1000px';
-                        })
-                    } else {
-                        // clearTimeout(timeout);
-                        // timeout = setTimeout(textChangeHandler, 500, evt);
-                    }
-                });
+            function textBoxMousedown() {
+                console.log("textBox");
             }
 
-            textBox();
+            function textBoxMouseup() {
+                var sendTextData = {};
+                var sendTextBoxData = {};
+                var x = parseInt(event.pageX - svgElm.position().left);
+                var y = parseInt(event.pageY - svgElm.position().top);
+                document.getElementById('board').appendChild(input);
+                input.value = "";
+                input.style.left = x + 'px';
+                input.style.top = y + 'px';
+                input.style.position = 'fixed';
+                input.focus();
+                id = Math.random().toString(32).substring(2);
+                createTextBox(x, y, 0, 0, id, text);
+                sendTextBoxData.cx = x;
+                sendTextBoxData.cy = y;
+                sendTextBoxData.x = 0;
+                sendTextBoxData.y = 0;
+                sendTextBoxData.id = id;
+                sendTextBoxData.text = text;
+                sendTextBoxData.type = "textBox"
+                drawingData[id] = sendTextBoxData;
+                saveBoardData();
+                roomSocket.send(JSON.stringify(sendTextBoxData));
+
+                input.addEventListener("keyup", function () {
+                    if (curText !== this.value) {
+                        drawingData[id].text = input.value;
+                        sendTextData = {
+                            "type": "writing",
+                            "id": id,
+                            "text": input.value
+                        }
+                        roomSocket.send(JSON.stringify(sendTextData));
+                        curText = input.value;
+                        saveBoardData();
+                    }
+                })
+                input.addEventListener("blur", function () {
+                    input.removeEventListener("keyup", function () { })
+                    input.style.top = '-1000px';
+                })
+            }
 
             function svgResize() {
                 window.addEventListener('scroll', () => {
@@ -590,6 +566,7 @@
             }
 
             svgResize();
+
             function pencilByMousedown() {
                 movetoX = parseInt(event.pageX - svgElm.position().left);
                 movetoY = parseInt(event.pageY - svgElm.position().top);
@@ -639,62 +616,6 @@
                 $("#drawingCanvas").off("mousemove"); //pathの描画を終了
                 saveBoardData();
             }
-            function pencil() {
-                $("#drawingCanvas").mousedown(function (event) {
-                    if (pointerType === "draw") {
-                        movetoX = parseInt(event.pageX - svgElm.position().left);
-                        movetoY = parseInt(event.pageY - svgElm.position().top);
-
-                        id = Math.random().toString(32).substring(2);
-
-                        browserDrawData = {
-                            "id" : id,
-                            'type': "draw",
-                            "d": "",
-                            "fill": "none",
-                            "stroke": strokeColor,
-                            "stroke-width": "3",
-                            "stroke-linecap": "round", 
-                            "x" : 0,
-                            "y" : 0
-                        }
-
-                        roomSocket.send(JSON.stringify(browserDrawData));
-
-                        var linetoX = [], //描画点の横座標の初期化
-                            linetoY = [], //描画点の縦座標の初期化
-                            cntMoveto = 0; //描画点のカウンターを初期化
-                        linetoStr = 'M ' + movetoX + ' ' + movetoY + ' '; //d要素でpathの開始点を設定
-
-                        /* ドラッグ中 */
-                        $("#drawingCanvas").on("mousemove", function (event) {
-                            event.preventDefault();
-                            linetoX[cntMoveto] = parseInt(event.pageX - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                            linetoY[cntMoveto] = parseInt(event.pageY - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
-                            linetoStr = linetoStr + " L " + linetoX[cntMoveto] + " " + linetoY[cntMoveto]; //動いた後の新たなマウス座標を描画点として追加
-
-                            // svgElm.find("path:last").attr("d", linetoStr); //pathデータ(d属性)の値を更新
-                            browserDrawingData = {
-                                'type': "drawing",
-                                "d": linetoStr
-                            }
-
-                            roomSocket.send(JSON.stringify(browserDrawingData));
-                            cntMoveto++; //カウンターをセット
-                        });
-                    };
-                    /* ドラッグ終了 */
-                }).mouseup(function (event) {
-                    if (pointerType === "draw") {
-                    browserDrawData["d"] = linetoStr
-                    drawingData[id] = browserDrawData;
-                    $("#drawingCanvas").off("mousemove"); //pathの描画を終了
-                    saveBoardData();
-                    }
-                });
-            }
-
-            // pencil();
 
             function saveBoardData() {
                 const apiUrl =
