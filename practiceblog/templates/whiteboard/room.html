@@ -474,16 +474,6 @@
             }
 
             function eraserByMousedown() {
-                var target = document.elementFromPoint(getPageX(event), getPageY(event));
-                        if (target !== document.getElementById("drawingCanvas") && target_id !== "") { 
-                            var target_id = target.id;
-                            var sendData = {
-                                "type" : "delete",
-                                "id" : target_id
-                            }
-                            roomSocket.send(JSON.stringify(sendData));
-                            delete drawingData[target_id];
-                         }
                         $("#drawingCanvas").on(move_event, function (evt) {
                             // event.preventDefault()
                             var target = document.elementFromPoint(getPageX(evt), getPageY(evt));
@@ -499,12 +489,6 @@
                             delete drawingData[target_id];
                             }
                         });
-                        // $("#drawingCanvas").on("mouseout", function (evt) {
-                        //     if (pointerType === "eraser") {
-                        //         $("#drawingCanvas").off(move_event);
-                        //         saveBoardData();
-                        //     }
-                        // });
             }
 
             function eraserByMouseup() {
@@ -868,6 +852,7 @@
                         break;
                     case "shareData":
                         drawingData = data.data;
+                        console.log("share");
                         break;
                     default:
                         console.log("no data");
