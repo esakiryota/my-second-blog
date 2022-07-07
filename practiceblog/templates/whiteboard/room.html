@@ -66,6 +66,7 @@
     <!-- <script src="{% static 'js/select.js' %}"></script> -->
     <!-- <script src="{% static 'js/init.js' %}"></script>  -->
     {{ room_name|json_script:"room-name" }}
+    {% csrf_token %}
     <script>
         $(function () {
             $('#brush-tap-target').css("width", "300px").css("height", "300px")
@@ -175,7 +176,12 @@
             function ajax(data, url, type, doneFunc) {
                 var csrf_token = getCookie("csrftoken");
                 var data = JSON.stringify(data);
-                console.log(csrf_token);
+                // var csrftoken1 = Cookies.get('csrftoken');
+                var csrftoken2 = getCookie("csrftoken");
+                var csrftoken3 = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                // console.log(`csrftoken1:${csrftoken1}`);
+                console.log(`csrftoken2:${csrftoken2}`);
+                console.log(`csrftoken3:${csrftoken3}`);
                 $.ajax({
                     url: url,
                     type: type,
