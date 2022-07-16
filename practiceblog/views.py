@@ -145,6 +145,9 @@ def room(request, room_name):
         'room_list' : data
     })
 
+def webrtc(request):
+    return render(request, 'webrtc/webrtc.html')
+
 def question_box(request, num=1):
     question_box = QuestionBox.objects.filter(bool=False).filter(user_name="noname").filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
     page = Paginator(question_box, 10)
