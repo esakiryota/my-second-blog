@@ -15,10 +15,22 @@
     <!--Import materialize.js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
-
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+    
+        video {
+            max-width: 100%;
+            width: 320px;
+        }
+    </style>
 </head>
 
 <body>
+    <div id="videos">
+        <video id="localVideo" autoplay muted playsinline></video>
+    </div>
     <figure id="board">
         <svg id="drawingCanvas" width="958" height="2000"></svg>
     </figure>
@@ -62,9 +74,9 @@
     </ul>
     </p>
 
-    <!-- <script src="{% static 'js/materialize.js' %}"></script> -->
-    <!-- <script src="{% static 'js/select.js' %}"></script> -->
-    <!-- <script src="{% static 'js/init.js' %}"></script>  -->
+    <!-- <script src="{% static 'js/materialize.js' %}"></script>
+    <script src="{% static 'js/select.js' %}"></script>
+    <script src="{% static 'js/init.js' %}"></script>  -->
     {{ room_name|json_script:"room-name" }}
     {% csrf_token %}
     <script>
@@ -93,7 +105,7 @@
             }
             const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
-            const roomSocket = new WebSocket(
+            roomSocket = new WebSocket(
                 'ws://'
                 + window.location.host
                 + '/ws/rooms/'
@@ -871,6 +883,7 @@
 
         });
     </script>
+    <script src="{% static 'js/webrtc.js' %}"></script> 
 </body>
 
 </html>

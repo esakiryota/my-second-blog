@@ -1,34 +1,8 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-
-  <title>WebRTC</title>
-
-<style>
-    body {
-        font-family: sans-serif;
-    }
-
-    video {
-        max-width: 100%;
-        width: 320px;
-    }
-</style>
-
-</head>
-
-<body>
-  <div id="videos">
-    <video id="localVideo" autoplay muted playsinline></video>
-  </div>
-
-  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-  <script>
-
-var localVideo = document.querySelector('#localVideo');
+(function($){
+    var localVideo = document.querySelector('#localVideo');
 var remoteVideo;
 const startButton = document.getElementById('startButton');
+console.log("video open");
 
 var rpc;
 var remoteStream;
@@ -39,7 +13,9 @@ var isInitiator = false;
 
 
 
-const roomSocket = new WebSocket(
+const videoRoomName = JSON.parse(document.getElementById('room-name').textContent);
+
+const videoRoomSocket = new WebSocket(
                 'ws://'
                 + window.location.host
                 + '/ws/rooms/'
@@ -47,14 +23,14 @@ const roomSocket = new WebSocket(
                 + '/'
             );
 
-roomSocket.onopen = function(e) {
-  roomSocket.send(JSON.stringify({
+videoRoomSocket.onopen = function(e) {
+  videoRoomSocket.send(JSON.stringify({
   "type": "create or join"
 }));
 }
 
 window.onbeforeunload = function(event){
-  roomSocket.send(JSON.stringify({
+  videoRoomSocket.send(JSON.stringify({
   "type": "bye"
 }));
 }
@@ -78,7 +54,7 @@ function gotStream(stream) {
 
 // startButton.addEventListener('click', startAction);
 
-roomSocket.onmessage = function(e) {
+videoRoomSocket.onmessage = function(e) {
   const data = JSON.parse(e.data);
   console.log('Client received message:', data.message);
   console.log("data type: ", data.type);
@@ -210,7 +186,7 @@ function sendMessage(message) {
       "type" : "message",
       "message" : message,
   }
-  roomSocket.send(JSON.stringify(content));
+  videoRoomSocket.send(JSON.stringify(content));
 }
 
 function hangup() {
@@ -237,6 +213,4 @@ function stop() {
   pc.close();
   pc = null;
 }
-</script>
-</body>
-</html>
+})(jQuery);

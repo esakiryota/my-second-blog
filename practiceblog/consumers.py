@@ -4,9 +4,18 @@ from channels.generic.websocket import WebsocketConsumer
 from .repositories.roomListRepository import RoomListRepository
 # リアルタイムで描写している
 class ChatConsumer(WebsocketConsumer):
+
+    room = {}
+
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
+        if self.room_name in self.room :
+            self.room[self.room_name] += 1
+        else :
+            self.room[self.room_name] = 1
+
+        print(self.scope)
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -142,6 +151,42 @@ class ChatConsumer(WebsocketConsumer):
                     'type': 'clear'
                 }
             )
+        elif type == "message":
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'message', 
+                    'message': text_data_json["message"]
+                }
+            )
+        elif type == "create or join":
+            if self.room[self.room_name] == 1:
+                async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'create',
+                    'message': 'create',
+                    'number' : self.room[self.room_name],
+                }
+            )
+            else:
+                async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'join',
+                    'message': 'join',
+                    'number' : self.room[self.room_name],
+                }
+            )
+        elif type == "bye":
+            self.room[self.room_name] -= 1
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'bye', 
+                    'number': self.room[self.room_name]
+                }
+            )
 
 
     # Receive message from room group
@@ -179,5 +224,18 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
 
     def shareData(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def message(self, event):
+        print(event)
+        self.send(text_data=json.dumps(event))
+
+    def join(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def create(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def bye(self, event):
         self.send(text_data=json.dumps(event))
         
