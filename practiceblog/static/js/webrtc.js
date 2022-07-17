@@ -19,6 +19,7 @@ const videoRoomSocket = new WebSocket(
                 'ws://'
                 + window.location.host
                 + '/ws/rooms/'
+                + videoRoomName
                 + roomName
                 + '/'
             );
