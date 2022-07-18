@@ -10,10 +10,10 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
-        if self.room_name in self.room :
-            self.room[self.room_name] += 1
+        if self.room_name in ChatConsumer.room :
+            ChatConsumer.room[self.room_name] += 1
         else :
-            self.room[self.room_name] = 1
+            ChatConsumer.room[self.room_name] = 1
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -157,13 +157,13 @@ class ChatConsumer(WebsocketConsumer):
                 }
             )
         elif type == "create or join":
-            if self.room[self.room_name] == 1:
+            if ChatConsumer.room[self.room_name] == 1:
                 async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
                     'type': 'create',
                     'message': 'create',
-                    'number' : self.room[self.room_name],
+                    'number' : ChatConsumer.room[self.room_name],
                     'room_name' : self.room_name,
                 }
             )
@@ -173,7 +173,7 @@ class ChatConsumer(WebsocketConsumer):
                 {
                     'type': 'join',
                     'message': 'join',
-                    'number' : self.room[self.room_name],
+                    'number' : ChatConsumer.room[self.room_name],
                     'room_name' : self.room_name,
                 }
             )
