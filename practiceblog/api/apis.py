@@ -15,5 +15,4 @@ def updateRoom(request, room_name):
 def loadRoom(request, room_name):
     json_open = open(f'practiceblog/boards/{room_name}.json', 'r')
     json_load = json.load(json_open)
-    print(json_load)
     return JsonResponse({"data": json_load})

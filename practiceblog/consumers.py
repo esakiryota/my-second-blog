@@ -15,8 +15,6 @@ class ChatConsumer(WebsocketConsumer):
         else :
             self.room[self.room_name] = 1
 
-        print(self.scope)
-
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -38,7 +36,6 @@ class ChatConsumer(WebsocketConsumer):
         type = text_data_json['type']
 
         if type == "room_list":
-            # print(text_data_json)
             room_name = text_data_json['room_name']
             password = text_data_json['password']
             # Send message to room group
@@ -194,7 +191,6 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from room group
     def room_list(self, event):
         rlrepos = RoomListRepository()
-        print(event)
         result = rlrepos.insert(event)
         self.send(text_data=json.dumps(result))
 
@@ -229,7 +225,6 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
     
     def message(self, event):
-        print(event)
         self.send(text_data=json.dumps(event))
 
     def join(self, event):
