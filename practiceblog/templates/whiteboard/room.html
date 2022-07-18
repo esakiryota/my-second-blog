@@ -106,7 +106,7 @@
             const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
             roomSocket = new WebSocket(
-                'ws://'
+                'wss://'
                 + window.location.host
                 + '/ws/rooms/'
                 + roomName

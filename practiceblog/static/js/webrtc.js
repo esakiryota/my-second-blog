@@ -16,7 +16,7 @@ var isInitiator = false;
 const videoRoomName = JSON.parse(document.getElementById('room-name').textContent);
 
 const videoRoomSocket = new WebSocket(
-                'ws://'
+                'wss://'
                 + window.location.host
                 + '/ws/rooms/'
                 + videoRoomName
