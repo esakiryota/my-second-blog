@@ -186,6 +186,7 @@ class RoomList(models.Model):
     url_token = models.CharField(max_length=30, null=False)
     password = models.CharField(max_length=200, null=True)
     created_date = models.DateTimeField(default=timezone.now)
+    participants = models.IntegerField(default=0)
 
     def publish(self):
         self.published_date = timezone.now()

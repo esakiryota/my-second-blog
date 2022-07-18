@@ -2,6 +2,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from .repositories.roomListRepository import RoomListRepository
+from .models import RoomList
 # リアルタイムで描写している
 class ChatConsumer(WebsocketConsumer):
 
@@ -153,18 +154,15 @@ class ChatConsumer(WebsocketConsumer):
                 }
             )
         elif type == "create or join":
-            if self.room_name in ChatConsumer.room :
-                ChatConsumer.room[self.room_name] += 1
-            else :
-                ChatConsumer.room[self.room_name] = 1
-            
-            if ChatConsumer.room[self.room_name] == 1:
+            repos = RoomListRepository()
+            now_participants = repos.addParticipants(self.room_name)
+            if now_participants == 1:
                 async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
                     'type': 'create',
                     'message': 'create',
-                    'number' : ChatConsumer.room[self.room_name],
+                    'number' : now_participants,
                     'room_name' : self.room_name,
                 }
             )
@@ -174,17 +172,18 @@ class ChatConsumer(WebsocketConsumer):
                 {
                     'type': 'join',
                     'message': 'join',
-                    'number' : ChatConsumer.room[self.room_name],
+                    'number' : now_participants,
                     'room_name' : self.room_name,
                 }
             )
         elif type == "bye":
-            self.room[self.room_name] -= 1
+            repos = RoomListRepository()
+            now_participants = repos.removeParticipants(self.room_name)
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
                     'type': 'bye', 
-                    'number': self.room[self.room_name]
+                    'number': now_participants
                 }
             )
 
