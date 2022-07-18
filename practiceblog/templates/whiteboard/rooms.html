@@ -42,8 +42,16 @@
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script>
     $(function () {
+
+        var ws_or_wss;
+        if (location.protocol == 'http:') {
+            ws_or_wss = 'ws://'
+        } else if (location.protocol == 'https:') {
+            ws_or_wss = 'wss://'
+        }
+
         const roomsSocket = new WebSocket(
-            'wss://'
+            ws_or_wss
             + window.location.host
             + '/ws/rooms/room_list/'
         );

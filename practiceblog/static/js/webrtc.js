@@ -15,8 +15,15 @@ var isInitiator = false;
 
 const videoRoomName = JSON.parse(document.getElementById('room-name').textContent);
 
+  var ws_or_wss;
+  if (location.protocol == 'http:') {
+    ws_or_wss = 'ws://'
+  } else if (location.protocol == 'https:') {
+    ws_or_wss = 'wss://'
+  }
+
 const videoRoomSocket = new WebSocket(
-                'wss://'
+                 ws_or_wss
                 + window.location.host
                 + '/ws/rooms/'
                 + videoRoomName
