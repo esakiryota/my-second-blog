@@ -167,6 +167,7 @@ class ChatConsumer(WebsocketConsumer):
                     'type': 'create',
                     'message': 'create',
                     'number' : self.room[self.room_name],
+                    'room_name' : self.room_name,
                 }
             )
             else:
@@ -176,6 +177,7 @@ class ChatConsumer(WebsocketConsumer):
                     'type': 'join',
                     'message': 'join',
                     'number' : self.room[self.room_name],
+                    'room_name' : self.room_name,
                 }
             )
         elif type == "bye":

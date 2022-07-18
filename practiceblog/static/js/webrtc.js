@@ -68,11 +68,13 @@ videoRoomSocket.onmessage = function(e) {
   }
   if (data.message == "create") {
     console.log("pertitipants number: ", data.number);
+    console.log("room_name: ", data.room_name);
       isInitiator = true;
       return
     }
   if (data.message == "join" && !isInitiator) {
     console.log("pertitipants number: ", data.number);
+    console.log("room_name: ", data.room_name);
     startAction();
     return
   }
