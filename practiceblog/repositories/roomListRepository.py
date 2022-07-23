@@ -10,10 +10,7 @@ class RoomListRepository :
         return {"room_name" : data["room_name"], "password" : data["password"], "url_token" : url_token}
     
     def addParticipants(self, name):
-        name = name[:15]
-        print(name)
         ob = RoomList.objects.filter(url_token=name).get()
-        print(ob)
         now_participants = ob.participants
         new_participants = now_participants + 1
         ob.participants = new_participants
@@ -21,7 +18,6 @@ class RoomListRepository :
         return new_participants
     
     def removeParticipants(self, name):
-        name = name[:15]
         ob = RoomList.objects.filter(url_token=name).get()
         now_participants = ob.participants
         new_participants = now_participants - 1
@@ -29,7 +25,9 @@ class RoomListRepository :
         ob.save()
         return new_participants
 
-
+    def getNowParticipants(self, name):
+        ob = RoomList.objects.filter(url_token=name).get()
+        return ob.participants
 
     def randomname(self, n):
         randlst = [random.choice(string.ascii_letters + string.digits) for i in range(n)]

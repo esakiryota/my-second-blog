@@ -10,6 +10,7 @@ var localStream;
 var roomName = "webrtc";
 var isStarted = true;
 var isInitiator = false;
+var signalingState = "null";
 
 
 
@@ -25,9 +26,8 @@ const videoRoomName = JSON.parse(document.getElementById('room-name').textConten
 const videoRoomSocket = new WebSocket(
                  ws_or_wss
                 + window.location.host
-                + '/ws/rooms/'
+                + '/ws/webrtc/'
                 + videoRoomName
-                + roomName
                 + '/'
             );
 
@@ -129,6 +129,19 @@ function createPeerConnection() {
     pc.onicecandidate = handleIceCandidate;
     pc.onaddstream = handleRemoteStreamAdded;
     // rpc.onremovestream = handleRemoteStreamRemoved;
+    pc.addEventListener('iceconnectionstatechange', () => {
+      pc.iceConnectionState;
+      if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
+        videoRoomSocket.send(JSON.stringify({
+          "type": "bye"
+        }));
+      }
+    });
+    console.log('signalingstate: ', pc.signalingState);
+    pc.addEventListener('signalingstatechange', () => {
+      console.log('signalingstate: ', pc.signalingState);
+      signalingState = pc.signalingState;
+    });
     console.log('Created RTCPeerConnnection');
   } catch (e) {
     console.log('Failed to create PeerConnection, exception: ' + e.message);

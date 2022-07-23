@@ -53,7 +53,7 @@
         const roomsSocket = new WebSocket(
             ws_or_wss
             + window.location.host
-            + '/ws/rooms/room_list/'
+            + '/ws/room_list/room_list/'
         );
         roomsSocket.onclose = function (e) {
             console.error('socket closed unexpectedly');

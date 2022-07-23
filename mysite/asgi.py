@@ -17,6 +17,8 @@ application = ProtocolTypeRouter({
   "websocket": AuthMiddlewareStack(
         URLRouter([
             practiceblog.routing.websocket_urlpatterns[0],
+            practiceblog.routing.websocket_urlpatterns[1],
+            practiceblog.routing.websocket_urlpatterns[2],
         ])
     ),
 })
