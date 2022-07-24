@@ -236,6 +236,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def bye(self, event):
         await self.send(text_data=json.dumps(event))
+    
+    async def hello(self, event):
+        await self.send(text_data=json.dumps(event))
 
 class WebRTCConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -263,34 +266,35 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
         type = text_data_json['type']
         repos = RoomListRepository()
         now_participants = repos.getNowParticipants(self.room_name)
-        if type == "create or join":
-            now_participants = await self.addParticipantFromRepository(self.room_name)
-            if now_participants == 1:
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'create',
-                        'message': 'create',
-                        'number' : now_participants,
-                        'room_name' : self.room_name,
-                    }
-                )
-            else:
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'join',
-                        'message': 'join',
-                        'number' : now_participants,
-                        'room_name' : self.room_name,
-                    }
-                )
+        if type == "join":
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'join',
+                    'message': 'join',
+                    'number' : now_participants,
+                    'room_name' : self.room_name,
+                    'user_name': text_data_json['user_name']
+                }
+            )
+        elif type == "hello":
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'hello',
+                    'message': 'hello',
+                    'to': text_data_json['to'],
+                    'from': text_data_json['from']
+                }
+            )
         elif type == "message":
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'message',
-                    'message': text_data_json['message']
+                    'message': text_data_json['message'],
+                    'to': text_data_json['to'],
+                    'from': text_data_json['from']
                 }
             )
         elif type == "bye":
@@ -299,11 +303,15 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'bye', 
-                    'number': now_participants
+                    'to': text_data_json['to'],
+                    'from': text_data_json['from']
                 }
             )
     
     async def join(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def hello(self, event):
         await self.send(text_data=json.dumps(event))
     
     async def create(self, event):
