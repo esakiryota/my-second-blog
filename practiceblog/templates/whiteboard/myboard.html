@@ -103,7 +103,7 @@
                 // these HTTP methods do not require CSRF protection
                 return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
             }
-            const roomName = JSON.parse(document.getElementById('room-name').textContent);
+            const roomName = Math.random().toString(36).substr(2)
 
             var ws_or_wss;
             if (location.protocol == 'http:') {
@@ -191,6 +191,259 @@
             roomSocket.onclose = function (e) {
                 console.error('socket closed unexpectedly');
             };
+
+            var user_name = Math.random().toString(36).substr(2)
+            var pc_list = {};
+            var dataChannel;
+
+
+            const videoRoomSocket = new WebSocket(
+                ws_or_wss
+                + window.location.host
+                + '/ws/webrtc/'
+                + 'myboard'
+                + '/'
+            );
+
+            videoRoomSocket.onclose = function (e) {
+                console.error('video room socket closed unexpectedly');
+            };
+
+            videoRoomSocket.onopen = function (e) {
+                console.log('video room socket opened successfully')
+                videoRoomSocket.send(JSON.stringify({
+                    "type": "join",
+                    "user_name": user_name
+                }));
+            }
+
+            videoRoomSocket.onmessage = function (e) {
+             const data = JSON.parse(e.data);
+             if (data.type === 'bye') {
+                 if (data.from !== user_name) {
+                     stop(data.from);
+                 }
+                 return;
+             }
+             if (data.message == "join") {
+                 console.log("user_name: ", data.user_name);
+                 if (data.user_name !== user_name) {
+                     videoRoomSocket.send(JSON.stringify({
+                         "type": "hello",
+                         "to": data.user_name,
+                         "from": user_name
+                     }));
+                     return;
+                 }
+                 return
+             }
+             if (data.message == "hello") {
+                 if (data.to == user_name) {
+                     createPeerConnection(data.from);
+                     doCall(data.from, data.to, pc_list[data.from]);
+                     console.log("start from: ", user_name);
+                 } else {
+                     if (data.from == user_name) {
+                         createPeerConnection(data.to);
+                         recieveDataChannel(pc_list[data.to])
+                         console.log("recieve: ", user_name);
+                     }
+                 }
+                 return
+             }
+             
+             if (data.message.type === 'offer') {
+                 console.log("offer data: ", data);
+                 if (data.to == user_name) {
+                     console.log('remote description', data.message);
+                     pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
+                     doAnswer(data.from, data.to, pc_list[data.from]);
+                 }
+             } else if (data.message.type === 'answer') {
+                 if (data.to == user_name) {
+                     console.log("recieved answer");
+                     pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
+                 }
+             } else if (data.message.type === 'candidate') {
+                 if (data.to === user_name || data.from === user_name) {
+                     var name = data.to === user_name ? data.from : data.to;
+                     if (pc_list[name] !== data.message.target) {
+                         console.log("candidate", data.message.candidate);
+                         var candidate = new RTCIceCandidate({
+                             sdpMLineIndex: data.message.label,
+                             candidate: data.message.candidate
+                         });
+                         pc.addIceCandidate(candidate);
+                     }
+                 }
+             }
+         };
+
+         function recieveDataChannel(pc) {
+             pc.ondatachannel = function (event) {
+                 console.log('ondatachannel:', event.channel);
+                 dataChannel = event.channel;
+                 onDataChannelCreated(dataChannel);
+             };
+         }
+
+         function createPeerConnection(name) {
+             try {
+                 pc = new RTCPeerConnection(null);
+
+                 pc.addEventListener('isolationchange', function (event) {
+                     console.log(event);
+                 })
+                 pc.addEventListener('icecandidate', function (event) {
+                     console.log('icecandidate event: ', event);
+                     if (event.candidate) {
+                         sendMessage({
+                             type: 'candidate',
+                             label: event.candidate.sdpMLineIndex,
+                             id: event.candidate.sdpMid,
+                             candidate: event.candidate.candidate,
+                             target: event.target,
+                         },
+                             name,
+                             user_name
+                         );
+                     } else {
+                         console.log('End of candidates.');
+                     }
+                 })
+                 pc.addEventListener('iceconnectionstatechange', () => {
+                     pc.iceConnectionState;
+                     if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
+                         console.log(`${name} connection: `, pc.iceConnectionState);
+                         stop(name);
+                     }
+                     console.log(`${name} connection: `, pc.iceConnectionState);
+                 });
+                 console.log('signalingstate: ', pc.signalingState);
+                 pc.addEventListener('signalingstatechange', () => {
+                     console.log('signalingstate: ', pc.signalingState);
+                     signalingState = pc.signalingState;
+                 });
+                 pc_list[name] = pc;
+                 console.log('Created RTCPeerConnnection');
+             } catch (e) {
+                 console.log('Failed to create PeerConnection, exception: ' + e.message);
+                 alert('Cannot create RTCPeerConnection object.');
+                 return;
+             }
+         }
+
+         function doCall(to, from, pc) {
+             console.log('Sending offer to peer');
+             dataChannel = pc.createDataChannel('test');
+             console.log("create dataChannel");
+             onDataChannelCreated(dataChannel);
+             pc.createOffer().then(function (sessionDescription) {
+                 pc.setLocalDescription(sessionDescription);
+                 sendMessage(sessionDescription, to, from);
+                 return;
+             });
+         }
+
+         function onDataChannelCreated(channel) {
+             console.log('onDataChannelCreated:', channel);
+
+             channel.onopen = function () {
+                 console.log('CHANNEL opened!!!');
+             };
+
+             channel.onclose = function () {
+                 console.log('Channel closed.');
+             }
+
+             channel.onmessage = function(e) {
+                 console.log('recieve message');
+                 const data = JSON.parse(e.data);
+                 console.log("data: ", data);
+                var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                switch (data.type) {
+                    case "draw":
+                        svgElm.append(pathElm);
+                        svgElm.find("path:last").attr({
+                            "id": data.id,
+                            "d": "", //pathデータ//塗りつぶし
+                            "fill": "none",
+                            "stroke": data.stroke, //線の色
+                            "stroke-width": "3", //線の太さ
+                            "stroke-linecap": "round" //線の端を丸める
+                        });
+                        break;
+                    case "drawing":
+                        svgElm.find("path:last").attr("d", data.d);
+                        break;
+                    case "delete":
+                        var target = document.getElementById(data.id);
+                        console.log(target);
+                        target.remove();
+                        break;
+                    case "moveContent":
+                        var target = document.getElementById(data.id);
+                        var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                        if (!target.hasAttribute("transform")) {
+                            target.transform.baseVal.appendItem(transform);
+                        }
+
+                            // var Matrix = target.transform.matrix;
+                        var Matrix = target.transform.baseVal[0].matrix;
+                        Matrix.e += data.dx;
+                        Matrix.f += data.dy;
+                        break;
+                    case "image":
+                        createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
+                        break;
+                    case "textBox":
+                        createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
+                        break;
+                    case "writing":
+                        document.getElementById(data.id).textContent = data.text;
+                        break;
+                    case "resize":
+                        document.getElementById(data.id).width.baseVal.value += data.w;
+                        document.getElementById(data.id).height.baseVal.value += data.h;
+                        break;
+                    case "shareData":
+                        drawingData = data.data;
+                        console.log("share");
+                        break;
+                    default:
+                        console.log("no data");
+                        break;
+                }
+             }
+         }
+
+         function doAnswer(to, from, pc) {
+             console.log('Sending answer to peer.');
+             pc.createAnswer().then(function (sessionDescription) {
+                 pc.setLocalDescription(sessionDescription);
+                 sendMessage(sessionDescription, to, from);
+                 return;
+             });
+         }
+
+         function sendMessage(message, to, from) {
+             console.log('Client sending message: ', message);
+             var content = {
+                 "type": "message",
+                 "message": message,
+                 "to": to,
+                 "from": from,
+             }
+             videoRoomSocket.send(JSON.stringify(content));
+         }
+
+         function stop(name) {
+             console.log(`Connection with ${name} was over`);
+             pc_list[name].close();
+             delete pc_list[name];
+         }
+
+
 
             function ajax(data, url, type, doneFunc) {
                 var csrf_token = getCookie("csrftoken");
@@ -447,7 +700,8 @@
                             "dx": x_length,
                             "dy": y_length
                         }
-                        roomSocket.send(JSON.stringify(sendData));
+                        // roomSocket.send(JSON.stringify(sendData));
+                        dataChannel.send(JSON.stringify(sendData));
                         for (var i = 0; i < rects.length; i++) {
                             rects[i].transform.baseVal[0].matrix.e += x_length
                             rects[i].transform.baseVal[0].matrix.f += y_length
@@ -478,7 +732,8 @@
                             "w": w,
                             "h": h
                         }
-                        roomSocket.send(JSON.stringify(resizeData));
+                        // roomSocket.send(JSON.stringify(resizeData));
+                        dataChannel.send(JSON.stringify(resizeData));
                         elm_rect.width.baseVal.value += w;
                         elm_rect.height.baseVal.value += h;
                         mini_rect.x.baseVal.value += w;
@@ -513,7 +768,8 @@
                                     "type" : "delete",
                                     "id" : target_id
                             }
-                            roomSocket.send(JSON.stringify(sendData));
+                            // roomSocket.send(JSON.stringify(sendData));
+                            dataChannel.send(JSON.stringify(sendData));
                             delete drawingData[target_id];
                             }
                         });
@@ -553,7 +809,8 @@
                 sendTextBoxData.type = "textBox"
                 drawingData[id] = sendTextBoxData;
                 saveBoardData();
-                roomSocket.send(JSON.stringify(sendTextBoxData));
+                // roomSocket.send(JSON.stringify(sendTextBoxData));
+                dataChannel.send(JSON.stringify(sendTextBoxData))
 
                 input.addEventListener("keyup", function () {
                     if (curText !== this.value) {
@@ -563,7 +820,8 @@
                             "id": id,
                             "text": input.value
                         }
-                        roomSocket.send(JSON.stringify(sendTextData));
+                        // roomSocket.send(JSON.stringify(sendTextData));
+                        dataChannel.send(JSON.stringify(sendTextData));
                         curText = input.value;
                         saveBoardData();
                     }
@@ -610,7 +868,9 @@
                     "y": 0
                 }
 
-                roomSocket.send(JSON.stringify(browserDrawData));
+                // roomSocket.send(JSON.stringify(browserDrawData));
+                dataChannel.send(JSON.stringify(browserDrawData));
+
 
                 var linetoX = [], //描画点の横座標の初期化
                     linetoY = [], //描画点の縦座標の初期化
@@ -630,7 +890,8 @@
                         "d": linetoStr
                     }
 
-                    roomSocket.send(JSON.stringify(browserDrawingData));
+                    // roomSocket.send(JSON.stringify(browserDrawingData));
+                    dataChannel.send(JSON.stringify(browserDrawingData));
                     cntMoveto++; //カウンターをセット
                 });
             }
@@ -659,7 +920,8 @@
                     "type" : "shareData",
                     "data" : drawingData
                 };
-                roomSocket.send(JSON.stringify(boardDataToShare));
+                // roomSocket.send(JSON.stringify(boardDataToShare));
+                dataChannel.send(JSON.stringify(browserDrawingData));
             }
 
             function imageUpload() {
@@ -739,7 +1001,8 @@
                             saveImageData.cy = y;
                             drawingData[id] = saveImageData;
                             saveBoardData();
-                            roomSocket.send(JSON.stringify(saveImageData));
+                            // roomSocket.send(JSON.stringify(saveImageData));
+                            dataChannel.send(JSON.stringify(saveImageData));
                         }
                         image.src = reader.result;
                     }
@@ -830,67 +1093,66 @@
 
 
 
-            roomSocket.onmessage = function (e) {
-                const data = JSON.parse(e.data);
-                var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                switch (data.type) {
-                    case "draw":
-                        svgElm.append(pathElm);
-                        svgElm.find("path:last").attr({
-                            "id": data.id,
-                            "d": "", //pathデータ//塗りつぶし
-                            "fill": "none",
-                            "stroke": data.stroke, //線の色
-                            "stroke-width": "3", //線の太さ
-                            "stroke-linecap": "round" //線の端を丸める
-                        });
-                        break;
-                    case "drawing":
-                        svgElm.find("path:last").attr("d", data.d);
-                        break;
-                    case "delete":
-                        var target = document.getElementById(data.id);
-                        console.log(target);
-                        target.remove();
-                        break;
-                    case "moveContent":
-                        var target = document.getElementById(data.id);
-                        var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
-                        if (!target.hasAttribute("transform")) {
-                            target.transform.baseVal.appendItem(transform);
-                        }
+            // roomSocket.onmessage = function (e) {
+            //     const data = JSON.parse(e.data);
+            //     var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            //     switch (data.type) {
+            //         case "draw":
+            //             svgElm.append(pathElm);
+            //             svgElm.find("path:last").attr({
+            //                 "id": data.id,
+            //                 "d": "", //pathデータ//塗りつぶし
+            //                 "fill": "none",
+            //                 "stroke": data.stroke, //線の色
+            //                 "stroke-width": "3", //線の太さ
+            //                 "stroke-linecap": "round" //線の端を丸める
+            //             });
+            //             break;
+            //         case "drawing":
+            //             svgElm.find("path:last").attr("d", data.d);
+            //             break;
+            //         case "delete":
+            //             var target = document.getElementById(data.id);
+            //             console.log(target);
+            //             target.remove();
+            //             break;
+            //         case "moveContent":
+            //             var target = document.getElementById(data.id);
+            //             var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+            //             if (!target.hasAttribute("transform")) {
+            //                 target.transform.baseVal.appendItem(transform);
+            //             }
 
-                            // var Matrix = target.transform.matrix;
-                        var Matrix = target.transform.baseVal[0].matrix;
-                        Matrix.e += data.dx;
-                        Matrix.f += data.dy;
-                        break;
-                    case "image":
-                        createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
-                        break;
-                    case "textBox":
-                        createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
-                        break;
-                    case "writing":
-                        document.getElementById(data.id).textContent = data.text;
-                        break;
-                    case "resize":
-                        document.getElementById(data.id).width.baseVal.value += data.w;
-                        document.getElementById(data.id).height.baseVal.value += data.h;
-                        break;
-                    case "shareData":
-                        drawingData = data.data;
-                        console.log("share");
-                        break;
-                    default:
-                        console.log("no data");
-                        break;
-                }
-            };
+            //                 // var Matrix = target.transform.matrix;
+            //             var Matrix = target.transform.baseVal[0].matrix;
+            //             Matrix.e += data.dx;
+            //             Matrix.f += data.dy;
+            //             break;
+            //         case "image":
+            //             createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
+            //             break;
+            //         case "textBox":
+            //             createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
+            //             break;
+            //         case "writing":
+            //             document.getElementById(data.id).textContent = data.text;
+            //             break;
+            //         case "resize":
+            //             document.getElementById(data.id).width.baseVal.value += data.w;
+            //             document.getElementById(data.id).height.baseVal.value += data.h;
+            //             break;
+            //         case "shareData":
+            //             drawingData = data.data;
+            //             console.log("share");
+            //             break;
+            //         default:
+            //             console.log("no data");
+            //             break;
+            //     }
+            // };
 
         });
     </script>
-    <script src="{% static 'js/webrtc.js' %}"></script> 
 </body>
 
 </html>

@@ -131,6 +131,9 @@ def connectOn(request, pk):
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
 
+def myboard(request):
+    return render(request, 'whiteboard/myboard.html')
+
 def rooms(request):
     data = RoomList.objects.order_by('created_date').reverse()
     return render(request, 'whiteboard/rooms.html',{

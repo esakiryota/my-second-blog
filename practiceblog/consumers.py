@@ -264,15 +264,12 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         type = text_data_json['type']
-        repos = RoomListRepository()
-        now_participants = repos.getNowParticipants(self.room_name)
         if type == "join":
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'join',
                     'message': 'join',
-                    'number' : now_participants,
                     'room_name' : self.room_name,
                     'user_name': text_data_json['user_name']
                 }
@@ -298,7 +295,6 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
                 }
             )
         elif type == "bye":
-            now_participants = await self.removeParticipantFromRepository(self.room_name)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
