@@ -49,6 +49,9 @@ def json_serial(obj):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
 
+def wvp(request):
+    return render(request, 'whiteboard/PtoP_vs_WS.html')
+
 def search_alg(arg):
     searchArg = {}
     for k, v in arg.items():

@@ -264,15 +264,12 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         type = text_data_json['type']
-        repos = RoomListRepository()
-        now_participants = repos.getNowParticipants(self.room_name)
         if type == "join":
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'join',
                     'message': 'join',
-                    'number' : now_participants,
                     'room_name' : self.room_name,
                     'user_name': text_data_json['user_name']
                 }
@@ -307,6 +304,21 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
                     'from': text_data_json['from']
                 }
             )
+        elif type == "image":
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'image',
+                    "id": text_data_json["id"],
+                    "href": text_data_json["href"],
+                    "cx": text_data_json["cx"],
+                    "cy": text_data_json["cy"],
+                    "x": text_data_json["x"],
+                    "y": text_data_json["y"],
+                    "width": text_data_json["width"],
+                    "height": text_data_json["height"],
+                }
+            )
     
     async def join(self, event):
         await self.send(text_data=json.dumps(event))
@@ -321,6 +333,9 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def bye(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def image(self, event):
         await self.send(text_data=json.dumps(event))
     
     @database_sync_to_async
