@@ -1,0 +1,382 @@
+{% load static %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>ホワイトボード</title>
+    <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+    <!--Import jQuery Library-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!--Import materialize.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
+    <style>
+    </style>
+</head>
+<body>
+    <div>通信速度テスト</div>
+    <input type="text" name="text" id="text">
+    <button id="btn">送信</button>
+    <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="画像"
+            id="image_catch"><i class="material-icons">photo</i></a>
+        <input type="file" style="display: none;" accept="image/*" id="file-select-input">
+</body>
+<script>
+     $(function () {
+         var textBox = document.getElementById("text");
+         var btn = document.getElementById("btn");
+         var ws_or_wss;
+         var roomName = "test";
+         if (location.protocol == 'http:') {
+             ws_or_wss = 'ws://'
+         } else if (location.protocol == 'https:') {
+             ws_or_wss = 'wss://'
+         }
+
+         var ws_starttime = 0;
+         var ws_endtime = 0;
+
+         var roomSocket = new WebSocket(
+             ws_or_wss
+             + window.location.host
+             + '/ws/rooms/'
+             + roomName
+             + '/'
+         );
+
+         var ws_or_wss;
+         if (location.protocol == 'http:') {
+             ws_or_wss = 'ws://'
+         } else if (location.protocol == 'https:') {
+             ws_or_wss = 'wss://'
+         }
+
+         var videoRoomName = "test";
+
+         const videoRoomSocket = new WebSocket(
+             ws_or_wss
+             + window.location.host
+             + '/ws/webrtc/'
+             + videoRoomName
+             + '/'
+         );
+
+        roomSocket.onclose = function (e) {
+            console.error('room socket closed unexpectedly');
+        };
+
+        roomSocket.onopen = function (e) {
+            console.log('room socket opened successfully')
+        };
+
+        videoRoomSocket.onclose = function (e) {
+            console.error('video room socket closed unexpectedly');
+        };
+
+        videoRoomSocket.onopen = function (e) {
+            console.log('video room socket opened successfully')
+        };
+
+        roomSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            if (data.type == "message") {
+                console.log("value", data.message);
+                ws_endtime = new Date();
+                var ws_speed = ws_starttime - ws_endtime;
+                console.log("WS 通信速度: ", ws_speed);
+            } else if (data.type == "image") {
+                console.log("value", data.message);
+                ws_endtime = new Date();
+                var ws_speed = ws_starttime - ws_endtime;
+                console.log("WS 通信速度: ", ws_speed);
+                createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
+            }
+        }
+
+        function createImage(cx, cy, x, y,  w, h, href, id) {
+                var image_elm = document.createElement("image");
+                image_elm.setAttribute("href", href);
+                image_elm.setAttribute("id", id);
+                image_elm.setAttribute("width", w);
+                image_elm.setAttribute("height", h);
+                image_elm.setAttribute("x", cx);
+                image_elm.setAttribute("y", cy);
+                document.querySelector("body").appendChild(image_elm);
+            }
+
+
+        var remoteStream;
+        var localStream;
+        var isInitiator = false;
+        var user_name = Math.random().toString(36).substr(2)
+        var pc_list = {};
+        var dataChannel;
+        var ptop_starttime;
+        var ptop_endtime;
+
+
+        videoRoomSocket.onopen = function (e) {
+             videoRoomSocket.send(JSON.stringify({
+                 "type": "join",
+                 "user_name": user_name
+             }));
+         }
+
+         window.onbeforeunload = function (event) {
+             videoRoomSocket.send(JSON.stringify({
+                 "type": "bye",
+                 "from": user_name,
+                 "to": "all"
+             }));
+         }
+
+         videoRoomSocket.onmessage = function (e) {
+             const data = JSON.parse(e.data);
+             if (data.type === 'bye') {
+                 if (data.from !== user_name) {
+                     stop(data.from);
+                 }
+                 return;
+             }
+             if (data.message == "join") {
+                 console.log("user_name: ", data.user_name);
+                 if (data.user_name !== user_name) {
+                     videoRoomSocket.send(JSON.stringify({
+                         "type": "hello",
+                         "to": data.user_name,
+                         "from": user_name
+                     }));
+                     return;
+                 }
+                 return
+             }
+             if (data.message == "hello") {
+                 if (data.to == user_name) {
+                     createPeerConnection(data.from);
+                     doCall(data.from, data.to, pc_list[data.from]);
+                     console.log("start from: ", user_name);
+                 } else {
+                     if (data.from == user_name) {
+                         createPeerConnection(data.to);
+                         recieveDataChannel(pc_list[data.to])
+                         console.log("recieve: ", user_name);
+                     }
+                 }
+                 return
+             }
+             
+             if (data.message.type === 'offer') {
+                 console.log("offer data: ", data);
+                 if (data.to == user_name) {
+                     console.log('remote description', data.message);
+                     pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
+                     doAnswer(data.from, data.to, pc_list[data.from]);
+                 }
+             } else if (data.message.type === 'answer') {
+                 if (data.to == user_name) {
+                     console.log("recieved answer");
+                     pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
+                 }
+             } else if (data.message.type === 'candidate') {
+                 if (data.to === user_name || data.from === user_name) {
+                     var name = data.to === user_name ? data.from : data.to;
+                     if (pc_list[name] !== data.message.target) {
+                         console.log("candidate", data.message.candidate);
+                         var candidate = new RTCIceCandidate({
+                             sdpMLineIndex: data.message.label,
+                             candidate: data.message.candidate
+                         });
+                         pc.addIceCandidate(candidate);
+                     }
+                 }
+             }
+         };
+
+
+         function recieveDataChannel(pc) {
+             pc.ondatachannel = function (event) {
+                 console.log('ondatachannel:', event.channel);
+                 dataChannel = event.channel;
+                 onDataChannelCreated(dataChannel);
+             };
+         }
+
+
+         function createPeerConnection(name) {
+             try {
+                 pc = new RTCPeerConnection(null);
+                //  pc.addEventListener('addstream', function (event) {
+                //      handleRemoteStreamAdded(event, name);
+                //  })
+
+                 pc.addEventListener('isolationchange', function (event) {
+                     console.log(event);
+                 })
+                 pc.addEventListener('icecandidate', function (event) {
+                     console.log('icecandidate event: ', event);
+                     if (event.candidate) {
+                         sendMessage({
+                             type: 'candidate',
+                             label: event.candidate.sdpMLineIndex,
+                             id: event.candidate.sdpMid,
+                             candidate: event.candidate.candidate,
+                             target: event.target,
+                         },
+                             name,
+                             user_name
+                         );
+                     } else {
+                         console.log('End of candidates.');
+                     }
+                 })
+                 // pc.onicecandidate = handleIceCandidate;
+                 // rpc.onremovestream = handleRemoteStreamRemoved;
+                 pc.addEventListener('iceconnectionstatechange', () => {
+                     pc.iceConnectionState;
+                     if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
+                         console.log(`${name} connection: `, pc.iceConnectionState);
+                         stop(name);
+                     }
+                     console.log(`${name} connection: `, pc.iceConnectionState);
+                 });
+                 console.log('signalingstate: ', pc.signalingState);
+                 pc.addEventListener('signalingstatechange', () => {
+                     console.log('signalingstate: ', pc.signalingState);
+                     signalingState = pc.signalingState;
+                 });
+                 pc_list[name] = pc;
+                 console.log('Created RTCPeerConnnection');
+             } catch (e) {
+                 console.log('Failed to create PeerConnection, exception: ' + e.message);
+                 alert('Cannot create RTCPeerConnection object.');
+                 return;
+             }
+         }
+
+         function doCall(to, from, pc) {
+             console.log('Sending offer to peer');
+             dataChannel = pc.createDataChannel('test');
+             console.log("create dataChannel");
+             onDataChannelCreated(dataChannel);
+             pc.createOffer().then(function (sessionDescription) {
+                 pc.setLocalDescription(sessionDescription);
+                 sendMessage(sessionDescription, to, from);
+                 return;
+             });
+         }
+
+         function onDataChannelCreated(channel) {
+             console.log('onDataChannelCreated:', channel);
+
+             channel.onopen = function () {
+                 console.log('CHANNEL opened!!!');
+             };
+
+             channel.onclose = function () {
+                 console.log('Channel closed.');
+             }
+
+             channel.onmessage = function(e) {
+                 var data = JSON.parse(e.data);
+                 console.log("recieve message: ", JSON.parse(e.data));
+                 ptop_starttime = data.ptop_starttime;
+                 console.log("ptop_starttime: ", ptop_starttime);
+                 ptop_endtime = new Date();
+                 console.log("ptop_endtime: ", ptop_endtime.getTime());
+                 var ptop_speed = ptop_starttime - ptop_endtime;
+                 console.log("PtoP 通信速度: ", ptop_speed);
+                 if (data.type == "image") {
+                     console.log("create");
+                    createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
+                 }
+             }
+         }
+
+         function doAnswer(to, from, pc) {
+             console.log('Sending answer to peer.');
+             pc.createAnswer().then(function (sessionDescription) {
+                 pc.setLocalDescription(sessionDescription);
+                 sendMessage(sessionDescription, to, from);
+                 return;
+             });
+         }
+
+         function sendMessage(message, to, from) {
+             console.log('Client sending message: ', message);
+             var content = {
+                 "type": "message",
+                 "message": message,
+                 "to": to,
+                 "from": from,
+             }
+             videoRoomSocket.send(JSON.stringify(content));
+         }
+
+         function stop(name) {
+             console.log(`Connection with ${name} was over`);
+             pc_list[name].close();
+             delete pc_list[name];
+         }
+
+         btn.addEventListener('click', function(e) {
+            var val = textBox.value;
+            ws_starttime = new Date();
+            ptop_starttime = new Date();
+            roomSocket.send(JSON.stringify({"type": "message", "message": val}));
+            dataChannel.send(JSON.stringify({"value": val, "ptop_starttime": ptop_starttime.getTime()}));
+        })
+
+        function imageUpload() {
+             document.getElementById("image_catch").addEventListener('click', () => {
+                 document.getElementById('file-select-input').click();
+             })
+
+             document.getElementById('file-select-input').addEventListener('change', (event) => {
+                 const files = event.target.files;
+                 if (files.length > 0) {
+                     previewAndInsert(files, 200, 200);
+                 }
+                 event.target.files = null;
+                 event.target.value = null;
+             });
+
+
+             const previewAndInsert = (files, x, y) => {
+                 var id = ""
+                 const reader = new FileReader();
+                 reader.onload = (event) => {
+                     const image = new Image();
+                     var saveImageData = {};
+                     image.onload = function () {
+                         id = Math.random().toString(32).substring(2);
+                         var href = reader.result;
+                         saveImageData.href = href;
+                         saveImageData.id = id;
+                         saveImageData.type = "image";
+                         saveImageData.x = 0;
+                        saveImageData.y = 0;
+                        saveImageData.width = x;
+                        saveImageData.height = y;
+                        saveImageData.cx = x;
+                        saveImageData.cy = y;
+                        roomSocket.send(JSON.stringify(saveImageData));
+                        ptop_starttime = new Date();
+                        ws_starttime = new Date();
+                        saveImageData.ptop_starttime = ptop_starttime.getTime();
+                        dataChannel.send(JSON.stringify(saveImageData));
+                     }
+                     image.src = reader.result;
+                 }
+                 reader.readAsDataURL(files[0]);
+             }
+         }
+         imageUpload()
+     })
+</script>
+</html>
