@@ -422,7 +422,6 @@
                  console.log('Created RTCPeerConnnection');
              } catch (e) {
                  console.log('Failed to create PeerConnection, exception: ' + e.message);
-                 alert('Cannot create RTCPeerConnection object.');
                  logOnView(`接続できません。: ${e.message}`, 10000, "red")
                  return;
              }
