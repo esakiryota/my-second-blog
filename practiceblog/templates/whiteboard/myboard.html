@@ -30,7 +30,13 @@
 
 <body>
     <div id="videos" style="position: fixed; left: 100px; top:20px;">
-        <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
+            <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
+            <div style="position: absolute; top: 120px; left: 120px;">
+            <a class='tooltipped' href='#' data-position="bottom" data-delay="50" data-tooltip="audio"
+            id="mic" style="color: white"><i class="material-icons">mic</i></a>
+            <a class='tooltipped' href='#' data-position="bottom" data-delay="50" data-tooltip="video"
+            id="switch_video" style="color: white"><i class="material-icons">videocam</i></a>
+            </div>
     </div>
     <figure id="board">
         <svg id="drawingCanvas" width="958" height="2000"></svg>
@@ -56,10 +62,6 @@
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="画像"
             id="image_catch"><i class="material-icons">photo</i></a>
         <input type="file" style="display: none;" accept="image/*" id="file-select-input">
-        <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="ボタン"
-            id="switch_video"><i class="material-icons">switch_video</i></a>
-        <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="ボタン"
-            id="mic"><i class="material-icons">mic</i></a>
         <!-- <a class="btn" onclick="Materialize.toast('I am a toast', 4000)">Toast!</a> -->
     <ul id='dropdown1' class='dropdown-content' style="width: 100px;">
         <li class="color" id="#000000"><a href="#!">
@@ -261,9 +263,11 @@
                         if (mediaStream[i].kind === "video") {
                             if (mediaStream[i].enabled) {
                                 mediaStream[i].enabled = false;
+                                btn.innerHTML= `<i class="material-icons">videocam_off</i>`
                                 console.log(mediaStream);
                             } else {
                                 mediaStream[i].enabled = true;
+                                btn.innerHTML= `<i class="material-icons">videocam</i>`
                                 console.log(mediaStream);
                             }
                         }
@@ -281,9 +285,11 @@
                         if (mediaStream[i].kind === "audio") {
                             if (mediaStream[i].enabled) {
                                 mediaStream[i].enabled = false;
+                                btn.innerHTML= `<i class="material-icons">mic_off</i>`
                                 console.log(mediaStream);
                             } else {
                                 mediaStream[i].enabled = true;
+                                btn.innerHTML= `<i class="material-icons">mic</i>`
                                 console.log(mediaStream);
                             }
                         }
