@@ -71,12 +71,6 @@ videoRoomSocket.onmessage = function(e) {
     }
     return;
   }
-  if (data.message == "create") {
-    console.log("pertitipants number: ", data.number);
-    console.log("room_name: ", data.room_name);
-      isInitiator = true;
-      return
-    }
   if (data.message == "join" && !isInitiator) {
     console.log("user_name: ", data.user_name);
     if (data.user_name !== user_name) {
@@ -181,21 +175,6 @@ function createPeerConnection(name) {
     console.log('Failed to create PeerConnection, exception: ' + e.message);
     alert('Cannot create RTCPeerConnection object.');
     return;
-  }
-}
-
-function handleIceCandidate(event) {
-  console.log('icecandidate event: ', event);
-  if (event.candidate) {
-    sendMessage({
-      type: 'candidate',
-      label: event.candidate.sdpMLineIndex,
-      id: event.candidate.sdpMid,
-      candidate: event.candidate.candidate,
-      target: event.target,
-    });
-  } else {
-    console.log('End of candidates.');
   }
 }
 

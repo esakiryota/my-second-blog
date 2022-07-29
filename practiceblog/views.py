@@ -39,6 +39,7 @@ import django_filters
 from rest_framework import viewsets
 from django_filters import rest_framework as filters
 from django.utils import six 
+from .repositories.userTokenListRepository import UserTokenListRepository
 
 def logout_view(request):
     logout(request)
@@ -99,6 +100,8 @@ def profile(request, str="str", num=1):
     data_json_list_math  = json.dumps(math_list, default=json_serial)
     data_json_english  = json.dumps(english_list, default=json_serial)
     form = SolveForm(initial={"cate": cate, "title": title})
+    rps = UserTokenListRepository()
+    token = rps.getUserToken(request.user)
     params = {
     'author': author,
     'data': data,
@@ -106,6 +109,7 @@ def profile(request, str="str", num=1):
     'data_json_english': data_json_english,
     'tests': page.get_page(num),
     'form': form,
+    'token': token,
     }
     return render(request, 'practiceblog/profile.html', params)
 
@@ -131,8 +135,11 @@ def connectOn(request, pk):
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
 
-def myboard(request):
-    return render(request, 'whiteboard/myboard.html')
+def myboard(request, room_name):
+    rps = UserTokenListRepository()
+    user_token = rps.getUserToken(request.user)
+    params = {"token": room_name, "user_name": user_token}
+    return render(request, 'whiteboard/myboard.html', params)
 
 def rooms(request):
     data = RoomList.objects.order_by('created_date').reverse()

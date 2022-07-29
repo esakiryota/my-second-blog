@@ -194,3 +194,10 @@ class RoomList(models.Model):
 
     def __str__(self):
         return self.room_name
+    
+class UserTokenList(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token = models.CharField(max_length=30, null=False)
+
+    def __str__(self):
+        return self.room_name

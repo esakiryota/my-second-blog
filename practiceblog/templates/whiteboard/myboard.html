@@ -22,14 +22,15 @@
     
         video {
             max-width: 100%;
-            width: 320px;
+            width: 200px;
+            border-radius: 8px;
         }
     </style>
 </head>
 
 <body>
-    <div id="videos">
-        <video id="localVideo" autoplay muted playsinline></video>
+    <div id="videos" style="position: fixed; left: 100px; top:20px;">
+        <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
     </div>
     <figure id="board">
         <svg id="drawingCanvas" width="958" height="2000"></svg>
@@ -45,7 +46,7 @@
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="選択"
             id="moveContent"><i class="material-icons">pan_tool</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="削除"
-            id="eraser"><i class="material-icons">clear</i></a>
+            id="eraser"><i class="material-icons">delete</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50"
             data-tooltip="comming soon"><i class="material-icons">zoom_in</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50"
@@ -55,6 +56,11 @@
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="画像"
             id="image_catch"><i class="material-icons">photo</i></a>
         <input type="file" style="display: none;" accept="image/*" id="file-select-input">
+        <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="ボタン"
+            id="switch_video"><i class="material-icons">switch_video</i></a>
+        <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="ボタン"
+            id="mic"><i class="material-icons">mic</i></a>
+        <!-- <a class="btn" onclick="Materialize.toast('I am a toast', 4000)">Toast!</a> -->
     <ul id='dropdown1' class='dropdown-content' style="width: 100px;">
         <li class="color" id="#000000"><a href="#!">
                 <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #000000;"></div>
@@ -77,7 +83,8 @@
     <!-- <script src="{% static 'js/materialize.js' %}"></script>
     <script src="{% static 'js/select.js' %}"></script>
     <script src="{% static 'js/init.js' %}"></script>  -->
-    {{ room_name|json_script:"room-name" }}
+    {{ token|json_script:"token" }}
+    {{ user_name|json_script:"user_name"}}
     {% csrf_token %}
     <script>
         $(function () {
@@ -103,7 +110,7 @@
                 // these HTTP methods do not require CSRF protection
                 return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
             }
-            const roomName = Math.random().toString(36).substr(2)
+            const roomName = JSON.parse(document.getElementById('token').textContent);
 
             var ws_or_wss;
             if (location.protocol == 'http:') {
@@ -192,16 +199,21 @@
                 console.error('socket closed unexpectedly');
             };
 
-            var user_name = Math.random().toString(36).substr(2)
+            var user_name = JSON.parse(document.getElementById('user_name').textContent);
             var pc_list = {};
-            var dataChannel;
+            var dataChannelList = {};
+            var remoteStream;
+            var localStream;
+            var dummy_stream = new MediaStream();
+            var dummy_track = new MediaStream();
+            console.log(dummy_stream);
 
 
             const videoRoomSocket = new WebSocket(
                 ws_or_wss
                 + window.location.host
                 + '/ws/webrtc/'
-                + 'myboard'
+                + roomName
                 + '/'
             );
 
@@ -217,10 +229,75 @@
                 }));
             }
 
+            window.onbeforeunload = function (event) {
+                videoRoomSocket.send(JSON.stringify({
+                    "type": "bye",
+                    "from": user_name,
+                    "to": "all"
+                }));
+            }
+
+            navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: true
+            }).then(function(stream) {
+                gotStream(stream);
+            }).catch(function (e) {
+                    alert('getUserMedia() error: ' + e.name);
+                });
+
+            function gotStream(stream) {
+                console.log('Adding local stream.');
+
+                localStream = stream;
+                localVideo.srcObject = stream;
+            }
+
+            function switchVideo() {
+                var btn = document.getElementById("switch_video");
+                btn.addEventListener("click", function() {
+                    var mediaStream = localVideo.srcObject.getTracks();
+                    for (var i = 0; i < mediaStream.length; i++) {
+                        if (mediaStream[i].kind === "video") {
+                            if (mediaStream[i].enabled) {
+                                mediaStream[i].enabled = false;
+                                console.log(mediaStream);
+                            } else {
+                                mediaStream[i].enabled = true;
+                                console.log(mediaStream);
+                            }
+                        }
+                    }
+                } )
+            }
+
+            switchVideo()
+
+            function switchAudio() {
+                var btn = document.getElementById("mic");
+                btn.addEventListener("click", function() {
+                    var mediaStream = localVideo.srcObject.getTracks();
+                    for (var i = 0; i < mediaStream.length; i++) {
+                        if (mediaStream[i].kind === "audio") {
+                            if (mediaStream[i].enabled) {
+                                mediaStream[i].enabled = false;
+                                console.log(mediaStream);
+                            } else {
+                                mediaStream[i].enabled = true;
+                                console.log(mediaStream);
+                            }
+                        }
+                    }
+                } )
+            }
+
+            switchAudio()
+
             videoRoomSocket.onmessage = function (e) {
              const data = JSON.parse(e.data);
              if (data.type === 'bye') {
                  if (data.from !== user_name) {
+                     logOnView(`${data.from}: bye, ${user_name}`, 4000, "blue")
                      stop(data.from);
                  }
                  return;
@@ -233,6 +310,7 @@
                          "to": data.user_name,
                          "from": user_name
                      }));
+                     logOnView(`${data.user_name}が入室しました`, 4000, "blue")
                      return;
                  }
                  return
@@ -245,7 +323,7 @@
                  } else {
                      if (data.from == user_name) {
                          createPeerConnection(data.to);
-                         recieveDataChannel(pc_list[data.to])
+                         recieveDataChannel(pc_list[data.to], data.to)
                          console.log("recieve: ", user_name);
                      }
                  }
@@ -274,22 +352,29 @@
                              candidate: data.message.candidate
                          });
                          pc.addIceCandidate(candidate);
+                         logOnView(`${name}と接続しました`, 4000, "blue")
                      }
                  }
              }
          };
 
-         function recieveDataChannel(pc) {
+         function recieveDataChannel(pc, name) {
              pc.ondatachannel = function (event) {
                  console.log('ondatachannel:', event.channel);
-                 dataChannel = event.channel;
-                 onDataChannelCreated(dataChannel);
+                 dataChannelList[name] = event.channel;
+                 onDataChannelCreated(dataChannelList[name]);
              };
          }
 
          function createPeerConnection(name) {
              try {
                  pc = new RTCPeerConnection(null);
+                 pc.addEventListener('track', function (event) {
+                     console.log(event.streams);
+                    //  if (event.track.kind === "video") {
+                        handleRemoteStreamAdded(event.streams[0], name);
+                    //  }
+                 })
 
                  pc.addEventListener('isolationchange', function (event) {
                      console.log(event);
@@ -315,6 +400,7 @@
                      pc.iceConnectionState;
                      if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
                          console.log(`${name} connection: `, pc.iceConnectionState);
+                         logOnView(`${name} との接続が切れました`, 4000, "orange")
                          stop(name);
                      }
                      console.log(`${name} connection: `, pc.iceConnectionState);
@@ -325,19 +411,22 @@
                      signalingState = pc.signalingState;
                  });
                  pc_list[name] = pc;
+                 var video_track = localStream.getVideoTracks()[0];
+                 pc.addTrack(video_track, localStream);
                  console.log('Created RTCPeerConnnection');
              } catch (e) {
                  console.log('Failed to create PeerConnection, exception: ' + e.message);
                  alert('Cannot create RTCPeerConnection object.');
+                 logOnView(`接続できません。: ${e.message}`, 10000, "red")
                  return;
              }
          }
 
          function doCall(to, from, pc) {
              console.log('Sending offer to peer');
-             dataChannel = pc.createDataChannel('test');
+             dataChannelList[to] = pc.createDataChannel('test');
              console.log("create dataChannel");
-             onDataChannelCreated(dataChannel);
+             onDataChannelCreated(dataChannelList[to]);
              pc.createOffer().then(function (sessionDescription) {
                  pc.setLocalDescription(sessionDescription);
                  sendMessage(sessionDescription, to, from);
@@ -345,15 +434,32 @@
              });
          }
 
+         function handleRemoteStreamAdded(stream, name) {
+                console.log('Remote stream added.');
+                remoteVideo = document.createElement("video");
+                remoteVideo.autoplay = true;
+                remoteVideo.playsinline = true;
+                remoteVideo.setAttribute("id", name)
+                remoteVideo.setAttribute("class", "z-depth-5")
+                var videos = document.getElementById("videos");
+                videos.appendChild(remoteVideo);
+                remoteStream = stream;
+                remoteVideo.srcObject = remoteStream;
+            }
+
          function onDataChannelCreated(channel) {
              console.log('onDataChannelCreated:', channel);
 
              channel.onopen = function () {
                  console.log('CHANNEL opened!!!');
+                 logOnView("CHANNEL opened!!!", 4000, "blue")
+                 logOnView("ボードのデータが共有されました", 4000, "blue")
              };
 
              channel.onclose = function () {
                  console.log('Channel closed.');
+                 logOnView("Channel closed.", 4000, "red")
+                 logOnView("接続が切れました", 4000, "red")
              }
 
              channel.onmessage = function(e) {
@@ -408,7 +514,6 @@
                         break;
                     case "shareData":
                         drawingData = data.data;
-                        console.log("share");
                         break;
                     default:
                         console.log("no data");
@@ -439,6 +544,7 @@
 
          function stop(name) {
              console.log(`Connection with ${name} was over`);
+             document.getElementById(name).remove();
              pc_list[name].close();
              delete pc_list[name];
          }
@@ -701,7 +807,21 @@
                             "dy": y_length
                         }
                         // roomSocket.send(JSON.stringify(sendData));
-                        dataChannel.send(JSON.stringify(sendData));
+                        sendOnDatachannel(sendData);
+
+                        var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+                        var targetContent = document.getElementById(sendData.id);
+                        var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                        if (!targetContent.hasAttribute("transform")) {
+                            targetContent.transform.baseVal.appendItem(transform);
+                        }
+
+                            // var Matrix = targetContent.transform.matrix;
+                        var Matrix = targetContent.transform.baseVal[0].matrix;
+                        Matrix.e += sendData.dx;
+                        Matrix.f += sendData.dy;
+
                         for (var i = 0; i < rects.length; i++) {
                             rects[i].transform.baseVal[0].matrix.e += x_length
                             rects[i].transform.baseVal[0].matrix.f += y_length
@@ -733,7 +853,9 @@
                             "h": h
                         }
                         // roomSocket.send(JSON.stringify(resizeData));
-                        dataChannel.send(JSON.stringify(resizeData));
+                        sendOnDatachannel(resizeData);
+                        document.getElementById(resizeData.id).width.baseVal.value += resizeData.w;
+                        document.getElementById(resizeData.id).height.baseVal.value += resizeData.h;
                         elm_rect.width.baseVal.value += w;
                         elm_rect.height.baseVal.value += h;
                         mini_rect.x.baseVal.value += w;
@@ -769,7 +891,9 @@
                                     "id" : target_id
                             }
                             // roomSocket.send(JSON.stringify(sendData));
-                            dataChannel.send(JSON.stringify(sendData));
+                            sendOnDatachannel(sendData);
+                            var target = document.getElementById(sendData.id);
+                            target.remove();
                             delete drawingData[target_id];
                             }
                         });
@@ -810,7 +934,8 @@
                 drawingData[id] = sendTextBoxData;
                 saveBoardData();
                 // roomSocket.send(JSON.stringify(sendTextBoxData));
-                dataChannel.send(JSON.stringify(sendTextBoxData))
+                sendOnDatachannel(sendTextBoxData);
+                createTextBox(sendTextBoxData.cx, sendTextBoxData.cy, sendTextBoxData.x, sendTextBoxData.y, sendTextBoxData.id, sendTextBoxData.text);
 
                 input.addEventListener("keyup", function () {
                     if (curText !== this.value) {
@@ -821,7 +946,8 @@
                             "text": input.value
                         }
                         // roomSocket.send(JSON.stringify(sendTextData));
-                        dataChannel.send(JSON.stringify(sendTextData));
+                        sendOnDatachannel(sendTextData);
+                        document.getElementById(sendTextData.id).textContent = sendTextData.text;
                         curText = input.value;
                         saveBoardData();
                     }
@@ -869,7 +995,17 @@
                 }
 
                 // roomSocket.send(JSON.stringify(browserDrawData));
-                dataChannel.send(JSON.stringify(browserDrawData));
+                sendOnDatachannel(browserDrawData);
+                var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                svgElm.append(pathElm);
+                svgElm.find("path:last").attr({
+                    "id": browserDrawData.id,
+                    "d": "", //pathデータ//塗りつぶし
+                    "fill": "none",
+                    "stroke": browserDrawData.stroke, //線の色
+                    "stroke-width": "3", //線の太さ
+                    "stroke-linecap": "round" //線の端を丸める
+                });
 
 
                 var linetoX = [], //描画点の横座標の初期化
@@ -891,7 +1027,8 @@
                     }
 
                     // roomSocket.send(JSON.stringify(browserDrawingData));
-                    dataChannel.send(JSON.stringify(browserDrawingData));
+                    sendOnDatachannel(browserDrawingData);
+                    svgElm.find("path:last").attr("d", browserDrawingData.d);
                     cntMoveto++; //カウンターをセット
                 });
             }
@@ -921,7 +1058,8 @@
                     "data" : drawingData
                 };
                 // roomSocket.send(JSON.stringify(boardDataToShare));
-                dataChannel.send(JSON.stringify(browserDrawingData));
+                sendOnDatachannel(browserDrawingData);
+                drawingData = boardDataToShare.data;
             }
 
             function imageUpload() {
@@ -1002,7 +1140,8 @@
                             drawingData[id] = saveImageData;
                             saveBoardData();
                             // roomSocket.send(JSON.stringify(saveImageData));
-                            dataChannel.send(JSON.stringify(saveImageData));
+                            sendOnDatachannel(saveImageData);
+                            createImage(saveImageData.cx, saveImageData.cy, saveImageData.x, saveImageData.y, saveImageData.width, saveImageData.height, saveImageData.href, saveImageData.id);
                         }
                         image.src = reader.result;
                     }
@@ -1089,6 +1228,18 @@
                 elm.append(rect);
             }
 
+            function sendOnDatachannel(data) {
+                if (!isEmpty(dataChannelList)) {
+                    for (let user_name in dataChannelList) {
+                        dataChannelList[user_name].send(JSON.stringify(data));
+                    }
+                }
+            }
+
+            function isEmpty(obj) {
+                return !Object.keys(obj).length;
+            }
+
 
 
 
@@ -1150,6 +1301,10 @@
             //             break;
             //     }
             // };
+
+            function logOnView(content, time, className) {
+                Materialize.toast(content, time, className)
+            }
 
         });
     </script>
