@@ -33,7 +33,7 @@
             <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
             <div style="position: absolute; top: 120px; left: 120px;">
             <a class='tooltipped' href='#' data-position="bottom" data-delay="50" data-tooltip="audio"
-            id="mic" style="color: white"><i class="material-icons">mic</i></a>
+            id="mic" style="color: white"><i class="material-icons">mic_off</i></a>
             <a class='tooltipped' href='#' data-position="bottom" data-delay="50" data-tooltip="video"
             id="switch_video" style="color: white"><i class="material-icons">videocam</i></a>
             </div>
@@ -209,27 +209,28 @@
             var dummy_stream = new MediaStream();
             var dummy_track = new MediaStream();
             console.log(dummy_stream);
+            var videoRoomSocket;
 
+            async function startInOrder() {
+                let stream = null;
 
-            const videoRoomSocket = new WebSocket(
-                ws_or_wss
-                + window.location.host
-                + '/ws/webrtc/'
-                + roomName
-                + '/'
-            );
-
-            videoRoomSocket.onclose = function (e) {
-                console.error('video room socket closed unexpectedly');
-            };
-
-            videoRoomSocket.onopen = function (e) {
-                console.log('video room socket opened successfully')
-                videoRoomSocket.send(JSON.stringify({
-                    "type": "join",
-                    "user_name": user_name
-                }));
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+                    await gotStream(stream);
+                    videoRoomSocket = await new WebSocket(
+                        ws_or_wss
+                        + window.location.host
+                        + '/ws/webrtc/'
+                        + roomName
+                        + '/'
+                    );
+                    await startConnection();
+                    await setMessage();
+                } catch(e) {
+                    console.log('startInOrder() error: ' + e.message);
+                }
             }
+            startInOrder();
 
             window.onbeforeunload = function (event) {
                 videoRoomSocket.send(JSON.stringify({
@@ -239,20 +240,25 @@
                 }));
             }
 
-            navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: true
-            }).then(function(stream) {
-                gotStream(stream);
-            }).catch(function (e) {
-                    alert('getUserMedia() error: ' + e.name);
-                });
-
-            function gotStream(stream) {
+            async function gotStream(stream) {
                 console.log('Adding local stream.');
-
+                var audio_track = stream.getAudioTracks()[0];
+                audio_track.enabled = false;
                 localStream = stream;
                 localVideo.srcObject = stream;
+            }
+
+            async function startConnection() {
+                videoRoomSocket.onopen = async function (e) {
+                console.log('video room socket opened successfully')
+                await videoRoomSocket.send(JSON.stringify({
+                    "type": "join",
+                    "user_name": user_name
+                }))
+                videoRoomSocket.onclose = async function (e) {
+                console.error('video room socket closed unexpectedly');
+            };
+            }
             }
 
             function switchVideo() {
@@ -299,7 +305,8 @@
 
             switchAudio()
 
-            videoRoomSocket.onmessage = function (e) {
+            async function setMessage() {
+                videoRoomSocket.onmessage = function (e) {
              const data = JSON.parse(e.data);
              if (data.type === 'bye') {
                  if (data.from !== user_name) {
@@ -363,6 +370,7 @@
                  }
              }
          };
+            }
 
          function recieveDataChannel(pc, name) {
              pc.ondatachannel = function (event) {
@@ -376,10 +384,11 @@
              try {
                  pc = new RTCPeerConnection(null);
                  pc.addEventListener('track', function (event) {
-                     console.log(event.streams);
-                    //  if (event.track.kind === "video") {
+                     console.log("remote stream: ", event.streams[0].getTracks());
+                     if (event.track.kind === "video") {
+
                         handleRemoteStreamAdded(event.streams[0], name);
-                    //  }
+                     }
                  })
 
                  pc.addEventListener('isolationchange', function (event) {
@@ -418,7 +427,10 @@
                  });
                  pc_list[name] = pc;
                  var video_track = localStream.getVideoTracks()[0];
+                 var audio_track = localStream.getAudioTracks()[0];
+                 console.log("local stream: ", localStream.getTracks());
                  pc.addTrack(video_track, localStream);
+                 pc.addTrack(audio_track, localStream);
                  console.log('Created RTCPeerConnnection');
              } catch (e) {
                  console.log('Failed to create PeerConnection, exception: ' + e.message);
@@ -441,9 +453,11 @@
 
          function handleRemoteStreamAdded(stream, name) {
                 console.log('Remote stream added.');
+                console.log('stream: ', stream.getTracks());
                 remoteVideo = document.createElement("video");
                 remoteVideo.autoplay = true;
                 remoteVideo.playsinline = true;
+                remoteVideo.muted = false;
                 remoteVideo.setAttribute("id", name)
                 remoteVideo.setAttribute("class", "z-depth-5")
                 var videos = document.getElementById("videos");
