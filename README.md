@@ -151,6 +151,15 @@ $ sudo chown -R <user>:<group> my-second-blog/
 ・consumer.pyを編集した際には、一度daphneを停止して、もう一度起動する。
 https://study.myjobroom.com/
 
+## deploy後のファイル更新
+```
+$ sudo supervisorctl reread
+$ sudo supervisorctl update
+$ sudo service nginx reload
+$ sudo supervisorctl reload
+```
+
+
 
 
 
