@@ -200,4 +200,4 @@ class UserTokenList(models.Model):
     token = models.CharField(max_length=30, null=False)
 
     def __str__(self):
-        return self.room_name
+        return self.token

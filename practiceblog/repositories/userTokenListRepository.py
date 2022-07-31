@@ -22,5 +22,9 @@ class UserTokenListRepository :
             user_token = ob.get()
             token = user_token.token
         return token
+    
+    def getTokenList(self, author):
+        ob = UserTokenList.objects.exclude(author=author)
+        return ob
 
 

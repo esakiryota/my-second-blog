@@ -131,6 +131,15 @@ def connectOn(request, pk):
     images.save()
     return redirect('profile')
 
+def boardList(request,  num=1):
+    user = request.user
+    rps = UserTokenListRepository()
+    token_list = rps.getTokenList(user)
+    print(token_list)
+    # page = Paginator(token_list, 10)
+    params = {"token_list": token_list}
+    return render(request, 'practiceblog/board_list.html', params)
+
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')

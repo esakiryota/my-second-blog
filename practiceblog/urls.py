@@ -63,6 +63,8 @@ urlpatterns = [
     path('rooms/api/<str:room_name>/load',  apis.loadRoom, name='loadRoom'),
     # webrtc
     path('webrtc', views.webrtc, name='webrtc'),
+    # ホワイトボードリスト
+    path('board_list', views.boardList, name='board_list'),
 ]
 
 router = routers.DefaultRouter()
