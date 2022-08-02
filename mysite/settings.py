@@ -27,6 +27,8 @@ SECRET_KEY = 'v$i)dx-^kosepd-h@(q5!=0_skau-!x7-lw0@4dipn#r^%)*m%'
 # DEBUG = False
 DEBUG = True
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
+
 # Application definition
 
 INSTALLED_APPS = [

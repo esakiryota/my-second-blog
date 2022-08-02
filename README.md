@@ -151,6 +151,13 @@ $ sudo chown -R <user>:<group> my-second-blog/
 ・Server側の処理を編集した際には、一度daphneを停止して、もう一度起動する。
 https://study.myjobroom.com/
 
+## mergeした場合
+・remoteのbranchに強制的に合わせる
+```
+$ sudo git fetch origin ryota
+$ sudo git reset --hard origin/ryota
+```
+
 ## deploy後のファイル更新
 ```
 $ sudo supervisorctl reread

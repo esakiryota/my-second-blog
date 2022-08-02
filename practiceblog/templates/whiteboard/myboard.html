@@ -39,7 +39,7 @@
             </div>
     </div>
     <figure id="board">
-        <svg id="drawingCanvas" width="958" height="2000"></svg>
+        <svg id="drawingCanvas" width="958" height="2000" class="z-depth-5" style="position: absolute;"></svg>
     </figure>
     <p style="position: fixed; left: 10px; top: 10px; display: flex; flex-flow: column;">
         <a class='dropdown-button btn row tooltipped' data-position="right" data-delay="50" data-tooltip="色"
@@ -208,7 +208,6 @@
             var localStream;
             var dummy_stream = new MediaStream();
             var dummy_track = new MediaStream();
-            console.log(dummy_stream);
             var videoRoomSocket;
             let pc_config = {
                 "iceServers": [
@@ -275,11 +274,9 @@
                             if (mediaStream[i].enabled) {
                                 mediaStream[i].enabled = false;
                                 btn.innerHTML= `<i class="material-icons">videocam_off</i>`
-                                console.log(mediaStream);
                             } else {
                                 mediaStream[i].enabled = true;
                                 btn.innerHTML= `<i class="material-icons">videocam</i>`
-                                console.log(mediaStream);
                             }
                         }
                     }
@@ -297,11 +294,9 @@
                             if (mediaStream[i].enabled) {
                                 mediaStream[i].enabled = false;
                                 btn.innerHTML= `<i class="material-icons">mic_off</i>`
-                                console.log(mediaStream);
                             } else {
                                 mediaStream[i].enabled = true;
                                 btn.innerHTML= `<i class="material-icons">mic</i>`
-                                console.log(mediaStream);
                             }
                         }
                     }
@@ -321,7 +316,6 @@
                  return;
              }
              if (data.message == "join") {
-                 console.log("user_name: ", data.user_name);
                  if (data.user_name !== user_name) {
                      videoRoomSocket.send(JSON.stringify({
                          "type": "hello",
@@ -525,6 +519,16 @@
                         break;
                     case "image":
                         createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
+                        count = data.count;
+                        break;
+                    case "image_href":
+                        href += data.href;
+                        if (data.count === count) {
+                            var target = document.getElementById(data.id);
+                            target.setAttribute("href", href);
+                            href = "";
+                            count = 0;
+                        }
                         break;
                     case "textBox":
                         createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
@@ -538,6 +542,7 @@
                         break;
                     case "shareData":
                         drawingData = data.data;
+                        console.log("share");
                         break;
                     default:
                         console.log("no data");
@@ -850,6 +855,8 @@
                             rects[i].transform.baseVal[0].matrix.e += x_length
                             rects[i].transform.baseVal[0].matrix.f += y_length
                         }
+                        drawingData[targetContent.id].x = targetContent.transform.baseVal[0].matrix.e;
+                        drawingData[targetContent.id].y = targetContent.transform.baseVal[0].matrix.f;
                     }
                     if (target.classList.contains('catch')) {
                         var resizeData = {};
@@ -884,20 +891,15 @@
                         elm_rect.height.baseVal.value += h;
                         mini_rect.x.baseVal.value += w;
                         mini_rect.y.baseVal.value += h;
+                        drawingData[resizeData.id].width = document.getElementById(resizeData.id).width.baseVal.value;
+                        drawingData[resizeData.id].height = document.getElementById(resizeData.id).height.baseVal.value;
                     }
                 });
             }
 
             function moveContentByMouseup() {
-                if (id !== "") {
-                        drawingData[old_id].x = document.getElementById(old_id).transform.baseVal[0].matrix.e;
-                        drawingData[old_id].y = document.getElementById(old_id).transform.baseVal[0].matrix.f;
-                        if (drawingData[old_id].width) {
-                            drawingData[old_id].width = document.getElementById(old_id).width.baseVal.value;
-                            drawingData[old_id].height = document.getElementById(old_id).height.baseVal.value;
-                        }
-                        saveBoardData();
-                }
+                saveBoardData();
+                console.log("save");
                 svgElm.css('cursor', 'default');
                 $("#drawingCanvas").off(move_event);
             }
@@ -906,7 +908,6 @@
                         $("#drawingCanvas").on(move_event, function (evt) {
                             // event.preventDefault()
                             var target = document.elementFromPoint(getPageX(evt), getPageY(evt));
-                            console.log(target);
                             var target_id = target.id;
                             if (target !== document.getElementById("drawingCanvas") && target_id !== "") {
                                 var target_id = target.id;
@@ -924,7 +925,6 @@
             }
 
             function eraserByMouseup() {
-                console.log(drawingData);
                 $("#drawingCanvas").off(move_event);
                 saveBoardData();
             }
@@ -1070,6 +1070,7 @@
                         + roomName
                         + '/update'
                     const afterDrawFunc = function (response) {
+                        logOnView(response.message, 1000, "blue")
                         return response;
                     }
                     ajax(drawingData, apiUrl, "post", afterDrawFunc)
@@ -1081,10 +1082,14 @@
                     "type" : "shareData",
                     "data" : drawingData
                 };
-                // roomSocket.send(JSON.stringify(boardDataToShare));
-                sendOnDatachannel(browserDrawingData);
+                // sendOnDatachannel(boardDataToShare);
+                // shareは容量の問題があるので、socket使う
+                roomSocket.send(JSON.stringify(boardDataToShare));
                 drawingData = boardDataToShare.data;
             }
+
+            var count;
+            var href = ""
 
             function imageUpload() {
                 document.getElementById("image_catch").addEventListener('click', () => {
@@ -1130,6 +1135,9 @@
                         var saveImageData = {};
                         image.onload = function () {
                             id = Math.random().toString(32).substring(2);
+                            String.prototype.bytes = function () {
+                                return (encodeURIComponent(this).replace(/%../g, "x").length);
+                            }
                             var href = reader.result;
                             saveImageData.href = href;
                             saveImageData.id = id;
@@ -1164,8 +1172,16 @@
                             drawingData[id] = saveImageData;
                             saveBoardData();
                             // roomSocket.send(JSON.stringify(saveImageData));
-                            sendOnDatachannel(saveImageData);
+                            // sendOnDatachannel(saveImageData);
                             createImage(saveImageData.cx, saveImageData.cy, saveImageData.x, saveImageData.y, saveImageData.width, saveImageData.height, saveImageData.href, saveImageData.id);
+                            var sendImageData = saveImageData;
+                            sendImageData.href = ""
+                            var len = href.length;
+                            var count = Math.floor(len / 64000);
+                            console.log("---------");
+                            saveImageData.count = count;
+                            sendOnDatachannel(sendImageData);
+                            sendImageDataChunk(64000, href, id)
                         }
                         image.src = reader.result;
                     }
@@ -1264,67 +1280,37 @@
                 return !Object.keys(obj).length;
             }
 
+            function sendImageDataChunk(chunk, data, id) {
+                var len = data.length;
+                var count = Math.floor(len/chunk);
+                for (var i = 0; i < count + 1; i++) {
+                    var parts = data.substring(i*chunk, (i+1)*chunk);
+                    var sendData = {"type": "image_href", "href": parts, "count": i, "id": id};
+                    sendOnDatachannel(sendData);
+                    if (i === count) {
+                        var parts = data.substring(i*chunk, len);
+                        var sendData = {"type": "image_href", "href": parts, "count": i, "id": id};
+                        sendOnDatachannel(sendData);
+                    }
+                }
+            }
 
 
 
 
-            // roomSocket.onmessage = function (e) {
-            //     const data = JSON.parse(e.data);
-            //     var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            //     switch (data.type) {
-            //         case "draw":
-            //             svgElm.append(pathElm);
-            //             svgElm.find("path:last").attr({
-            //                 "id": data.id,
-            //                 "d": "", //pathデータ//塗りつぶし
-            //                 "fill": "none",
-            //                 "stroke": data.stroke, //線の色
-            //                 "stroke-width": "3", //線の太さ
-            //                 "stroke-linecap": "round" //線の端を丸める
-            //             });
-            //             break;
-            //         case "drawing":
-            //             svgElm.find("path:last").attr("d", data.d);
-            //             break;
-            //         case "delete":
-            //             var target = document.getElementById(data.id);
-            //             console.log(target);
-            //             target.remove();
-            //             break;
-            //         case "moveContent":
-            //             var target = document.getElementById(data.id);
-            //             var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
-            //             if (!target.hasAttribute("transform")) {
-            //                 target.transform.baseVal.appendItem(transform);
-            //             }
 
-            //                 // var Matrix = target.transform.matrix;
-            //             var Matrix = target.transform.baseVal[0].matrix;
-            //             Matrix.e += data.dx;
-            //             Matrix.f += data.dy;
-            //             break;
-            //         case "image":
-            //             createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
-            //             break;
-            //         case "textBox":
-            //             createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
-            //             break;
-            //         case "writing":
-            //             document.getElementById(data.id).textContent = data.text;
-            //             break;
-            //         case "resize":
-            //             document.getElementById(data.id).width.baseVal.value += data.w;
-            //             document.getElementById(data.id).height.baseVal.value += data.h;
-            //             break;
-            //         case "shareData":
-            //             drawingData = data.data;
-            //             console.log("share");
-            //             break;
-            //         default:
-            //             console.log("no data");
-            //             break;
-            //     }
-            // };
+            roomSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                switch (data.type) {
+                    case "shareData":
+                        drawingData = data.data;
+                        console.log("share");
+                        break;
+                    default:
+                        console.log("no data");
+                        break;
+                }
+            };
 
             function logOnView(content, time, className) {
                 Materialize.toast(content, time, className)

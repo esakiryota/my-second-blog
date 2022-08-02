@@ -303,6 +303,14 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
                     'from': text_data_json['from']
                 }
             )
+        elif type == "shareData":
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'shareData',
+                    "data": text_data_json["data"],
+                }
+            )
     
     async def join(self, event):
         await self.send(text_data=json.dumps(event))
@@ -317,6 +325,9 @@ class WebRTCConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def bye(self, event):
+        await self.send(text_data=json.dumps(event))
+    
+    async def shareData(self, event):
         await self.send(text_data=json.dumps(event))
     
     @database_sync_to_async
