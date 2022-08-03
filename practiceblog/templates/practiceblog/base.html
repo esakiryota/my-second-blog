@@ -22,100 +22,54 @@
   body {
     font-family: 'Myfont';
   }
+
+  @media screen and (min-width: 992px){
+    main, footer, header {
+      padding-left: 300px;
+    }
+  }
+
+  @media screen and (max-width: 992px){
+  }
+
+
         </style>
     <body>
-      <body class="brown lighten-5">
+      <body class="">
         <header>
           <div class="navbar-fixed">
            <nav>
              <div class="nav-wrapper">
-               <!-- <a href="/" class="">MyBlog</a> -->
                <a href="/" class="brand-logo">study room</a>
                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-               <ul class="right hide-on-med-and-down">
-                 {% if user.is_authenticated %}
-                 <li>こんにちは、{{user.username}}さん</li>
-                 <li><a  href="{% url 'logout' %}">ログアウト</a></li>
-                 <li><a  href="{% url 'profile' %}">プロフィール</a></li>
-                 <li><a  href="{% url 'board_list' %}">ボードリスト</a></li>
-                 {% else %}
-                 <li><a href="{% url 'post_list' %}">ログイン</a></li>
-                 <li><a href="{% url 'user_create' %}">アカウント作成</a></li>
-                 {% endif %}
-                 {% if perms.practiceblog.add_solve %}
-                 <li><a  href="{% url 'introduce_all' %}">一覧</a></li>
-                 <li><a  href="{% url 'teacher' %}">先生</a></li>
-                 {% else %}
-                 <li><a href="{% url 'student' %}">テスト</a></li>
-                 <li><a href="{% url 'result' %}">結果</a></li>
-                 <li><a  href="{% url 'introduce' %}">紹介</a></li>
-                 {% endif %}
-                 <li><a href="{% url 'explanation' %}">サイト概要</a></li>
-               </ul>
              </div>
            </nav>
          </div>
-         <ul class="sidenav collapsible" id="mobile-demo">
-           <div class="nav-wrapper">
-             <form>
-               <div class="input-field">
-                 <input id="search" type="search" required>
-                 <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-                 <i class="material-icons">close</i>
-               </div>
-             </form>
-           </div>
-           {% if user.is_authenticated %}
-           <li>こんにちは、{{user.username}}さん</li>
-           <li><a  href="{% url 'logout' %}" class="collapsible-header"><i class="material-icons">logout</i>ログアウト</a></li>
-           <li><a  href="{% url 'profile' %}" class="collapsible-header"><i class="material-icons">assignment_ind</i>プロフィール</a></li>
-           <li><a  href="{% url 'board_list' %}" class="collapsible-header"><i class="material-icons">storage</i>ボードリスト</a></li>
-           {% else %}
-           <li><a href="{% url 'login' %}" class="collapsible-header"><i class="material-icons">exit_to_app</i>ログイン</a></li>
-           <li><a href="{% url 'user_create' %}" class="collapsible-header"><i class="material-icons">add_box</i>アカウント作成</a></li>
-           {% endif %}
-           <li><a href="/rooms" class="collapsible-header"><i class="material-icons">school</i>授業</a></li>
-           <!-- <li><a  class="collapsible-header"><i class="material-icons">forum</i>質問箱</a>
-             <div class="collapsible-body">
-               <ul>
-                 <li><a href="{% url 'question_box' %}"><i class="material-icons">apps</i>公開</a></li>
-                 <li><a href="{% url 'question_box_indiv' %}"><i class="material-icons">desktop_mac</i>個人</a></li>
-               </ul>
-             </div>
-           </li> -->
-           <!-- <li><a  href="{% url 'question_answer' %}" class="collapsible-header"><i class="material-icons">school</i>回答一覧</a></li> -->
-              <li>
-                <a class="collapsible-header"><i class="material-icons">border_color</i>テスト</a>
-                <div class="collapsible-body">
-                  <ul>
-                        {% if perms.practiceblog.add_solve %}
-                        <li><a  href="{% url 'teacher' %}"><i class="material-icons">face</i>先生</a>
-                        </li>
-                        {% else %}
-                        <div class="collapsible">
-                                <li><a href="{% url 'student' %}"><i class="material-icons">import_contacts</i>問題</a></li>
-                                <li><a href="{% url 'result' %}"><i class="material-icons">local_library</i>結果</a></li>
-                            </div>
-                    {% endif %}
-                  </ul>
-                </div>
-              </li>
-              <li><a href="{% url 'explanation' %}" class="collapsible-header"><i class="material-icons">settings</i>サイト概要</a></li>
-              <!-- {% if perms.practiceblog.add_solve %}
-              <li class="no-padding"><a  href="{% url 'introduce_all' %}" class="collapsible-header"><i class="material-icons">people</i>一覧</a></li>
-              {% else %}
-              <li class="no-padding"><a  href="{% url 'introduce' %}" class="collapsible-header"><i class="material-icons">people</i>紹介</a></li>
-              {% endif %} -->
-         </ul>
+         <ul class="sidenav sidenav-fixed" id="mobile-demo" style="padding-top: 50px;">
+          {% if user.is_authenticated %}
+          <li style="padding-left: 20px;">こんにちは、{{user.username}}さん</li>
+          <li><a  href="{% url 'logout' %}" class="collapsible-header" id="logout"><i class="material-icons">logout</i>ログアウト</a></li>
+          <li><a  href="{% url 'profile' %}" class="collapsible-header" id="profile"><i class="material-icons">assignment_ind</i>プロフィール</a></li>
+          <li><a  href="{% url 'board_list' %}" class="collapsible-header" id="board_list"><i class="material-icons">storage</i>ボードリスト</a></li>
+          <li><a  href="" class="collapsible-header" id="user_list"><i class="material-icons">people_outline</i>ユーザーリスト</a></li>
+          {% else %}
+          <li><a href="{% url 'login' %}" class="collapsible-header" id="login"><i class="material-icons">exit_to_app</i>ログイン</a></li>
+          <li><a href="{% url 'user_create' %}" class="collapsible-header" id="user_create"><i class="material-icons">add_box</i>アカウント作成</a></li>
+          <li><a href="{% url 'rooms' %}" class="collapsible-header"><i class="material-icons" id="rooms">school</i>体験授業</a></li>
+          {% endif %}
+          <li><a href="{% url 'explanation' %}" class="collapsible-header" id="explanation"><i class="material-icons">settings</i>サイト概要</a></li>
+        </ul>
         </header>
+        <main>
           <div class="content container">
-              <div class="row">
-                  <div class="col-md-8">
-                  {% block content %}
-                  {% endblock %}
-                  </div>
-              </div>
-          </div>
+            <div class="row">
+                <div class="col-md-8">
+                {% block content %}
+                {% endblock %}
+                </div>
+            </div>
+        </div>
+        </main>
           <hr>
           <footer class="">
             <div class="footer-copyright">
