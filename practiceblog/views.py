@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.utils import timezone
+from .models import Post, RoomList
 from .models import Solve
 from django.shortcuts import render, get_object_or_404
-from .forms import SolveForm, UserCreateForm, SolveForm
+from .forms import PostForm, FindForm, ImageBoxForm, QuestionForm, SolveForm, UserCreateForm, QuestionBoxForm, QuestionSolveForm, TeacherStudentForm, SolveForm
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -33,6 +34,8 @@ from rest_framework import viewsets
 from django_filters import rest_framework as filters
 from django.utils import six 
 from .repositories.userTokenListRepository import UserTokenListRepository
+from .repositories.relationshipListRepository import RelationshipListRepository
+from .repositories.userRepository import UserRepository
 
 def logout_view(request):
     logout(request)
@@ -104,6 +107,48 @@ def profile(request, str="str", num=1):
     'token': token,
     }
     return render(request, 'practiceblog/profile.html', params)
+
+def boardList(request,  num=1):
+    user = request.user
+    rps = UserTokenListRepository()
+    token_list = rps.getTokenListByMutalFollow(user)
+    # token_list = list(token_list.values())
+    params = {"token_list": token_list}
+    print(params)
+    return render(request, 'practiceblog/board_list.html', params)
+
+
+def explanation(request):
+    return render(request, 'practiceblog/explanation.html')
+
+def myboard(request, room_name):
+    rps = UserTokenListRepository()
+    user_token = rps.getUserToken(request.user)
+    params = {"token": room_name, "user_name": user_token}
+    return render(request, 'whiteboard/myboard.html', params)
+
+def rooms(request):
+    data = RoomList.objects.order_by('created_date').reverse()
+    return render(request, 'whiteboard/rooms.html',{
+        'room_list' : data
+    })
+
+def userList(request):
+    usr_rps = UserRepository()
+    user_list = usr_rps.getUserAllListForView()
+    author_id = request.user.pk
+    relation_rps = RelationshipListRepository()
+    relation_list = relation_rps.getRelationshipListByUserId(author_id)
+    params = {"user_list": user_list, "user_id": author_id, "relation_list": relation_list}
+    return render(request, 'practiceblog/user_list.html', params)
+
+def room(request, room_name):
+    data = RoomList.objects.order_by('created_date').reverse()
+    print(data)
+    return render(request, 'whiteboard/room.html', {
+        'room_name': room_name,
+        'room_list' : data
+    })
 
 User = get_user_model()
 

@@ -1,12 +1,18 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
-<nav style="margin-top: 40px;" class="text-darken-2">
-    <div class="nav-wrapper red lighten-3">
-        <a href="#!" class="brand-logo" style="font-size: 15px;">ボードリスト</a>
+<nav>
+    <div class="nav-wrapper">
+        <form>
+            <div class="input-field">
+                <input class="white" id="search" type="search" placeholder="検索">
+                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                <i class="material-icons">close</i>
+            </div>
+        </form>
     </div>
 </nav>
-<div id="room_list">
-    {% for token in token_list %}
+<div id="room_collection">
+    <!-- {% for token in token_list %}
     <a id="token" class="room" href="/myboard/{{token.token}}">
         <div class="card grey lighten-5 hoverable">
             <div class="card-content black-text">
@@ -14,11 +20,105 @@
             </div>
         </div>
     </a>
-    {% endfor %}
+    {% endfor %} -->
 </div>
-<div class="fixed-action-btn">
-    <a href="#modal1" class="btn-floating btn-large waves-effect waves-light red modal-trigger"><i
-            class="material-icons">add</i></a>
-</div>
+{{ token_list|json_script:"token_list"}}
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script>
+     $(function () {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+
+        function ajax(data, url, type, doneFunc) {
+                var csrf_token = getCookie("csrftoken");
+                var csrftoken2 = getCookie("csrftoken");
+                console.log(`csrftoken2:${csrftoken2}`);
+                $.ajax({
+                    url: url,
+                    type: type,
+                    data: data,
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                        }
+                    },
+                    dataType: 'json',
+                    contentType: "application/json",
+                }).done(function (response) {
+
+                    if (data.error) {
+                        console.log("ERROR");
+                    }
+                    else {
+                        doneFunc(response.data);
+                    }
+
+                }).fail(function (xhr, status, error) {
+                    console.log(status + ":" + error + ":" + xhr);
+                });
+            }
+
+            var response_data;
+            var token_list = JSON.parse(document.getElementById('token_list').textContent);
+            console.log(token_list);
+
+            var search = document.getElementById("search")
+            var room_collection = document.getElementById("room_collection")
+            var read_more = document.getElementById("read_more")
+            var page = 0
+            var num = 1
+            new_user_list = ``
+
+            function userDisplay(data) {
+                user_list = data
+
+                for (var i = 0; i < user_list.length; i++) {
+                    new_user_list += `<a id="token" class="room" href="/myboard/${user_list[i].token}">
+        <div class="card grey lighten-5 hoverable">
+            <div class="card-content black-text">
+                <span class="card-title"><i class="material-icons">note</i>   ${ user_list[i].username }のホワイトボード</span>
+            </div>
+        </div>
+    </a>`
+                }
+
+                room_collection.innerHTML = new_user_list
+            }
+
+            userDisplay(token_list)
+
+            search.addEventListener("input", function() {
+                console.log(this.value);
+                new_user_list = ``
+                page = 0
+                var data = {
+                        str : this.value
+                    }
+                const apiUrl = '/board_list/api/search'
+                response_data = ajax(data, apiUrl, "GET", userDisplay)
+            })
+
+
+
+    })
+</script>
 {% endblock %}

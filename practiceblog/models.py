@@ -201,3 +201,11 @@ class UserTokenList(models.Model):
 
     def __str__(self):
         return self.token
+
+class RelationshipList(models.Model):
+    follow = models.IntegerField(default=0)
+    follower = models.IntegerField(default=0)
+
+    def __str__(self):
+        display = str(self.follow) + "->" + str(self.follower)
+        return display

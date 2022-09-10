@@ -51,7 +51,7 @@
           <li><a  href="{% url 'logout' %}" class="collapsible-header" id="logout"><i class="material-icons">logout</i>ログアウト</a></li>
           <li><a  href="{% url 'profile' %}" class="collapsible-header" id="profile"><i class="material-icons">assignment_ind</i>プロフィール</a></li>
           <li><a  href="{% url 'board_list' %}" class="collapsible-header" id="board_list"><i class="material-icons">storage</i>ボードリスト</a></li>
-          <li><a  href="" class="collapsible-header" id="user_list"><i class="material-icons">people_outline</i>ユーザーリスト</a></li>
+          <li><a  href="{% url 'user_list' %}" class="collapsible-header" id="user_list"><i class="material-icons">people_outline</i>ユーザーリスト</a></li>
           {% else %}
           <li><a href="{% url 'login' %}" class="collapsible-header" id="login"><i class="material-icons">exit_to_app</i>ログイン</a></li>
           <li><a href="{% url 'user_create' %}" class="collapsible-header" id="user_create"><i class="material-icons">add_box</i>アカウント作成</a></li>
@@ -61,7 +61,7 @@
         </ul>
         </header>
         <main>
-          <div class="content container">
+          <div class="content container" style="padding-top: 50px;">
             <div class="row">
                 <div class="col-md-8">
                 {% block content %}

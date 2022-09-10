@@ -1,5 +1,6 @@
 from ..models import UserTokenList
 import random, string
+from .relationshipListRepository import RelationshipListRepository 
 
 
 class UserTokenListRepository :
@@ -26,5 +27,31 @@ class UserTokenListRepository :
     def getTokenList(self, author):
         ob = UserTokenList.objects.exclude(author=author)
         return ob
+    
+    def getTokenListByMutalFollow(self, author):
+        token_list = self.getTokenList(author)
+        token_list_values = list(token_list.values())
+        relation_rps = RelationshipListRepository()
+        mutal_follow = relation_rps.getMutalFollowRelationship(author.pk)
+        result = []
+        for token in token_list:
+            if token.author.pk in mutal_follow:
+                data = {}
+                data["username"] = token.author.username
+                data["token"] = token.token
+                result.append(data)
+        return result
+    
+    def getTokenListByMutalFollowAndUsername(self, author, str):
+        token_list = self.getTokenListByMutalFollow(author)
+        if str == "":
+            return token_list
+        result = []
+        for token in token_list:
+            if str in token["username"]:
+                result.append(token)
+        return result
+
+
 
 

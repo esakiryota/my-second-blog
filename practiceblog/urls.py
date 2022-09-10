@@ -24,6 +24,12 @@ urlpatterns = [
     path('rooms/api/<str:room_name>/load',  apis.loadRoom, name='loadRoom'),
     # ホワイトボードリスト
     path('board_list', views.boardList, name='board_list'),
+    path('board_list/api/search', apis.board_search),
+    # ユーザーリスト
+    path('user_list', views.userList, name='user_list'),
+    path('user_list/api/search', apis.user_search),
+    path('user_list/api/follow', apis.user_follow),
+    path('user_list/api/unfollow', apis.user_unfollow),
 ]
 
 router = routers.DefaultRouter()

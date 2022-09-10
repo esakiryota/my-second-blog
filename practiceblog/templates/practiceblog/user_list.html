@@ -1,0 +1,248 @@
+{% extends 'practiceblog/base.html' %}
+{% block content %}
+<nav>
+    <div class="nav-wrapper">
+        <form>
+            <div class="input-field">
+                <input class="white" id="search" type="search" placeholder="検索">
+                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                <i class="material-icons">close</i>
+            </div>
+        </form>
+    </div>
+</nav>
+<div id="user_list">
+    <ul class="collection" id="user_list_collection">
+        
+      </ul>
+      <button class="waves-teal btn-flat" id="read_more">さらに読み込む</button>
+</div>
+{{ user_list|json_script:"user_list_json"}}
+{{ relation_list|json_script:"relation_list"}}
+{{author_id|json_script:"author_id"}}
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script>
+    $(function () {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+
+        function ajax(data, url, type, doneFunc) {
+                var csrf_token = getCookie("csrftoken");
+                // var data = JSON.stringify(data);
+                // var csrftoken1 = Cookies.get('csrftoken');
+                var csrftoken2 = getCookie("csrftoken");
+                // var csrftoken3 = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                // console.log(`csrftoken1:${csrftoken1}`);
+                console.log(`csrftoken2:${csrftoken2}`);
+                // console.log(`csrftoken3:${csrftoken3}`);
+                console.log(data);
+                $.ajax({
+                    url: url,
+                    type: type,
+                    data: data,
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                        }
+                    },
+                    dataType: 'json',
+                    contentType: "application/json",
+                }).done(function (response) {
+
+                    if (data.error) {
+                        console.log("ERROR");
+                    }
+                    else {
+                        doneFunc(response.data);
+                    }
+
+                }).fail(function (xhr, status, error) {
+                    console.log(status + ":" + error + ":" + xhr);
+                });
+            }
+
+            var response_data;
+
+            function followAction(data) {
+                console.log(data);
+                var content = document.getElementById(String(data.follower))
+                content.textContent = "フォロー中"
+                content.classList.add("unfollow")
+            }
+
+            function unfollowAction(data) {
+                console.log(data);
+                var content = document.getElementById(String(data.follower))
+                content.textContent = "フォロー"
+                content.classList.remove("unfollow")
+            }
+
+            var follow_btn = document.getElementsByClassName("follow")
+            var unfollow_btn = document.getElementsByClassName("unfollow")
+
+            function btn_action() {
+                for (var i = 0; i < follow_btn.length; i++) {
+                follow_btn[i].addEventListener("click", function(e) {
+                    var id = this.id
+                    var data = {
+                        author_id : author_id,
+                        follow_id : id
+                    }
+                    if (this.classList.contains("unfollow")) {
+                        var apiUrl = '/user_list/api/unfollow'
+                        response_data = ajax(data, apiUrl, "GET", unfollowAction)
+                    } else {
+                        var apiUrl = '/user_list/api/follow'
+                        response_data = ajax(data, apiUrl, "GET", followAction)
+                    }
+                })
+            }
+
+            }
+
+            console.log(document.getElementById('user_list_json'));
+            var realtion_list = JSON.parse(document.getElementById('relation_list').textContent);
+            var user_list = JSON.parse(document.getElementById('user_list_json').textContent);
+            var author_id = JSON.parse(document.getElementById('author_id').textContent);
+
+            console.log(user_list);
+
+
+            btn_action()
+
+            var search = document.getElementById("search")
+            var user_list_collection = document.getElementById("user_list_collection")
+            var read_more = document.getElementById("read_more")
+            var page = 0
+            var num = 1
+            new_user_list = ``
+
+            // function searchUserDisplay(response) {
+
+            // }
+
+
+            function userDisplay(data) {
+                user_list = data
+                var user_list_page = pagenation(1, page, user_list)
+                console.log(user_list_page);
+
+                for (var i = 0; i < user_list_page.length; i++) {
+                    new_user_list += `<li class="collection-item avatar">
+            <i class="material-icons circle">person_outline</i>
+          <span class="title">${user_list_page[i].username}</span>
+          <p>ユーザーID: <span id="user_id">${user_list_page[i].id}</span><br>
+          </p>`
+                     if (realtion_list["follower_list"].includes(user_list_page[i].id)) {
+                        new_user_list += `フォローされています。`
+                     }
+
+                     if (realtion_list["follow_list"].includes(user_list_page[i].id)) {
+                        new_user_list += `<a class="follow secondary-content btn unfollow" id="${user_list_page[i].id}">フォロー中</a>`
+                     } else {
+                        new_user_list += `<a class="follow secondary-content btn" id="${user_list_page[i].id}">フォロー</a>`
+                     }
+
+                     new_user_list += `</li>`
+                }
+
+                user_list_collection.innerHTML = new_user_list
+                follow_btn = document.getElementsByClassName("follow")
+                unfollow_btn = document.getElementsByClassName("unfollow")
+                btn_action()
+            }
+
+            userDisplay(user_list)
+
+            read_more.addEventListener("click", function() {
+                page++
+                userDisplay(user_list)
+                // if (num*(page+1) >= user_list.length) {
+                //     read_more.classList.add("disabled")
+                // }
+            })
+
+
+
+            function pagenation(num, page, data) {
+                var i = 0
+                console.log(data);
+                if (data.length == 0) {
+                    return []
+                }
+                result = []
+                while (i < data.length) {
+                    list = []
+                    for (var j = 0; j < num; j++) {
+                        list.push(data[i])
+                        i++
+                    }
+                    result.push(list)
+                }
+                return result[page]
+            }
+
+            function userDisplayBysearch(response_data) {
+                console.log(response_data);
+
+                new_user_list = ``
+
+                var user_list_page = pagenation(num, page, response_data.data)
+
+                for (var i = 0; i < response_data.data.length; i++) {
+                    new_user_list += `<li class="collection-item avatar">
+            <i class="material-icons circle">person_outline</i>
+          <span class="title">${response_data.data[i].username}</span>
+          <p>ユーザーID: <span id="user_id">${response_data.data[i].id}</span><br>
+          </p>`
+                     if (realtion_list["follower_list"].includes(response_data.data[i].id)) {
+                        new_user_list += `フォローされています。`
+                     }
+
+                     if (realtion_list["follow_list"].includes(response_data.data[i].id)) {
+                        new_user_list += `<a class="follow secondary-content btn unfollow" id="${response_data.data[i].id}">フォロー中</a>`
+                     } else {
+                        new_user_list += `<a class="follow secondary-content btn" id="${response_data.data[i].id}">フォロー</a>`
+                     }
+
+                     new_user_list += `</li>`
+                }
+
+                user_list_collection.innerHTML = new_user_list
+            }
+
+            search.addEventListener("input", function() {
+                console.log(this.value);
+                new_user_list = ``
+                page = 0
+                var data = {
+                        str : this.value
+                    }
+                const apiUrl = '/user_list/api/search'
+                response_data = ajax(data, apiUrl, "GET", userDisplay)
+            })
+
+
+
+    })
+</script>
+{% endblock %}
