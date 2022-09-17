@@ -9,9 +9,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.css'%}" />
 
     <!--Import jQuery Library-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!-- <script src="/path/to/jquery.mCustomScrollbar.concat.min.js"></script> -->
     <!--Import materialize.js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
@@ -29,38 +31,46 @@
 </head>
 
 <body>
-    <div id="videos" style="position: fixed; left: 100px; top:20px;">
-            <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
-            <div style="position: absolute; top: 120px; left: 120px;">
-            <a class='tooltipped' href='#' data-position="bottom" data-delay="50" data-tooltip="audio"
-            id="mic" style="color: white"><i class="material-icons">mic_off</i></a>
-            <a class='tooltipped' href='#' data-position="bottom" data-delay="50" data-tooltip="video"
-            id="switch_video" style="color: white"><i class="material-icons">videocam</i></a>
-            </div>
-    </div>
-    <figure id="board">
-        <svg id="drawingCanvas" width="958" height="2000" class="z-depth-5" style="position: absolute;"></svg>
+    <figure id="board" >
+        <!-- <div id="zoom_in" style="left: 600px; position: absolute;"><i class="material-icons">zoom_in</i></div> -->
+        <svg id="drawingCanvas" style="top: 10px; left: 100px; position: absolute; width: 90%; height: 90%;" class="z-depth-5"></svg>
+        <div id="bottons" style="position: absolute; bottom: 50px; right: 50px;">
+            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right" data-delay="50" data-tooltip="全削除"
+            id="eraserAll" ><i class="material-icons">delete_forever</i></a>
+            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right" data-delay="50" data-tooltip="戻る"
+            id="redo"><i class="material-icons">redo</i></a>
+            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right" data-delay="50" data-tooltip="画像"
+            id="image_catch"><i class="material-icons">photo</i></a>
+        </div>
+        <div id="controllers" class="row" style="position: absolute; top: 20px; right: 50px;">
+            <span class='pointer-type col controller' id="zoom_in"><i class="material-icons">zoom_in</i></span>
+            <span class='pointer-type col controller' id="moveScreen"><i class="material-icons">open_with</i></span>
+        </div>
     </figure>
     <p style="position: fixed; left: 10px; top: 10px; display: flex; flex-flow: column;">
         <a class='dropdown-button btn row tooltipped' data-position="right" data-delay="50" data-tooltip="色"
             style="background-color: black;" href='#' data-activates='dropdown1' id="color-btn"><i
                 class="material-icons">color_lens</i></a>
-        <a class='pointer-type btn row tooltipped' data-position="right" data-delay="50" data-tooltip="ペン" href='#'
-            id="draw" style="background-color: #004d40;"><i class="material-icons">edit</i></a>
-        <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="移動"
-            id="moveScreen"><i class="material-icons">open_with</i></a>
+        <a class='dropdown-button pointer-type btn row tooltipped' data-position="right" data-delay="50" data-tooltip="ペン" href='#'
+            id="draw" style="background-color: #2962ff;" data-activates='dropdown2'><i class="material-icons">edit</i></a>
+        <!-- <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="移動"
+            id="moveScreen"><i class="material-icons">open_with</i></a> -->
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="選択"
-            id="moveContent"><i class="material-icons">pan_tool</i></a>
+            id="moveContent" style="background-color: #42a5f5;"><i class="material-icons">pan_tool</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="削除"
-            id="eraser"><i class="material-icons">delete</i></a>
+            id="eraser" style="background-color: #42a5f5;"><i class="material-icons">delete</i></a>
+        <!-- <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="全削除"
+            id="eraserAll"><i class="material-icons">delete_forever</i></a> -->
+        <!-- <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="戻る"
+            id="redo"><i class="material-icons">redo</i></a> -->
+        <!-- <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50"
+            data-tooltip="ズーム" id="zoom_in"><i class="material-icons">zoom_in</i></a> -->
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50"
-            data-tooltip="comming soon"><i class="material-icons">zoom_in</i></a>
-        <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50"
-            data-tooltip="comming soon"><i class="material-icons">picture_in_picture</i></a>
+            data-tooltip="comming soon" style="background-color: #42a5f5;"><i class="material-icons">picture_in_picture</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="文字"
-            id="text"><i class="material-icons">text_format</i></a>
-        <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="画像"
-            id="image_catch"><i class="material-icons">photo</i></a>
+            id="text" style="background-color: #42a5f5;"><i class="material-icons">text_format</i></a>
+        <!-- <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="画像"
+            id="image_catch"><i class="material-icons">photo</i></a> -->
         <input type="file" style="display: none;" accept="image/*" id="file-select-input">
         <!-- <a class="btn" onclick="Materialize.toast('I am a toast', 4000)">Toast!</a> -->
     <ul id='dropdown1' class='dropdown-content' style="width: 100px;">
@@ -79,18 +89,123 @@
         <li class="color" id="#ffff00"><a href="#!">
                 <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #ffff00;"></div>
             </a></li>
+        <li class="color" id="#FFFFFF"><a href="#!">
+                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #FFFFFF;"></div>
+            </a></li>
+    </ul>
+    <ul id='dropdown2' class='dropdown-content' style="width: 100px;">
+        <li class="size" id="3"><a href="#!" class="">
+                <div style="width: 3px; height: 3px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
+        <li class="size" id="6"><a href="#!">
+                <div style="width: 6px; height: 6px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
+        <li class="size" id="9"><a href="#!">
+                <div style="width: 9px; height: 9px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
+        <li class="size" id="12"><a href="#!">
+                <div style="width: 12px; height: 12px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
+        <li class="size" id="15"><a href="#!" class="">
+                <div style="width: 15px; height: 15px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
+        <li class="size" id="18"><a href="#!">
+                <div style="width: 18px; height: 18px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
+        <li class="size" id="21"><a href="#!">
+                <div style="width: 21px; height: 21px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
+        <li class="size" id="24"><a href="#!">
+                <div style="width: 24px; height: 24px; border-radius: 50%; background-color: #000000;"></div>
+            </a></li>
     </ul>
     </p>
+    <div id="videos" style="position: fixed; left: 100px; top:20px;">
+        <div id="{{user_name}}_box" style="position: relative;">
+            <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
+            <div style="position: absolute; bottom: 6px; left: 0px; background-color: black; color: white;" id="name_{{user_name}}">{{user}}</div>
+            <div style="position: absolute; bottom: 0px; right: 0px;">
+            <a class='' href='#' id="mic" style="color: white"><i class="material-icons">mic_off</i></a>
+            <a class='' href='#' id="switch_video" style="color: white"><i class="material-icons">videocam</i></a>
+            <a class='' href='#' id="visibility_{{user_name}}" style="color: white" class="visible"><i class="material-icons">visibility_off</i></a>
+            </div>
+            <div style="position: relative; top: 10px; left: 10px; margin: 10px; display: none" id="invisible_{{user_name}}">
+                <span class='tooltipped' id="person_{{user_name}}" data-position="right" data-delay="50" data-tooltip="" href='#' id="invisibility{{user_name}}" style="color: white" class="visible"><i class="material-icons circle black">person</i></span>
+            </div>
+        </div>
+</div>
 
-    <!-- <script src="{% static 'js/materialize.js' %}"></script>
-    <script src="{% static 'js/select.js' %}"></script>
-    <script src="{% static 'js/init.js' %}"></script>  -->
+    <!-- <script src="{% static 'js/materialize.js' %}"></script> -->
+    <!-- <script src="{% static 'js/select.js' %}"></script> -->
+    <script src="{% static 'js/jquery.mCustomScrollbar.js'%}"></script>
     {{ token|json_script:"token" }}
     {{ user_name|json_script:"user_name"}}
     {% csrf_token %}
     <script>
         $(function () {
+            // $(window).on("load", function () {
+            //     console.log("ok");
+                
+            // });
             $('#brush-tap-target').css("width", "300px").css("height", "300px")
+            // $("#board").mCustomScrollbar({
+            //         theme: "rounded-dark",
+            //         axis:"xy",
+            //     });
+            
+            var svgElm_js = document.getElementById("drawingCanvas")
+            svgElm_js.clientHeight = svgElm_js.style.height
+            svgElm_js.clientWidth = svgElm_js.style.width
+            var svgElm_js_height = svgElm_js.clientHeight
+            var svgElm_js_width = svgElm_js.clientWidth
+            var init_viewBox = "0 0 " + String(svgElm_js_width) + " " + String(svgElm_js_height)
+            svgElm_js.setAttribute("viewBox", init_viewBox)
+            function resizeWindow(e) {
+                svgElm_js.clientHeight = svgElm_js.style.height
+                svgElm_js.clientWidth = svgElm_js.style.width
+                var svgElm_js_height = svgElm_js.clientHeight
+                var svgElm_js_width = svgElm_js.clientWidth
+                var [minX, minY, width, height] = svgElm_js.getAttribute('viewBox').split(' ')
+                            .map(s => parseFloat(s));
+                var init_viewBox = String(minX) + " " + String(minY) + " " + String(svgElm_js_width) + " " + String(svgElm_js_height)
+
+                svgElm_js.setAttribute("viewBox", init_viewBox)
+            }
+            window.onresize = resizeWindow;
+
+            function getViewBox() {
+                var [minX, minY, width, height] = svgElm_js.getAttribute('viewBox')
+                    .split(' ')
+                    .map(s => parseFloat(s));
+                return [minX, minY, width, height]
+            }
+
+            function zoomAction() {
+                document.getElementById("drawingCanvas").addEventListener("wheel", function(e) {
+                    if (pointerType == "zoom_in" || pointerType == "zoom_out" ) {
+                        e.preventDefault()
+                        // var x = e.deltaX
+                        var dy = e.deltaY
+                        // var scale = 0.80
+                        // if (pointerType == "zoom_out") scale = 1.2
+                        var scale = dy < 0 ? 0.99 : 1.01
+                        console.log(scale);
+                        var pointer_x = getPositionXOnSvg(e)
+                        var pointer_y = getPositionYOnSvg(e)
+                        var [a, b, w, h] = svgElm_js.getAttribute('viewBox')
+                            .split(' ')
+                            .map(s => parseFloat(s));
+                        var a_ = (a - pointer_x)*scale + pointer_x;
+                        var b_ = (b - pointer_y)*scale + pointer_y;
+                        var h_ = h*scale;
+                        var w_ = w*scale;
+                        const zoomedViewBox = [a_, b_, w_, h_].join(' ');
+                        svgElm_js.setAttribute('viewBox', zoomedViewBox);
+
+                    }
+                }, {passive: false});
+            }
+            zoomAction()
 
             function getCookie(name) {
                 var cookieValue = null;
@@ -113,6 +228,9 @@
                 return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
             }
             const roomName = JSON.parse(document.getElementById('token').textContent);
+
+            
+            
 
             var ws_or_wss;
             if (location.protocol == 'http:') {
@@ -139,12 +257,13 @@
                         case "draw":
                             var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
                             svgElm.append(pathElm);
+                            console.log(value);
                             svgElm.find("path:last").attr({
                                 "id": key,
                                 "d": value.d, 
                                 "fill": "none",
                                 "stroke": value.stroke, 
-                                "stroke-width": "3", 
+                                "stroke-width": value.strokeSize, 
                                 "stroke-linecap": "round" 
                             });
                             var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
@@ -214,6 +333,27 @@
                     { "urls": "stun:stun.l.google.com:19302" }
                 ]
             };
+
+            var visibility = document.getElementById("visibility_" + user_name)
+            visibility.addEventListener("click", function() {
+                    console.log("click");
+                    document.getElementById("localVideo").style.display = "none"
+                    document.getElementById("name_" + user_name).style.display = "none"
+                    document.getElementById("visibility_" + user_name).style.display = "none"
+                    document.getElementById("mic").style.display = "none"
+                    document.getElementById("switch_video").style.display = "none"
+                    document.getElementById("invisible_" + user_name).style.display = ""
+                })
+                var invisibility = document.getElementById("invisible_" + user_name)
+                invisibility.addEventListener("click", function() {
+                    console.log("click");
+                    document.getElementById("localVideo").style.display = ""
+                    document.getElementById("name_" + user_name).style.display = ""
+                    document.getElementById("visibility_" + user_name).style.display = ""
+                    document.getElementById("mic").style.display = ""
+                    document.getElementById("switch_video").style.display = ""
+                    document.getElementById("invisible_" + user_name).style.display = "none"
+                })
 
             async function startInOrder() {
                 let stream = null;
@@ -310,7 +450,7 @@
              const data = JSON.parse(e.data);
              if (data.type === 'bye') {
                  if (data.from !== user_name) {
-                     logOnView(`${data.from}: bye, ${user_name}`, 4000, "blue")
+                    //  logOnView(`${data.from}: bye, ${user_name}`, 4000, "blue")
                      stop(data.from);
                  }
                  return;
@@ -322,7 +462,7 @@
                          "to": data.user_name,
                          "from": user_name
                      }));
-                     logOnView(`${data.user_name}が入室しました`, 4000, "blue")
+                    //  logOnView(`${data.user_name}が入室しました`, 4000, "blue")
                      return;
                  }
                  return
@@ -364,7 +504,6 @@
                              candidate: data.message.candidate
                          });
                          pc.addIceCandidate(candidate);
-                         logOnView(`${name}と接続しました`, 4000, "blue")
                      }
                  }
              }
@@ -414,7 +553,7 @@
                      pc.iceConnectionState;
                      if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
                          console.log(`${name} connection: `, pc.iceConnectionState);
-                         logOnView(`${name} との接続が切れました`, 4000, "orange")
+                         logOnView(`${getUserNameByToken(name)} との接続が切れました`, 4000, "orange")
                          stop(name);
                      }
                      console.log(`${name} connection: `, pc.iceConnectionState);
@@ -438,6 +577,18 @@
              }
          }
 
+         function getUserNameByToken(token) {
+             username = "匿名"
+             for (var i = 0; i < user_list.length; i++) {
+                 if (user_list[i].token == token) {
+                     username = user_list[i].username
+                     break;
+                 }
+             }
+
+             return username
+         }
+
          function doCall(to, from, pc) {
              console.log('Sending offer to peer');
              dataChannelList[to] = pc.createDataChannel('test');
@@ -459,10 +610,58 @@
                 remoteVideo.muted = false;
                 remoteVideo.setAttribute("id", name)
                 remoteVideo.setAttribute("class", "z-depth-5")
+                remoteVideoDiv = document.createElement("div");
+                remoteVideoDiv.setAttribute("id", name + "_box")
+                remoteVideoDiv.style.position = "relative"
+                remoteVideoName = document.createElement("div");
+                remoteVideoName.setAttribute("id", "name_" + name)
+                remoteVideoName.style.position = "absolute"
+                remoteVideoName.style.bottom = "5px"
+                remoteVideoName.style.left = "0px"
+                remoteVideoName.style.backgroundColor = "black"
+                remoteVideoName.style.color = "white"
+                remoteVideoVisibleDiv = document.createElement("div");
+                remoteVideoVisibleDiv.setAttribute("id", "visible_" + name)
+                remoteVideoVisibleDiv.style.position = "absolute"
+                remoteVideoVisibleDiv.style.bottom = "0px"
+                remoteVideoVisibleDiv.style.right = "0px"
+                remoteVideoVisibleDiv.innerHTML = `<span class='' href='#' id="visibility_${name}" style="color: white" class="visible"><i class="material-icons">visibility_off</i></span>`
+                remoteVideoInvisibleDiv = document.createElement("div");
+                remoteVideoInvisibleDiv.setAttribute("id", "invisible_" + name)
+                remoteVideoInvisibleDiv.style.position = "relative"
+                remoteVideoInvisibleDiv.style.top = "10px"
+                remoteVideoInvisibleDiv.style.left = "10px"
+                remoteVideoInvisibleDiv.style.margin = "10px"
+                remoteVideoInvisibleDiv.style.display = "none"
+                remoteVideoInvisibleDiv.innerHTML = `<span class='tooltipped' id="person_${name}" data-position="right" data-delay="50" data-tooltip="" href='#' id="invisibility_${name}" style="color: white" class="visible"><i class="material-icons circle black">person_outline</i></span>`
                 var videos = document.getElementById("videos");
-                videos.appendChild(remoteVideo);
+                remoteVideoDiv.appendChild(remoteVideo)
+                remoteVideoDiv.appendChild(remoteVideoName)
+                remoteVideoDiv.appendChild(remoteVideoVisibleDiv)
+                remoteVideoDiv.appendChild(remoteVideoInvisibleDiv)
+                videos.appendChild(remoteVideoDiv);
+                remoteVideo = document.getElementById(name);
                 remoteStream = stream;
                 remoteVideo.srcObject = remoteStream;
+                remoteVideoVisibleDiv.addEventListener("click", function() {
+                    console.log("click");
+                    console.log(remoteVideoDiv.style.display);
+                    document.getElementById(name).style.display = "none"
+                    document.getElementById("name_" + name).style.display = "none"
+                    document.getElementById("visible_" + name).style.display = "none"
+                    document.getElementById("invisible_" + name).style.display = ""
+                })
+                remoteVideoInvisibleDiv.addEventListener("click", function() {
+                    console.log("click");
+                    console.log(remoteVideoDiv.style.display);
+                    document.getElementById(name).style.display = ""
+                    document.getElementById("name_" + name).style.display = ""
+                    document.getElementById("visible_" + name).style.display = ""
+                    document.getElementById("invisible_" + name).style.display = "none"
+                })
+                console.log(name);
+                getUserName(name)
+                
             }
 
          function onDataChannelCreated(channel) {
@@ -470,13 +669,13 @@
 
              channel.onopen = function () {
                  console.log('CHANNEL opened!!!');
-                 logOnView("CHANNEL opened!!!", 4000, "blue")
+                //  logOnView("CHANNEL opened!!!", 4000, "blue")
                  logOnView("ボードのデータが共有されました", 4000, "blue")
              };
 
              channel.onclose = function () {
                  console.log('Channel closed.');
-                 logOnView("Channel closed.", 4000, "red")
+                //  logOnView("Channel closed.", 4000, "red")
                  logOnView("接続が切れました", 4000, "red")
              }
 
@@ -493,7 +692,7 @@
                             "d": "", //pathデータ//塗りつぶし
                             "fill": "none",
                             "stroke": data.stroke, //線の色
-                            "stroke-width": "3", //線の太さ
+                            "stroke-width": data.strokeSize, //線の太さ
                             "stroke-linecap": "round" //線の端を丸める
                         });
                         break;
@@ -505,6 +704,11 @@
                         console.log(target);
                         target.remove();
                         break;
+                    case "deleteAll":
+                        while (svgElm.lastChild) {
+                            svgElm.removeChild(svgElm.lastChild);
+                        }
+                        drawingData = []
                     case "moveContent":
                         var target = document.getElementById(data.id);
                         var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
@@ -544,6 +748,9 @@
                         drawingData = data.data;
                         console.log("share");
                         break;
+                    case "redo":
+                        var target = document.getElementById(data.id)
+                        target.remove()
                     default:
                         console.log("no data");
                         break;
@@ -574,8 +781,33 @@
          function stop(name) {
              console.log(`Connection with ${name} was over`);
              document.getElementById(name).remove();
+             document.getElementById(name + "_box").remove();
+            //  remoteVideoDiv
              pc_list[name].close();
              delete pc_list[name];
+         }
+
+         var user_list = []
+
+         function getUserName(token) {
+             console.log(token);
+            const apiUrl = '/myboard/api/user_info'
+            var data = {
+                token : token
+            }
+            console.log(data);
+            var response = ajax(data, apiUrl, "POST", roomInComment)
+         }
+
+         function roomInComment(response) {
+             console.log(response);
+             var data = {"token": response.data.token, "username": response.data.username}
+             user_list.push(data)
+             logOnView(response.data.username + "さんが入室しました。", 3000, "blue")
+             var name_plate = document.getElementById("name_" + response.data.token)
+             var name_tooltiped = document.getElementById("person_" + response.data.token)
+             name_plate.textContent = response.data.username
+             name_tooltiped.setAttribute("data-tooltip", response.data.username)
          }
 
 
@@ -628,15 +860,30 @@
 
             getColor();
 
+            function getStrokeSize() {
+                let size = document.getElementsByClassName("size");
+                for (let i = 0; i < size.length; i++) {
+                    size[i].addEventListener("click", () => {
+                        strokeSize = size[i].id
+                        $("#draw").attr("data-tooltip", String(strokeSize) + "px")
+                    }, false);
+                }
+            }
+
+            getStrokeSize()
+
             var pointerType = "draw";
 
             //初期設定
 
             var svgElm = $("#drawingCanvas"), //SVG要素を取得
+                svgElm_js = document.getElementById("drawingCanvas")
+                board = $("#board"),
                 movetoX = 0, //開始点(横方向)の初期化
                 movetoY = 0, //開始点(縦方向)の初期化
                 linetoStr = "", //LineToコマンド値の初期化
                 strokeColor = "#666666", //描画色の初期化
+                strokeSize = "3"
                 drawType = ""; //塗りつぶしの初期化
             drawingData = {};
             browserDrawingData = {};
@@ -718,6 +965,9 @@
                 let pointerTypeClass = document.getElementsByClassName("pointer-type");
                 for (let i = 0; i < pointerTypeClass.length; i++) {
                     pointerTypeClass[i].addEventListener("click", () => {
+                        if (pointerTypeClass[i].classList.contains("button")) {
+                            return
+                        }
                         if (document.querySelectorAll(".catch")) {
                             var rects = document.querySelectorAll(".catch");
                             for (var j = 0; j < rects.length; j++) {
@@ -725,10 +975,23 @@
                             }
                         }
                         pointerType = pointerTypeClass[i].id;
-                        pointerTypeClass[i].style.backgroundColor = "#004d40";
+                        if (pointerTypeClass[i].classList.contains("controller")) {
+                            // pointerTypeClass[i].style.backgroundColor = "#bbdefb";
+                            pointerTypeClass[i].classList.add("blue-text")
+                        } else {
+                            pointerTypeClass[i].style.backgroundColor = "#2962ff";
+                        }
+                        
                         for (let j = 0; j < pointerTypeClass.length; j++) {
                             if (j !== i) {
-                                pointerTypeClass[j].style.backgroundColor = "#26a69a";
+                                if (pointerTypeClass[j].classList.contains("controller")) {
+                                    // pointerTypeClass[i].style.backgroundColor = "#bbdefb";
+                                    pointerTypeClass[j].classList.remove("blue-text")
+                                    // pointerTypeClass[i].classList.add("blue-text")
+                                } else {
+                                    pointerTypeClass[j].style.backgroundColor = "#42a5f5";
+                                }
+                                
                             }
                         }
                         console.log(`change:${pointerType}`);
@@ -737,27 +1000,53 @@
             }
 
             changePinterType();
+            var onDown = false;
 
             function moveScreenByMousedown() {
+                // $("body").on(start_event, function (event) {
+                event.preventDefault();
                 svgElm.css("cursor", "move")
-                var mouse_move_x = 0;
-                mouse_move_y = 0;
-                mouse_move_x = parseInt(getPageX(event) - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                mouse_move_y = parseInt(getPageY(event) - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
+                onDown = true;
+                var mouse_move_x = parseFloat(getPageX(event)); //SVG上のマウス座標(横方向)の取得
+                    mouse_move_y = parseFloat(getPageY(event)); //SVG上のマウス座標(縦方向)の取得
                 $("#drawingCanvas").on(move_event, function (event) {
-                    // event.preventDefault();
-                    var mouse_moving_x = parseInt(getPageX(event) - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                    var mouse_moving_y = parseInt(getPageY(event) - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
-                    var x_length = mouse_move_x - mouse_moving_x;
-                    var y_length = mouse_move_y - mouse_moving_y;
+                    if (!onDown) return;
+                    
+                    
+                    event.preventDefault();
+                    // event.stopPropagation();
+                    // var mouse_moving_x = parseFloat(getPositionXOnSvg(event)); //SVG上のマウス座標(横方向)の取得
+                    // var mouse_moving_y = parseFloat(getPositionYOnSvg(event)); //SVG上のマウス座標(縦方向)の取得
+                    // if (mouse_moving_x == mouse_move_x || mouse_moving_y == mouse_move_y) return
+                    var mouse_moving_x = parseFloat(getPageX(event));
+                    var mouse_moving_y = parseFloat(getPageY(event));
+                    
+                    const viewBoxList = svgElm_js.getAttribute('viewBox').split(' ');
+                    var svg_w = svgElm_js.clientWidth
+                    var pageX_aspect =  viewBoxList[2]/svg_w
+                    var x_length = (mouse_moving_x - mouse_move_x)*pageX_aspect;
+                    var y_length = (mouse_moving_y - mouse_move_y)*pageX_aspect;
+                    
                     mouse_move_x = mouse_moving_x;
                     mouse_move_y = mouse_moving_y;
-                    scrollBy(x_length, y_length);
+
+                    viewBoxList[0] = '' + (parseFloat(viewBoxList[0]) - x_length);
+                    viewBoxList[1] = '' + (parseFloat(viewBoxList[1]) - y_length);
+                    const viewBox = viewBoxList.join(' ');
+                    // if (old_length_x == x_length*(-1) && old_length_y == y_length*(-1)) return;
+                    
+                    svgElm_js.setAttribute('viewBox', viewBox);
+
                 });
+            // });
             }
+            // moveScreenByMousedown()
 
             function moveScreenByMouseup() {
                 console.log("finish");
+                onDown = false;
+                
+                svgElm.css("cursor", "default")
                 $("#drawingCanvas").off(move_event);
             }
 
@@ -781,8 +1070,8 @@
                 svgElm.css("cursor", "grab")
                 var mouse_move_x = 0;
                 mouse_move_y = 0;
-                mouse_move_x = parseInt(getPageX(event) - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                mouse_move_y = parseInt(getPageY(event) - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
+                mouse_move_x = parseInt(getPositionXOnSvg(event)); //SVG上のマウス座標(横方向)の取得
+                mouse_move_y = parseInt(getPositionYOnSvg(event)); //SVG上のマウス座標(縦方向)の取得
                 var dx = 0;
                 dy = 0;
                 // var Matrix = target.target.parentNode.createSVGTransform();
@@ -823,8 +1112,8 @@
                 $("#drawingCanvas").on(move_event, function (event) {
                     if (target !== document.getElementById("drawingCanvas") && !target.classList.contains('catch')) {
                         svgElm.css('cursor', 'grabbing');
-                        var mouse_moving_x = parseInt(getPageX(event) - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                        var mouse_moving_y = parseInt(getPageY(event) - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
+                        var mouse_moving_x = parseInt(getPositionXOnSvg(event)); //SVG上のマウス座標(横方向)の取得
+                        var mouse_moving_y = parseInt(getPositionYOnSvg(event)); //SVG上のマウス座標(縦方向)の取得
                         var x_length = mouse_moving_x - mouse_move_x;
                         var y_length = mouse_moving_y - mouse_move_y;
                         mouse_move_x = mouse_moving_x;
@@ -861,8 +1150,8 @@
                     if (target.classList.contains('catch')) {
                         var resizeData = {};
                         var aspect = selected_elm.width.baseVal.value / selected_elm.height.baseVal.value
-                        var mouse_moving_x = parseInt(getPageX(event) - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                        var mouse_moving_y = parseInt(getPageY(event) - svgElm.position().top);
+                        var mouse_moving_x = parseInt(getPositionXOnSvg(event)); //SVG上のマウス座標(横方向)の取得
+                        var mouse_moving_y = parseInt(getPositionYOnSvg(event));
                         var x_length = mouse_moving_x - mouse_move_x;
                         var y_length = mouse_moving_y - mouse_move_y;
                         mouse_move_x = mouse_moving_x;
@@ -938,15 +1227,17 @@
             function textBoxMouseup() {
                 var sendTextData = {};
                 var sendTextBoxData = {};
-                var x = parseInt(getPageX(event) - svgElm.position().left);
-                var y = parseInt(getPageY(event) - svgElm.position().top);
+                var input_x = parseInt(getPageX(event));
+                var input_y = parseInt(getPageY(event));
                 document.getElementById('board').appendChild(input);
                 input.value = "";
-                input.style.left = x + 'px';
-                input.style.top = y + 'px';
+                input.style.left = input_x + 'px';
+                input.style.top = input_y + 'px';
                 input.style.position = 'fixed';
                 input.focus();
                 id = Math.random().toString(32).substring(2);
+                var x = parseInt(getPositionXOnSvg(event));
+                var y = parseInt(getPositionYOnSvg(event));
                 createTextBox(x, y, 0, 0, id, text);
                 sendTextBoxData.cx = x;
                 sendTextBoxData.cy = y;
@@ -963,7 +1254,7 @@
 
                 input.addEventListener("keyup", function () {
                     if (curText !== this.value) {
-                        drawingData[id].text = input.value;
+                        drawingData[id].text = this.value;
                         sendTextData = {
                             "type": "writing",
                             "id": id,
@@ -997,12 +1288,23 @@
                     }
                 });
             }
+            // function initSvgSize() {
+            //     var init_height = String(window.innerHeight - 10) + "px";
+            //     var init_width = String(window.innerWidth - 10 - 100) + "px";
+            //     // svgElm.attr("height", `2000`);
+            //     // svgElm.attr("width", `2000`);
+            //     console.log(board[0]);
+            //     board[0].css("height", init_height)
+            //     board[0].css("width", init_width)
+            //     board[0].css("overflow", "auto")
+            // }
+            // initSvgSize()
 
             svgResize();
 
             function pencilByMousedown() {
-                movetoX = parseInt(getPageX(event) - svgElm.position().left);
-                movetoY = parseInt(getPageY(event) - svgElm.position().top);
+                movetoX = parseInt(getPositionXOnSvg(event));
+                movetoY = parseInt(getPositionYOnSvg(event));
 
                 id = Math.random().toString(32).substring(2);
 
@@ -1012,7 +1314,7 @@
                     "d": "",
                     "fill": "none",
                     "stroke": strokeColor,
-                    "stroke-width": "3",
+                    "strokeSize": strokeSize,
                     "stroke-linecap": "round",
                     "x": 0,
                     "y": 0
@@ -1027,7 +1329,7 @@
                     "d": "", //pathデータ//塗りつぶし
                     "fill": "none",
                     "stroke": browserDrawData.stroke, //線の色
-                    "stroke-width": "3", //線の太さ
+                    "stroke-width": strokeSize, //線の太さ
                     "stroke-linecap": "round" //線の端を丸める
                 });
 
@@ -1040,8 +1342,8 @@
                 /* ドラッグ中 */
                 $("#drawingCanvas").on(move_event, function (event) {
                     event.preventDefault();
-                    linetoX[cntMoveto] = parseInt(getPageX(event) - svgElm.position().left); //SVG上のマウス座標(横方向)の取得
-                    linetoY[cntMoveto] = parseInt(getPageY(event) - svgElm.position().top); //SVG上のマウス座標(縦方向)の取得
+                    linetoX[cntMoveto] = parseInt(getPositionXOnSvg(event)); //SVG上のマウス座標(横方向)の取得
+                    linetoY[cntMoveto] = parseInt(getPositionYOnSvg(event)); //SVG上のマウス座標(縦方向)の取得
                     linetoStr = linetoStr + " L " + linetoX[cntMoveto] + " " + linetoY[cntMoveto]; //動いた後の新たなマウス座標を描画点として追加
 
                     // svgElm.find("path:last").attr("d", linetoStr); //pathデータ(d属性)の値を更新
@@ -1091,6 +1393,42 @@
             var count;
             var href = ""
 
+            function eraserAll() {
+                document.getElementById("eraserAll").addEventListener("click", function() {
+                    if (confirm("ボード内容を全て削除しますか？")) {
+                        // for (let id in drawingData) {
+                        //     var target = document.getElementById(id)
+                        //     target.remove()
+                        // }
+                        svgElm_js.innerHTML = ""
+                        var sendData = {
+                                        "type" : "deleteAll",
+                                    }
+                        drawingData = []
+                        sendOnDatachannel(sendData);
+                        saveBoardData();
+                    }
+                })
+            }
+            eraserAll()
+
+            function redo() {
+                document.getElementById("redo").addEventListener("click", function() {
+                        var target = svgElm_js.lastElementChild
+                        var target_id = target.id
+                        target.remove()
+                        var sendData = {
+                                        "type" : "redo",
+                                        "id": target_id
+                                    }
+                        delete drawingData[target_id]
+                        sendOnDatachannel(sendData);
+                        saveBoardData();
+                })
+            }
+
+            redo()
+
             function imageUpload() {
                 document.getElementById("image_catch").addEventListener('click', () => {
                     document.getElementById('file-select-input').click();
@@ -1121,8 +1459,8 @@
                     if (!files[0].type.match(/image\/*/)) {
                         return;
                     }
-                    const x = parseInt(getPageX(event) - svgElm.position().left);
-                    const y = parseInt(getPageY(event) - svgElm.position().top);
+                    const x = parseInt(getPositionXOnSvg(event));
+                    const y = parseInt(getPositionYOnSvg(event));
 
                     previewAndInsert(files, x, y);
                 });
@@ -1201,6 +1539,17 @@
                 return pageX;
             }
 
+            function getPositionXOnSvg(e) {
+                var x = getPageX(e)
+                var left = svgElm.position().left
+                var svg_w = svgElm_js.clientWidth
+                var viewBox = getViewBox()
+                var pageX_aspect =  viewBox[2]/svg_w
+                var viewBox_x = viewBox[0]
+                var result = (x - left)*pageX_aspect+viewBox_x;
+                return result
+            }
+
             function getPageY(e) {
                 var pageY = 0;
                 if (e.changedTouches) {
@@ -1209,6 +1558,18 @@
                     pageY = e.pageY;
                 }
                 return pageY;
+            }
+
+            function getPositionYOnSvg(e) {
+                var y = getPageY(e)
+                var top = svgElm.position().top
+                var svg_w = svgElm_js.clientWidth
+                var viewBox = getViewBox()
+                var svg_h = svgElm_js.clientHeight
+                var pageY_aspect =  viewBox[3]/svg_h
+                var viewBox_y = viewBox[1]
+                var result = (y - top)*pageY_aspect + viewBox_y;
+                return result
             }
 
             function createImage(cx, cy, x, y,  w, h, href, id) {

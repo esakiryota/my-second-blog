@@ -1,6 +1,7 @@
 from ..models import UserTokenList
 import random, string
-from .relationshipListRepository import RelationshipListRepository 
+from .relationshipListRepository import RelationshipListRepository
+
 
 
 class UserTokenListRepository :
@@ -51,6 +52,11 @@ class UserTokenListRepository :
             if str in token["username"]:
                 result.append(token)
         return result
+
+    def getUserInfoByToken(self, token):
+        result = UserTokenList.objects.filter(token=token)
+        return result.get().author
+
 
 
 

@@ -27,6 +27,9 @@ def updateRoom(request, room_name):
     return JsonResponse(d)
 
 def loadRoom(request, room_name):
+    if os.path.exists(f'practiceblog/boards/{room_name}.json') == False:
+        with open(f'practiceblog/boards/{room_name}.json', "w") as f:
+            json.dump("", f)
     json_open = open(f'practiceblog/boards/{room_name}.json', 'r')
     json_load = json.load(json_open)
     return JsonResponse({"data": json_load})
@@ -79,6 +82,17 @@ def board_search(request):
     usertoken_rps = UserTokenListRepository()
     result = usertoken_rps.getTokenListByMutalFollowAndUsername(author, value)
     return JsonResponse({"data": result})
+
+def getUserInfo(request):
+    value = request.body
+    data = json.loads(value)
+    usertoken_rps = UserTokenListRepository()
+    user_rps = UserRepository()
+    result = usertoken_rps.getUserInfoByToken(data["token"])
+    user_info = user_rps.getUserById(result.pk)
+    user_info["token"] = data["token"]
+
+    return JsonResponse({"data": user_info})
 
 
 

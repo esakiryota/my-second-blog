@@ -9,8 +9,8 @@ class UserRepository :
 
     def getUserById(self, id):
         ob = self.User.objects.filter(id=id)
-        user = ob.get()
-        return user
+        user = list(ob.values())
+        return user[0]
 
     def getUserAllList(self):
         result = self.User.objects.all()

@@ -7,7 +7,8 @@ from .api import apis
 # app_name = 'study_room'
 
 urlpatterns = [
-    path('', views.explanation, name='explanation'),
+    path('', views.index, name=''),
+    path('explanation', views.explanation, name='explanation'),
     path('logout', views.logout_view, name='logout'),
     path('user_create/', views.UserCreate.as_view(), name='user_create'),
     path('user_create/done', views.UserCreateDone.as_view(), name='user_create_done'),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('rooms', views.rooms, name='rooms'),
     path('rooms/<str:room_name>/', views.room, name='room'),
     path('myboard/<str:room_name>/', views.myboard, name='myboard'),
+    path('myboard/api/user_info', apis.getUserInfo),
     path('rooms/api/<str:room_name>/update',  apis.updateRoom, name='updateRoom'),
     path('rooms/api/<str:room_name>/load',  apis.loadRoom, name='loadRoom'),
     # ホワイトボードリスト

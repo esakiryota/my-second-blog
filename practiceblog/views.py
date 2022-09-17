@@ -37,6 +37,10 @@ from .repositories.userTokenListRepository import UserTokenListRepository
 from .repositories.relationshipListRepository import RelationshipListRepository
 from .repositories.userRepository import UserRepository
 
+
+def index(request):
+    return render(request, 'practiceblog/index.html')
+
 def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')
@@ -124,7 +128,7 @@ def explanation(request):
 def myboard(request, room_name):
     rps = UserTokenListRepository()
     user_token = rps.getUserToken(request.user)
-    params = {"token": room_name, "user_name": user_token}
+    params = {"token": room_name, "user_name": user_token, "user": request.user.username}
     return render(request, 'whiteboard/myboard.html', params)
 
 def rooms(request):
