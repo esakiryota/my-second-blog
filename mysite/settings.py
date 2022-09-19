@@ -12,10 +12,12 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import dj_database_url
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+json_open = open(f'mysite/env.json', 'r')
+aws_env = json.load(json_open)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -47,9 +49,9 @@ INSTALLED_APPS = [
 
 DEFAULT_FILE_STORAGE = 'practiceblog.aws_s3_storage.MediaStorage'
 
-AWS_ACCESS_KEY_ID = 'AKIAWCAVDE54QMAOCBFX'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'esakiryota-bucket'
+AWS_ACCESS_KEY_ID = aws_env["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = aws_env["AWS_SECRET_ACCESS_KEY"]
+AWS_STORAGE_BUCKET_NAME = aws_env["AWS_STORAGE_BUCKET_NAME"]
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
