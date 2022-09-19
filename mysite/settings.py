@@ -42,7 +42,14 @@ INSTALLED_APPS = [
     'practiceblog.apps.PracticeblogConfig',
     'rest_framework',
     'django_filters',
+    'storages',
 ]
+
+DEFAULT_FILE_STORAGE = 'practiceblog.aws_s3_storage.MediaStorage'
+
+AWS_ACCESS_KEY_ID = 'AKIAWCAVDE54QMAOCBFX'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'esakiryota-bucket'
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],

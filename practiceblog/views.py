@@ -22,8 +22,6 @@ from django.template.loader import render_to_string
 from django.contrib.auth import logout
 import requests
 import sys
-from PIL import Image
-from PIL.ExifTags import TAGS
 from django.http import HttpResponse
 from django.shortcuts import render
 import json
@@ -32,11 +30,12 @@ from .serializer import UserSerializer, SolveSerializer
 import django_filters
 from rest_framework import viewsets
 from django_filters import rest_framework as filters
-from django.utils import six 
+# from django.utils import six 
 from .repositories.userTokenListRepository import UserTokenListRepository
 from .repositories.relationshipListRepository import RelationshipListRepository
 from .repositories.userRepository import UserRepository
-
+from .repositories.profileListRepository import ProfileListRepository
+from .aws_s3_storage import MediaStorage
 
 def index(request):
     return render(request, 'practiceblog/index.html')
@@ -60,55 +59,16 @@ def search_alg(arg):
 
 def profile(request, str="str", num=1):
     author = request.user.username
-    data = Solve.objects.filter(user_name=author)
-    cate = ""
-    title = ""
-    if (request.method == 'POST'):
-        post_dict = dict(six.iterlists(request.POST))
-        seach = search_alg(post_dict)
-        request.session["form_value"] = seach
-        for k, v in seach.items():
-            if k == "cate":
-                data = data.filter(cate__contains=v[0])
-                cate = v[0]
-            if k == "title":
-                data = data.filter(title__contains=v[0])
-                title = v[0]
-    elif 'form_value' in request.session:
-        seach = request.session['form_value']
-        for k, v in seach.items():
-            if k == "cate":
-                data = data.filter(cate__contains=v[0])
-                cate = v[0]
-            if k == "title":
-                data = data.filter(title__contains=v[0])
-                title = v[0]
-    else:
-        data = Solve.objects.filter(user_name=author).filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    data = data.filter(published_date__lte=timezone.now()).order_by('published_date').reverse()
-    tests = data.all()[:7].values_list("id","cate", "title", "score", "created_date")
-    page = Paginator(tests, 3)
-    test_list = page.get_page(num)
-    math_list = []
-    english_list = []
-    for test in test_list:
-        if test[1] == "数学":
-            math_list.append(test)
-        if test[1] == "英語":
-            english_list.append(test)
-    data_json_list_math  = json.dumps(math_list, default=json_serial)
-    data_json_english  = json.dumps(english_list, default=json_serial)
-    form = SolveForm(initial={"cate": cate, "title": title})
     rps = UserTokenListRepository()
     token = rps.getUserToken(request.user)
+    prof_rps = ProfileListRepository()
+    profile = prof_rps.getProfileByAuthor(request.user)
+    image_src = prof_rps.getImageByUrl(profile["image"])
     params = {
     'author': author,
-    'data': data,
-    'data_json_math': data_json_list_math,
-    'data_json_english': data_json_english,
-    'tests': page.get_page(num),
-    'form': form,
     'token': token,
+    'profile': profile,
+    'image_src' : image_src
     }
     return render(request, 'practiceblog/profile.html', params)
 
@@ -116,7 +76,6 @@ def boardList(request,  num=1):
     user = request.user
     rps = UserTokenListRepository()
     token_list = rps.getTokenListByMutalFollow(user)
-    # token_list = list(token_list.values())
     params = {"token_list": token_list}
     print(params)
     return render(request, 'practiceblog/board_list.html', params)
@@ -228,33 +187,6 @@ class UserCreateComplete(generic.TemplateView):
 
         return HttpResponseBadRequest()
 
-def get_exif_of_image(file):
-    im = Image.open(file)
-    try:
-        exif = im._getexif()
-    except AttributeError:
-        return {}
-
-    # タグIDそのままでは人が読めないのでデコードして
-    # テーブルに格納する
-
-    exif_table = {}
-
-    try:
-        for tag_id, value in exif.items():
-            tag = TAGS.get(tag_id, tag_id)
-            exif_table[tag] = value
-    except AttributeError:
-        return exif_table
-    return exif_table
-
-def image_orientation_transpose(file):
-    im = Image.open(file)
-    orientation = get_exif_of_image(file).get('Orientation', 1)
-    if orientation == 6:
-        im = im.transpose(Image.ROTATE_270)
-    # return im
-    im.save(file)
 
 class CustomFilter(filters.FilterSet):
     start_created_date = filters.DateTimeFilter(field_name='created_date', lookup_expr='gt')

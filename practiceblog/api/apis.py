@@ -1,13 +1,15 @@
+from cmath import log
 from django.http import JsonResponse
 import json
 import os
-
+from ..aws_s3_storage import MediaStorage
 from practiceblog.views import json_serial
 from ..repositories.userRepository import UserRepository
 from ..repositories.relationshipListRepository import RelationshipListRepository
-from ..models import RelationshipList
+from ..models import Introduce, RelationshipList
 from ..repositories.userRepository import UserRepository
 from ..repositories.userTokenListRepository import UserTokenListRepository
+from ..repositories.profileListRepository import ProfileListRepository
 
 
 def updateRoom(request, room_name):
@@ -41,8 +43,6 @@ def getJsonFileSize(room_name):
 def getUserListBySearch(request):
     data = ""
     rps = UserRepository()
-
-
     return JsonResponse(data)
 
 def userList(request):
@@ -94,6 +94,32 @@ def getUserInfo(request):
 
     return JsonResponse({"data": user_info})
 
+def profile_update(request):
+    display_name = request.POST.get('username')
+    introduce = request.POST.get('introduce')
+    image = request.FILES.get('image', '')
+    file_path = ""
+    if image != "":
+        file_directory_within_bucket = 'user_upload_files/{username}'.format(username=request.user)
+        file_path_within_bucket = os.path.join(
+            file_directory_within_bucket,
+            image.name
+        )
+        file_path = file_path_within_bucket
+        media_storage = MediaStorage()
+
+        if not media_storage.exists(file_path_within_bucket): # avoid overwriting existing file
+            media_storage.save(file_path_within_bucket, image)
+            file_url = media_storage.url(file_path_within_bucket)
+    else:
+        file_path = ""
+    
+    author = request.user
+    profile_rps = ProfileListRepository()
+    result = profile_rps.update(author, display_name, introduce, file_path)
+    image_src = profile_rps.getImageByUrl(result["image"])
+    result["image_src"] = image_src
+    return JsonResponse({"data": result})
 
 
 

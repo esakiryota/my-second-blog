@@ -1,6 +1,65 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
+<div class="row">
+  <div class="col s2 offset-s10">
+    <a class="btn modal-trigger blue" href="#modal1">編集</a>
+  </div>
+</div>
 
+
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>プロフィール編集</h4>
+      <form action="" id="form">
+        {% csrf_token %}
+      <div class="file-field input-field col s6">
+        <div class="btn blue">
+          
+            <span class="">画像</span>
+            <input type="file" id="image" name="image">
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text">
+        </div>
+      </div>
+      <div class="input-field col s6">
+        <input placeholder="名前" id="username" type="text" class="validate" value="{{profile.display_name}}" name="username">
+        <label for="first_name">名前</label>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="introduce" class="materialize-textarea" data-length="120" name="introduce">{{profile.introduce}}</textarea>
+          <label for="textarea2">自己紹介</label>
+        </div>
+      </div>
+    </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn-flat">キャンセル</a>
+      <a href="#!" class="modal-close btn-flat" id="save">保存</a>
+    </div>
+  </div>
+
+<div class="col s12 m12 l12">
+  <div class="card-panel grey lighten-5 z-depth-1">
+    <div class="row valign-wrapper">
+      <div class="col s3">
+        <!-- <img src="images/yuna.jpg" alt="" class="circle responsive-img"> notice the "circle" class -->
+        {% if profile.image == "" %}
+        <i class="material-icons circle gray large">person</i>
+        {% else %}
+        <img src="{{image_src}}" alt="" class="circle" id="profile_image" width="100" height="100" style="object-fit: cover;">
+        {% endif%}
+      </div>
+      <div class="col s6">
+        <span class="black-text" style="font-weight: bold;font-size: 25px;" id="username_card">
+          {{profile.display_name}}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="col s12 m12">
   <div class="card horizontal">
     <div class="card-image">
@@ -8,9 +67,8 @@
     </div>
     <div class="card-stacked">
       <div class="card-content">
-        名前:{{user.username}}<br>
-        メールアドレス:{{user.email}}<br>
-        始めた時期:{{user.created_at}}
+        <i class="material-icons tiny">email</i>   {{user.email}}<br>
+        自己紹介: <br><span id="introduce_card">{{profile.introduce}}</span>
       </div>
     </div>
   </div>
@@ -49,6 +107,60 @@
           // these HTTP methods do not require CSRF protection
           return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
         }
+
+        function ajax(data, url, type, doneFunc) {
+                var csrf_token = getCookie("csrftoken");
+                // var data = JSON.stringify(data);
+                // var csrftoken1 = Cookies.get('csrftoken');
+                var csrftoken2 = getCookie("csrftoken");
+                // var csrftoken3 = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                // console.log(`csrftoken1:${csrftoken1}`);
+                console.log(`csrftoken2:${csrftoken2}`);
+                // console.log(`csrftoken3:${csrftoken3}`);
+                console.log(data);
+                $.ajax({
+                    url: url,
+                    type: type,
+                    data: data,
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                        }
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: "json"
+                }).done(function (response) {
+
+                    if (data.error) {
+                        console.log("ERROR");
+                    }
+                    else {
+                        doneFunc(response.data);
+                    }
+
+                }).fail(function (xhr, status, error) {
+                    console.log(status + ":" + error + ":" + xhr);
+                });
+            }
+
+            document.getElementById("save").addEventListener("click", function() {
+                new_user_list = ``
+                page = 0
+                var $upfile = $("form")
+                var formdata = new FormData($upfile.get(0));
+                const apiUrl = '/profile/api/update/'
+                response_data = ajax(formdata, apiUrl, "POST", profileUpdate)
+            })
+
+            function profileUpdate(data) {
+              console.log(data);
+              document.getElementById("username_card").textContent = data.display_name
+              document.getElementById("introduce_card").textContent = data.introduce
+              document.getElementById("profile_image").setAttribute("src", data.image_src)
+            }
+
 
         
     </script>

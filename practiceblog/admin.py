@@ -10,6 +10,7 @@ from .models import TeacherStudent
 from .models import RoomList
 from .models import UserTokenList
 from .models import RelationshipList
+from .models import ProfileList
 
 admin.site.register(Post)
 admin.site.register(ImageBox)
@@ -22,3 +23,4 @@ admin.site.register(TeacherStudent)
 admin.site.register(RoomList)
 admin.site.register(UserTokenList)
 admin.site.register(RelationshipList)
+admin.site.register(ProfileList)

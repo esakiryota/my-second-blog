@@ -15,6 +15,12 @@ $ source myvenv/bin/activate
 $ python manage.py runserver
 ```
 
+## 環境構築２（asgiの場合）
+
+```
+$ daphne mysite.asgi:application
+```
+
 ## AWSでの設定
 インスタンスを停止→再起動する時、
 ```
