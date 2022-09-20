@@ -1,60 +1,21 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
-<div class="conitainer"style="margin-top: 30px;">
+{% load static %}
+<div class="container">
   <div class="row">
-    <div class="col" style="font-size: 24px; font-weight: bold; border-left: solid 5px #e57373;">
-      このサイトの説明(生徒)
-    </div>
+    <div class="col s6"><img src="{% static 'img/explain_whiteboard.png' %}" alt="" style="width: 100%;"></div>
+    <div class="col s6"><span style="font-weight: bold; font-size: 16px;">図、文字で知の共有を行い、新しい価値創造を</span><br>Board Meetではペンを文字の書き込みや画像の貼り付けなどでアイデアを書き込むことができます。
+      そして、自分のボードには相互フォローとなっている友人や仲間も書き込むことができます。</div>
   </div>
   <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      家庭教師を探す
-    </div>
+    <div class="col s6"><img src="{% static 'img/explain_telework.png' %}" alt="" style="width: 100%;"></div>
+    <div class="col s6"><span style="font-weight: bold; font-size: 16px;">リアルタイムでボードを共有し、有意義なディスカッションを</span><br>Board Meetではリアルタイムで映像と音声を共有することにより、ディスカッションを行うことができます。
+    その際に、ボードに書き込むとリアルタイムでボードが更新され、反映されます。リモートでホワイトボードを使ったような会議を行うことができます。</div>
   </div>
   <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      動画
-    </div>
-  </div>
-  <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      <iframe width="400" height="225" src="https://www.youtube.com/embed/fACG_Qkbcwo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      質問をしてみる
-    </div>
-  </div>
-  <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      動画
-    </div>
-  </div>
-    <div class="row">
-      <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-        <iframe width="400" height="225" src="https://www.youtube.com/embed/C8vO6tIokbA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      </div>
-    </div>
-  <div class="row">
-    <div class="col" style="font-size: 24px; font-weight: bold; border-left: solid 5px #e57373;">
-      このサイトの説明(先生)
-    </div>
-  </div>
-  <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      家庭教師に応募する
-    </div>
-  </div>
-  <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      動画
-    </div>
-  </div>
-  <div class="row">
-    <div class="col" style="font-size: 18px; font-weight: bold; border-bottom: solid 2px #e57373;">
-      <iframe width="400" height="225" src="https://www.youtube.com/embed/j_ofHIB7STs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
+    <div class="col s6"><img src="{% static 'img/explain_idea.png' %}" alt="" style="width: 100%;"></div>
+    <div class="col s6"><span style="font-weight: bold; font-size: 16px;">アイデアをいつでも書き出せるボードを</span><br>ミーティングや自分で書き込んだボードは保存され、次のミーティングでも使うことができます。
+    思いついた時、いつでもボードにアイデアを書き加えることができます。</div>
   </div>
 </div>
 {% endblock %}
