@@ -30,4 +30,8 @@ class UserRepository :
             dict = {"username": user.username, "id": user.pk}
             result_list.append(dict)
         return result_list
+    
+    def getUserObjectById(self, id):
+        ob = self.User.objects.get(id=id)
+        return ob
 

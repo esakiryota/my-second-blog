@@ -90,7 +90,14 @@ def getUserInfo(request):
     user_rps = UserRepository()
     result = usertoken_rps.getUserInfoByToken(data["token"])
     user_info = user_rps.getUserById(result.pk)
+    user_ob = user_rps.getUserObjectById(result.pk)
+    prf_rps = ProfileListRepository()
+    profile = prf_rps.getProfileByAuthor(user_ob)
+    image_src = ""
+    if profile["image"] != "":
+        image_src = prf_rps.getImageByUrl(profile["image"])
     user_info["token"] = data["token"]
+    user_info["image_src"] = image_src
 
     return JsonResponse({"data": user_info})
 

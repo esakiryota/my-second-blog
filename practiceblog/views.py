@@ -97,9 +97,14 @@ def myboard(request, room_name):
     board_owner = rps.getUserInfoByToken(room_name)
     relation_rps = RelationshipListRepository()
     relation_bool = relation_rps.getRalationShipBool(board_owner.pk, request.user.pk)
+    prf_rps = ProfileListRepository()
+    profile = prf_rps.getProfileByAuthor(request.user)
+    image_src = ""
+    if profile["image"] != "":
+        image_src = prf_rps.getImageByUrl(profile["image"])
     if relation_bool == False and user_token != room_name:
         return redirect("user_list")
-    params = {"token": room_name, "user_name": user_token, "user": request.user.username}
+    params = {"token": room_name, "user_name": user_token, "user": request.user.username, "image": image_src}
     return render(request, 'whiteboard/myboard.html', params)
 
 @login_required

@@ -30,9 +30,7 @@ class ProfileListRepository :
 
     def getImageByUrl(self, url):
         storage = MediaStorage()
-        print(url)
         file_url = storage.url(url)
-        print(file_url)
         return file_url
     
     def getAllProfilesForView(self):
