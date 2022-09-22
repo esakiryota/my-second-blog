@@ -693,22 +693,27 @@
                  console.log('recieve message');
                  const data = JSON.parse(e.data);
                  console.log("data: ", data);
-                var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 var svgElm = $("#drawingCanvas")
                 switch (data.type) {
                     case "draw":
-                        svgElm.append(pathElm);
-                        svgElm.find("path:last").attr({
+                        var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        var path_attr = {
                             "id": data.id,
                             "d": "", //pathデータ//塗りつぶし
                             "fill": "none",
                             "stroke": data.stroke, //線の色
                             "stroke-width": data.strokeSize, //線の太さ
                             "stroke-linecap": "round" //線の端を丸める
-                        });
+                        }
+                        for (let key in path_attr) {
+                            pathElm.setAttribute(key, path_attr[key])
+                        }
+
+                        svgElm.append(pathElm);
                         break;
                     case "drawing":
-                        svgElm.find("path:last").attr("d", data.d);
+                        // svgElm.find("path:last").attr("d", data.d);
+                        document.getElementById(data.id).setAttribute("d", data.d)
                         break;
                     case "delete":
                         var target = document.getElementById(data.id);
@@ -1362,15 +1367,19 @@
                 // roomSocket.send(JSON.stringify(browserDrawData));
                 sendOnDatachannel(browserDrawData);
                 var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                svgElm.append(pathElm);
-                svgElm.find("path:last").attr({
+                var path_attr = {
                     "id": browserDrawData.id,
                     "d": "", //pathデータ//塗りつぶし
                     "fill": "none",
                     "stroke": browserDrawData.stroke, //線の色
                     "stroke-width": strokeSize, //線の太さ
                     "stroke-linecap": "round" //線の端を丸める
-                });
+                }
+                for (let key in path_attr) {
+                    pathElm.setAttribute(key, path_attr[key])
+                }
+                
+                svgElm.append(pathElm);
 
 
                 var linetoX = [], //描画点の横座標の初期化
@@ -1387,13 +1396,14 @@
 
                     // svgElm.find("path:last").attr("d", linetoStr); //pathデータ(d属性)の値を更新
                     browserDrawingData = {
+                        'id': pathElm.id,
                         'type': "drawing",
                         "d": linetoStr
                     }
 
                     // roomSocket.send(JSON.stringify(browserDrawingData));
                     sendOnDatachannel(browserDrawingData);
-                    svgElm.find("path:last").attr("d", browserDrawingData.d);
+                    pathElm.setAttribute("d", browserDrawingData.d);
                     cntMoveto++; //カウンターをセット
                 });
             }
