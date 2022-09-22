@@ -120,7 +120,7 @@
             </a></li>
     </ul>
     </p>
-    <div id="videos" style="position: fixed; left: 100px; top:20px;">
+    <div id="videos" style="position: fixed; left: 100px; top:20px; max-height: 500px; overflow:auto;">
         <div id="{{user_name}}_box" style="position: relative;">
             <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
             <div style="position: absolute; bottom: 6px; left: 0px; background-color: black; color: white;" id="name_{{user_name}}">{{user}}</div>
@@ -148,14 +148,16 @@
                 
             // });
             $('#brush-tap-target').css("width", "300px").css("height", "300px")
-            // $("#board").mCustomScrollbar({
-            //         theme: "rounded-dark",
-            //         axis:"xy",
-            //     });
+            $("#videos").mCustomScrollbar({
+                    theme: "rounded-dark",
+                    axis:"y",
+                });
             
             var svgElm_js = document.getElementById("drawingCanvas")
             svgElm_js.clientHeight = svgElm_js.style.height
             svgElm_js.clientWidth = svgElm_js.style.width
+            document.getElementById("videos").style.maxHeight = svgElm_js.style.height + "px"
+            console.log(document.getElementById("videos"));
             var svgElm_js_height = svgElm_js.clientHeight
             var svgElm_js_width = svgElm_js.clientWidth
             var init_viewBox = "0 0 " + String(svgElm_js_width) + " " + String(svgElm_js_height)
@@ -165,6 +167,8 @@
                 svgElm_js.clientWidth = svgElm_js.style.width
                 var svgElm_js_height = svgElm_js.clientHeight
                 var svgElm_js_width = svgElm_js.clientWidth
+                document.getElementById("videos").style.maxHeight = svgElm_js.clientHeight + "px"
+                console.log(document.getElementById("videos").style.maxHeight);
                 var [minX, minY, width, height] = svgElm_js.getAttribute('viewBox').split(' ')
                             .map(s => parseFloat(s));
                 var init_viewBox = String(minX) + " " + String(minY) + " " + String(svgElm_js_width) + " " + String(svgElm_js_height)
@@ -450,19 +454,19 @@
              const data = JSON.parse(e.data);
              if (data.type === 'bye') {
                  if (data.from !== user_name) {
-                    //  logOnView(`${data.from}: bye, ${user_name}`, 4000, "blue")
                      stop(data.from);
                  }
                  return;
              }
              if (data.message == "join") {
+                 console.log("join?");
                  if (data.user_name !== user_name) {
+                    console.log("join!");
                      videoRoomSocket.send(JSON.stringify({
                          "type": "hello",
                          "to": data.user_name,
                          "from": user_name
                      }));
-                    //  logOnView(`${data.user_name}が入室しました`, 4000, "blue")
                      return;
                  }
                  return
@@ -1271,6 +1275,30 @@
                     input.removeEventListener("keyup", function () { })
                     input.style.top = '-1000px';
                 })
+                input.addEventListener("blur", function () {
+                    input.removeEventListener("keyup", function () { })
+                    input.style.top = '-1000px';
+                })
+                input.addEventListener("keypress", function (e) {
+                    if (e.keyCode === 13) {
+                        input_y += 20
+                        input.style.top = input_y + 'px';
+                        id = Math.random().toString(32).substring(2);
+                        y += 20;
+                        createTextBox(x, y, 0, 0, id, text);
+                        sendTextBoxData.cx = x;
+                        sendTextBoxData.cy = y;
+                        sendTextBoxData.x = 0;
+                        sendTextBoxData.y = 0;
+                        sendTextBoxData.id = id;
+                        sendTextBoxData.text = text;
+                        sendTextBoxData.type = "textBox"
+                        drawingData[id] = sendTextBoxData;
+                        saveBoardData();
+                        createTextBox(sendTextBoxData.cx, sendTextBoxData.cy, sendTextBoxData.x, sendTextBoxData.y, sendTextBoxData.id, sendTextBoxData.text);
+                        input.value = ""
+                    }
+                })
             }
 
             function svgResize() {
@@ -1437,7 +1465,10 @@
                 document.getElementById('file-select-input').addEventListener('change', (event) => {
                     const files = event.target.files;
                     if (files.length > 0) {
-                        previewAndInsert(files, 200, 200);
+                        var viewBox = getViewBox()
+                        var viewBox_x = viewBox[0]
+                        var viewBox_y = viewBox[1]
+                        previewAndInsert(files, 200 + viewBox_x, 200 + viewBox_y);
                     }
                     event.target.files = null;
                     event.target.value = null;

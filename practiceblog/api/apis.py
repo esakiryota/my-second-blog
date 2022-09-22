@@ -108,9 +108,9 @@ def profile_update(request):
         file_path = file_path_within_bucket
         media_storage = MediaStorage()
 
-        if not media_storage.exists(file_path_within_bucket): # avoid overwriting existing file
-            media_storage.save(file_path_within_bucket, image)
-            file_url = media_storage.url(file_path_within_bucket)
+        # if not media_storage.exists(file_path_within_bucket): # avoid overwriting existing file
+        media_storage.save(file_path_within_bucket, image)
+        file_url = media_storage.url(file_path_within_bucket)
     else:
         file_path = ""
     

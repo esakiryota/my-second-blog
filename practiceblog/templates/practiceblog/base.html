@@ -35,6 +35,10 @@
   @media screen and (max-width: 992px){
   
   }
+  .blue_active {
+  background-color: rgba(230, 35, 35, 0.8);
+  color: blue;
+}
 
 
         </style>
@@ -60,7 +64,7 @@
           <li><a  href="{% url 'board_list' %}" class="collapsible-header" id="board_list"><i class="material-icons">storage</i>ボードリスト</a></li>
           <li><a  href="{% url 'user_list' %}" class="collapsible-header" id="user_list"><i class="material-icons">people_outline</i>ユーザーリスト</a></li>
           {% else %}
-          <li><a href="{% url 'login' %}" class="collapsible-header" id="login"><i class="material-icons">exit_to_app</i>ログイン</a></li>
+          <li class=""><a href="{% url 'login' %}" class="collapsible-header" id="login"><i class="material-icons">exit_to_app</i>ログイン</a></li>
           <li><a href="{% url 'user_create' %}" class="collapsible-header" id="user_create"><i class="material-icons">add_box</i>アカウント作成</a></li>
           <!-- <li><a href="{% url 'rooms' %}" class="collapsible-header"><i class="material-icons" id="rooms">school</i>体験授業</a></li> -->
           {% endif %}
@@ -81,7 +85,7 @@
           <footer class="">
             <div class="footer-copyright">
               <div class="container">
-                © 2022 Copyright 
+                © 2022 Copyright Ryota Esaki
                 <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
               </div>
             </div>

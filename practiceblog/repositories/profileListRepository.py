@@ -1,3 +1,4 @@
+from cmath import log
 from ..models import ProfileList
 import random, string
 from ..aws_s3_storage import MediaStorage
@@ -29,7 +30,18 @@ class ProfileListRepository :
 
     def getImageByUrl(self, url):
         storage = MediaStorage()
+        print(url)
         file_url = storage.url(url)
         print(file_url)
-        # image_src = json.loads(file)
         return file_url
+    
+    def getAllProfilesForView(self):
+        profiles = ProfileList.objects.select_related('author')
+        result_list = []
+        for profile in profiles:
+            image_src = ""
+            if profile.image != "":
+                image_src = self.getImageByUrl(profile.image)
+            dict = {"display_name": profile.display_name, "image": profile.image, "introduce": profile.introduce, "image_src": image_src, "author": {"username": profile.author.username, "id": profile.author.id, "pk": profile.author.pk}}
+            result_list.append(dict)
+        return result_list

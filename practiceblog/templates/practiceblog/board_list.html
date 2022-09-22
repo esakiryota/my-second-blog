@@ -11,16 +11,9 @@
         </form>
     </div>
 </nav>
-<div id="room_collection">
-    <!-- {% for token in token_list %}
-    <a id="token" class="room" href="/myboard/{{token.token}}">
-        <div class="card grey lighten-5 hoverable">
-            <div class="card-content black-text">
-                <span class="card-title"><i class="material-icons">note</i>   {{ token.author.username }}のホワイトボード</span>
-            </div>
-        </div>
-    </a>
-    {% endfor %} -->
+<div>
+    <div class="row" id="room_collection">
+    </div>
 </div>
 {{ token_list|json_script:"token_list"}}
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -48,7 +41,7 @@
         }
 
 
-        function ajax(data, url, type, doneFunc) {
+        function ajax(data, url, type, doneFunc, token) {
                 var csrf_token = getCookie("csrftoken");
                 var csrftoken2 = getCookie("csrftoken");
                 console.log(`csrftoken2:${csrftoken2}`);
@@ -69,7 +62,7 @@
                         console.log("ERROR");
                     }
                     else {
-                        doneFunc(response.data);
+                        doneFunc(response.data, token);
                     }
 
                 }).fail(function (xhr, status, error) {
@@ -90,18 +83,23 @@
 
             function userDisplay(data) {
                 user_list = data
+                console.log(data);
 
                 for (var i = 0; i < user_list.length; i++) {
-                    new_user_list += `<a id="token" class="room" href="/myboard/${user_list[i].token}">
-        <div class="card grey lighten-5 hoverable">
-            <div class="card-content black-text">
-                <span class="card-title"><i class="material-icons">note</i>   ${ user_list[i].username }のホワイトボード</span>
-            </div>
+                    new_user_list += `<a id="token" class="room" href="/myboard/${user_list[i].token}"><div class="col s12 m6 l4"><div class="card"><div class="card-image">
+                
+                    <svg id="${user_list[i].token}" style="width: 100%; height: 20%;" viewBox="0 0 666 333"></svg>
+                  <div class="card-content">
+          <p class="black-text">${user_list[i].username}ボード</p>
         </div>
-    </a>`
+                </div></div></div></a>`
                 }
 
                 room_collection.innerHTML = new_user_list
+
+                for (var i = 0; i < user_list.length; i++) {
+                    loadRoom(user_list[i].token);
+                }
             }
 
             userDisplay(token_list)
@@ -116,6 +114,114 @@
                 const apiUrl = '/board_list/api/search'
                 response_data = ajax(data, apiUrl, "GET", userDisplay)
             })
+
+            // var svgElm = $("#drawingCanvas")
+            // var token = JSON.parse(document.getElementById('token').textContent);
+
+            function defultDraw(data, token) {
+                console.log(token);
+                var svgElm = $(`#${token}`)
+                console.log(svgElm);
+                Object.keys(data).forEach(function(key) {
+                    //初期データをjsonfileに書き込む用のデータに加える
+                    var value = data[key];
+                    console.log(value);
+                    var draw_type = value.type
+                    switch (draw_type) {
+                        case "draw":
+                            var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            svgElm.append(pathElm);
+                            console.log(value);
+                            svgElm.find("path:last").attr({
+                                "id": key,
+                                "d": value.d, 
+                                "fill": "none",
+                                "stroke": value.stroke, 
+                                "stroke-width": value.strokeSize, 
+                                "stroke-linecap": "round" 
+                            });
+                            var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                            if (!pathElm.hasAttribute("transform")) {
+                                pathElm.transform.baseVal.appendItem(transform);
+                            }
+
+                            // var Matrix = target.transform.matrix;
+                            var Matrix = pathElm.transform.baseVal[0].matrix;
+                            Matrix.e = value.x;
+                            Matrix.f = value.y;
+                            break;
+                        case "image":
+                            var imageElm = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                            imageElm.setAttribute("href", value.href);
+                            imageElm.setAttribute("id", value.id);
+                            imageElm.setAttribute("width", value.width);
+                            imageElm.setAttribute("height", value.height);
+                            imageElm.setAttribute("x", value.cx);
+                            imageElm.setAttribute("y", value.cy);
+                            svgElm.append(imageElm);
+                            var transform = imageElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                            if (!imageElm.hasAttribute("transform")) {
+                                imageElm.transform.baseVal.appendItem(transform);
+                            }
+
+                            // var Matrix = target.transform.matrix;
+                            var Matrix = imageElm.transform.baseVal[0].matrix;
+                            Matrix.e = value.x;
+                            Matrix.f = value.y;
+                            break;
+                        case "textBox":
+                            createTextBox(value.cx, value.cy, value.x, value.y, value.id, value.text);
+                            break;
+                        case "":
+                            svgElm.html("");
+                            break;
+                        default:
+                            console.log("no type");
+                    }
+            }, data.data)
+          }
+
+          function loadRoom(token) {
+                const apiUrl =
+                    '/rooms/api/'
+                    + token
+                    + '/load'
+                loadingData = ajax("dummy", apiUrl, "GET", defultDraw, token)
+            }
+
+            window.addEventListener('load', function () {
+                loadRoom()
+              });
+
+            function createTextBox(cx, cy, x, y, id, text) {
+                var text_box = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text_box.setAttribute("x", cx);
+                text_box.setAttribute("y", cy);
+                text_box.setAttribute("font-size", 20);
+                text_box.setAttribute("fill", "#666666");
+                text_box.setAttribute("id", id);
+                text_box.textContent = text;
+                var transform = text_box.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                if (!text_box.hasAttribute("transform")) {
+                    text_box.transform.baseVal.appendItem(transform);
+                }
+                var Matrix = text_box.transform.baseVal[0].matrix;
+                Matrix.e += x;
+                Matrix.f += y;
+                svgElm.append(text_box);
+            }
+
+            function SVGMatrixCreate(a, b, c, d, e, f) {
+                var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                var mtx = svg.createSVGMatrix();
+                if (a !== undefined) mtx.a = a;
+                if (b !== undefined) mtx.b = b;
+                if (c !== undefined) mtx.c = c;
+                if (d !== undefined) mtx.d = d;
+                if (e !== undefined) mtx.e = e;
+                if (f !== undefined) mtx.f = f;
+                return mtx;
+            }
 
 
 

@@ -39,19 +39,17 @@ class RelationshipListRepository :
         follow_list = relationship_list["follow_list"]
         follower_list = relationship_list["follower_list"]
         mutal_follow = []
-        while len(follow_list) != 0:
-            if follow_list[0] == follower_list[0]:
-                mutal_follow.append(follow_list[0])
-                del follower_list[0]
-                del follow_list[0]
-            else :
-                if follow_list[0] > follower_list[0]:
-                    del follower_list[0]
-                else :
-                    del follow_list[0]
-            
-            if len(follow_list) == 0 or len(follower_list) == 0:
-                break
-        print(mutal_follow)
+        for i in follow_list:
+            if i in follower_list:
+                mutal_follow.append(i)
         return mutal_follow
+    
+    def getRalationShipBool(self, user_id_1, user_id_2):
+        relation_1 = RelationshipList.objects.filter(follow=user_id_1).filter(follower=user_id_2)
+        relation_2 = RelationshipList.objects.filter(follow=user_id_2).filter(follower=user_id_1)
+        relation_bool = False
+        if len(relation_1) != 0 and len(relation_2) != 0:
+            relation_bool = True
+        return relation_bool
+
 

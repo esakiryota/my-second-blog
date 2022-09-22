@@ -87,6 +87,10 @@
                 var content = document.getElementById(String(data.follower))
                 content.textContent = "フォロー中"
                 content.classList.add("unfollow")
+                content.style.backgroundColor = "white"
+                content.style.color = "blue"
+                realtion_list["follow_list"].push(data.follower)
+                console.log(realtion_list["follow_list"]);
             }
 
             function unfollowAction(data) {
@@ -94,6 +98,13 @@
                 var content = document.getElementById(String(data.follower))
                 content.textContent = "フォロー"
                 content.classList.remove("unfollow")
+                content.style.backgroundColor = "blue"
+                content.style.color = "white"
+                var val = 'apple';
+                console.log(realtion_list["follow_list"]);
+                var index = realtion_list["follow_list"].indexOf(data.follower);
+                realtion_list["follow_list"].splice(index, 1)
+                console.log(realtion_list["follow_list"]);
             }
 
             var follow_btn = document.getElementsByClassName("follow")
@@ -143,23 +154,30 @@
 
             function userDisplay(data) {
                 user_list = data
-                var user_list_page = pagenation(1, page, user_list)
+                var user_list_page = pagenation(5, page, user_list)
                 console.log(user_list_page);
+                new_user_list = user_list_collection.innerHTML
 
                 for (var i = 0; i < user_list_page.length; i++) {
-                    new_user_list += `<li class="collection-item avatar">
-            <i class="material-icons circle">person_outline</i>
-          <span class="title">${user_list_page[i].username}</span>
-          <p>ユーザーID: <span id="user_id">${user_list_page[i].id}</span><br>
+                    new_user_list += `<li class="collection-item avatar">`
+                    if (user_list_page[i].image != "") {
+                        new_user_list += `<img src="${user_list_page[i].image_src}" alt="" class="circle" style="object-fit: cover;">`
+                    } else {
+                        new_user_list += `<i class="material-icons circle">person_outline</i>`
+                    }
+                    new_user_list += `<span class="title">${user_list_page[i].display_name}</span>
+          <p>${user_list_page[i].introduce}</span><br>
           </p>`
-                     if (realtion_list["follower_list"].includes(user_list_page[i].id)) {
+                     if (realtion_list["follower_list"].includes(user_list_page[i].author.pk)) {
                         new_user_list += `フォローされています。`
                      }
 
-                     if (realtion_list["follow_list"].includes(user_list_page[i].id)) {
-                        new_user_list += `<a class="follow secondary-content btn-flat unfollow blue white-text" id="${user_list_page[i].id}">フォロー中</a>`
+                     console.log(realtion_list["follow_list"]);
+
+                     if (realtion_list["follow_list"].includes(user_list_page[i].author.pk)) {
+                        new_user_list += `<a class="follow secondary-content btn-flat unfollow" style="background-color: white; color: blue; border: solid; border-color: blue; " style="" id="${user_list_page[i].author.pk}">フォロー中</a>`
                      } else {
-                        new_user_list += `<a class="follow secondary-content btn-flat blue white-text" id="${user_list_page[i].id}">フォロー</a>`
+                        new_user_list += `<a class="follow secondary-content btn-flat" style="background-color: blue; color: white; border: solid; border-color: blue;" id="${user_list_page[i].author.pk}">フォロー</a>`
                      }
 
                      new_user_list += `</li>`
@@ -193,6 +211,9 @@
                 while (i < data.length) {
                     list = []
                     for (var j = 0; j < num; j++) {
+                        if (data[i] == undefined) {
+                            break;
+                        }
                         list.push(data[i])
                         i++
                     }
@@ -211,17 +232,17 @@
                 for (var i = 0; i < response_data.data.length; i++) {
                     new_user_list += `<li class="collection-item avatar">
             <i class="material-icons circle">person_outline</i>
-          <span class="title">${response_data.data[i].username}</span>
-          <p>ユーザーID: <span id="user_id">${response_data.data[i].id}</span><br>
+          <span class="title">${response_data.data[i].display_name}</span>
+          <p>ユーザーID: <span id="user_id">${response_data.data[i].author.id}</span><br>
           </p>`
-                     if (realtion_list["follower_list"].includes(response_data.data[i].id)) {
+                     if (realtion_list["follower_list"].includes(response_data.data[i].author.pk)) {
                         new_user_list += `フォローされています。`
                      }
 
-                     if (realtion_list["follow_list"].includes(response_data.data[i].id)) {
-                        new_user_list += `<a class="follow secondary-content btn unfollow" id="${response_data.data[i].id}">フォロー中</a>`
+                     if (realtion_list["follow_list"].includes(response_data.data[i].pk)) {
+                        new_user_list += `<a class="follow secondary-content btn unfollow" id="${response_data.data[i].author.pk}">フォロー中</a>`
                      } else {
-                        new_user_list += `<a class="follow secondary-content btn" id="${response_data.data[i].id}">フォロー</a>`
+                        new_user_list += `<a class="follow secondary-content btn" id="${response_data.data[i].author.pk}">フォロー</a>`
                      }
 
                      new_user_list += `</li>`

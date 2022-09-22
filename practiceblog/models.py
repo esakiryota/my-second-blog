@@ -214,7 +214,7 @@ class ProfileList(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=200, null=True)
     introduce = models.CharField(max_length=200, null=True)
-    image = models.CharField(max_length=200, null=True)
+    image = models.CharField(max_length=1000, null=True)
 
     def __str__(self):
         return self.author.username

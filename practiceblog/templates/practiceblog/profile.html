@@ -75,13 +75,20 @@
 </div>
 <div>
   <a id="" class="col s12 m12" href="/myboard/{{token}}">
-    <div class="card grey lighten-5 hoverable">
-        <div class="card-content black-text">
-            <span class="card-title"><i class="material-icons">note</i>ホワイトボード</span>
+    <div class="row">
+      <div class="col s12">
+        <div class="card-panel">
+          <span style="color: black;">ボード</span><br>
+          <figure id="board" >
+            <svg id="drawingCanvas" style="width: 90%; height: 50%;" viewBox="0 0 1000 500"></svg>
+          </figure>
         </div>
+      </div>
     </div>
   </a>
 </div>
+
+{{ token|json_script:"token" }}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -159,6 +166,112 @@
               document.getElementById("username_card").textContent = data.display_name
               document.getElementById("introduce_card").textContent = data.introduce
               document.getElementById("profile_image").setAttribute("src", data.image_src)
+            }
+
+            var svgElm = $("#drawingCanvas")
+            var token = JSON.parse(document.getElementById('token').textContent);
+
+            function defultDraw(data) {
+              console.log(data);
+                Object.keys(data).forEach(function(key) {
+                    //初期データをjsonfileに書き込む用のデータに加える
+                    var value = data[key];
+                    console.log(value);
+                    var draw_type = value.type
+                    switch (draw_type) {
+                        case "draw":
+                            var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            svgElm.append(pathElm);
+                            console.log(value);
+                            svgElm.find("path:last").attr({
+                                "id": key,
+                                "d": value.d, 
+                                "fill": "none",
+                                "stroke": value.stroke, 
+                                "stroke-width": value.strokeSize, 
+                                "stroke-linecap": "round" 
+                            });
+                            var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                            if (!pathElm.hasAttribute("transform")) {
+                                pathElm.transform.baseVal.appendItem(transform);
+                            }
+
+                            // var Matrix = target.transform.matrix;
+                            var Matrix = pathElm.transform.baseVal[0].matrix;
+                            Matrix.e = value.x;
+                            Matrix.f = value.y;
+                            break;
+                        case "image":
+                            var imageElm = document.createElementNS("http://www.w3.org/2000/svg", "image");
+                            imageElm.setAttribute("href", value.href);
+                            imageElm.setAttribute("id", value.id);
+                            imageElm.setAttribute("width", value.width);
+                            imageElm.setAttribute("height", value.height);
+                            imageElm.setAttribute("x", value.cx);
+                            imageElm.setAttribute("y", value.cy);
+                            svgElm.append(imageElm);
+                            var transform = imageElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                            if (!imageElm.hasAttribute("transform")) {
+                                imageElm.transform.baseVal.appendItem(transform);
+                            }
+
+                            // var Matrix = target.transform.matrix;
+                            var Matrix = imageElm.transform.baseVal[0].matrix;
+                            Matrix.e = value.x;
+                            Matrix.f = value.y;
+                            break;
+                        case "textBox":
+                            createTextBox(value.cx, value.cy, value.x, value.y, value.id, value.text);
+                            break;
+                        case "":
+                            svgElm.html("");
+                            break;
+                        default:
+                            console.log("no type");
+                    }
+            }, data.data)
+          }
+
+          function loadRoom() {
+                const apiUrl =
+                    '/rooms/api/'
+                    + token
+                    + '/load'
+                loadingData = ajax("dummy", apiUrl, "GET", defultDraw)
+            }
+
+            window.addEventListener('load', function () {
+                loadRoom()
+              });
+
+            function createTextBox(cx, cy, x, y, id, text) {
+                var text_box = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text_box.setAttribute("x", cx);
+                text_box.setAttribute("y", cy);
+                text_box.setAttribute("font-size", 20);
+                text_box.setAttribute("fill", "#666666");
+                text_box.setAttribute("id", id);
+                text_box.textContent = text;
+                var transform = text_box.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                if (!text_box.hasAttribute("transform")) {
+                    text_box.transform.baseVal.appendItem(transform);
+                }
+                var Matrix = text_box.transform.baseVal[0].matrix;
+                Matrix.e += x;
+                Matrix.f += y;
+                svgElm.append(text_box);
+            }
+
+            function SVGMatrixCreate(a, b, c, d, e, f) {
+                var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                var mtx = svg.createSVGMatrix();
+                if (a !== undefined) mtx.a = a;
+                if (b !== undefined) mtx.b = b;
+                if (c !== undefined) mtx.c = c;
+                if (d !== undefined) mtx.d = d;
+                if (e !== undefined) mtx.e = e;
+                if (f !== undefined) mtx.f = f;
+                return mtx;
             }
 
 
