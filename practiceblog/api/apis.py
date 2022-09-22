@@ -68,13 +68,13 @@ def user_unfollow(request):
 def user_search(request):
     value = request.GET.get('str')
     author = request.user
-    user_rps = UserRepository()
-    result = user_rps.getUserListByUsername(value)
-    json_serial = list(result.values())
+    prf_rps = ProfileListRepository()
+    result = prf_rps.getAllProfilesForViewByUsername(value)
+    # json_serial = list(result.values())
 
 
-    data = result
-    return JsonResponse({"data": json_serial})
+    # data = result
+    return JsonResponse({"data": result})
 
 def board_search(request):
     value = request.GET.get('str')

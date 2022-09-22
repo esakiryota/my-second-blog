@@ -156,7 +156,6 @@
                 user_list = data
                 var user_list_page = pagenation(5, page, user_list)
                 console.log(user_list_page);
-                new_user_list = user_list_collection.innerHTML
 
                 for (var i = 0; i < user_list_page.length; i++) {
                     new_user_list += `<li class="collection-item avatar">`
@@ -193,10 +192,8 @@
 
             read_more.addEventListener("click", function() {
                 page++
+                new_user_list = user_list_collection.innerHTML
                 userDisplay(user_list)
-                // if (num*(page+1) >= user_list.length) {
-                //     read_more.classList.add("disabled")
-                // }
             })
 
 
@@ -222,34 +219,34 @@
                 return result[page]
             }
 
-            function userDisplayBysearch(response_data) {
-                console.log(response_data);
+        //     function userDisplayBysearch(response_data) {
+        //         console.log(response_data);
 
-                new_user_list = ``
+        //         new_user_list = ``
 
-                var user_list_page = pagenation(num, page, response_data.data)
+        //         var user_list_page = pagenation(num, page, response_data.data)
 
-                for (var i = 0; i < response_data.data.length; i++) {
-                    new_user_list += `<li class="collection-item avatar">
-            <i class="material-icons circle">person_outline</i>
-          <span class="title">${response_data.data[i].display_name}</span>
-          <p>ユーザーID: <span id="user_id">${response_data.data[i].author.id}</span><br>
-          </p>`
-                     if (realtion_list["follower_list"].includes(response_data.data[i].author.pk)) {
-                        new_user_list += `フォローされています。`
-                     }
+        //         for (var i = 0; i < response_data.data.length; i++) {
+        //             new_user_list += `<li class="collection-item avatar">
+        //     <i class="material-icons circle">person_outline</i>
+        //   <span class="title">${response_data.data[i].display_name}</span>
+        //   <p>ユーザーID: <span id="user_id">${response_data.data[i].author.id}</span><br>
+        //   </p>`
+        //              if (realtion_list["follower_list"].includes(response_data.data[i].author.pk)) {
+        //                 new_user_list += `フォローされています。`
+        //              }
 
-                     if (realtion_list["follow_list"].includes(response_data.data[i].pk)) {
-                        new_user_list += `<a class="follow secondary-content btn unfollow" id="${response_data.data[i].author.pk}">フォロー中</a>`
-                     } else {
-                        new_user_list += `<a class="follow secondary-content btn" id="${response_data.data[i].author.pk}">フォロー</a>`
-                     }
+        //              if (realtion_list["follow_list"].includes(response_data.data[i].pk)) {
+        //                 new_user_list += `<a class="follow secondary-content btn unfollow" id="${response_data.data[i].author.pk}">フォロー中</a>`
+        //              } else {
+        //                 new_user_list += `<a class="follow secondary-content btn" id="${response_data.data[i].author.pk}">フォロー</a>`
+        //              }
 
-                     new_user_list += `</li>`
-                }
+        //              new_user_list += `</li>`
+        //         }
 
-                user_list_collection.innerHTML = new_user_list
-            }
+        //         user_list_collection.innerHTML = new_user_list
+        //     }
 
             search.addEventListener("input", function() {
                 console.log(this.value);

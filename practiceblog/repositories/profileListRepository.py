@@ -43,3 +43,14 @@ class ProfileListRepository :
             dict = {"display_name": profile.display_name, "image": profile.image, "introduce": profile.introduce, "image_src": image_src, "author": {"username": profile.author.username, "id": profile.author.id, "pk": profile.author.pk}}
             result_list.append(dict)
         return result_list
+    
+    def getAllProfilesForViewByUsername(self, str):
+        profiles = ProfileList.objects.filter(display_name__contains=str).select_related('author')
+        result_list = []
+        for profile in profiles:
+            image_src = ""
+            if profile.image != "":
+                image_src = self.getImageByUrl(profile.image)
+            dict = {"display_name": profile.display_name, "image": profile.image, "introduce": profile.introduce, "image_src": image_src, "author": {"username": profile.author.username, "id": profile.author.id, "pk": profile.author.pk}}
+            result_list.append(dict)
+        return result_list
