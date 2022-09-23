@@ -108,9 +108,11 @@ def profile_update(request):
     file_path = ""
     if image != "":
         file_directory_within_bucket = 'user_upload_files/{username}'.format(username=request.user)
+        extension = image.name.split('.')[-1]
+        image_name = request.user.username + extension
         file_path_within_bucket = os.path.join(
             file_directory_within_bucket,
-            image.name
+            image_name
         )
         file_path = file_path_within_bucket
         media_storage = MediaStorage()

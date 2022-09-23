@@ -190,8 +190,10 @@
                 return [minX, minY, width, height]
             }
 
+            var wheel_event = 'ontouchstart' in window ? "touchmove" : "wheel";
+
             function zoomAction() {
-                document.getElementById("drawingCanvas").addEventListener("wheel", function(e) {
+                document.getElementById("drawingCanvas").addEventListener(wheel_event, function(e) {
                     if (pointerType == "zoom_in" || pointerType == "zoom_out" ) {
                         e.preventDefault()
                         // var x = e.deltaX
@@ -923,6 +925,7 @@
             var start_event = 'ontouchstart' in window ? "touchstart" : "mousedown";
             var move_event = 'ontouchstart' in window ? "touchmove" : "mousemove";
             var end_event = 'ontouchstart' in window ? "touchend" : "mouseup";
+            var out_event = "mouseleave"
 
             function main() {
                 $("#drawingCanvas").on(start_event, function (event) {
@@ -971,7 +974,32 @@
                             console.log("main");
                             break;
                     }
+                }).on(out_event, function (event) {
+                    event.preventDefault();
+                    console.log("end");
+                    switch (pointerType) {
+                        case "draw":
+                            pencilByMouseup();
+                            break;
+                        case "moveScreen":
+                            moveScreenByMouseup();
+                            break;
+                        case "moveContent": 
+                            moveContentByMouseup();
+                            break;
+                        case "eraser": 
+                            eraserByMouseup();
+                            break;
+                        case "text": 
+                            textBoxMouseup();
+                            break;
+                        default:
+                            console.log("main");
+                            break;
+                    }
                 })
+
+                $("#drawingCanvas")
             }
 
             main();
@@ -1421,7 +1449,7 @@
                         + roomName
                         + '/update/'
                     const afterDrawFunc = function (response) {
-                        logOnView(response.message, 1000, "blue")
+                        // logOnView(response.message, 1000, "blue")
                         return response;
                     }
                     ajax(drawingData, apiUrl, "post", afterDrawFunc)
