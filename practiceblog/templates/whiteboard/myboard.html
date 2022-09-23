@@ -190,7 +190,7 @@
                 return [minX, minY, width, height]
             }
 
-            var wheel_event = 'ontouchstart' in window ? "touchmove" : "wheel";
+            var wheel_event = 'ontouchstart' in window ? "mousewheel" : "wheel";
 
             function zoomAction() {
                 document.getElementById("drawingCanvas").addEventListener(wheel_event, function(e) {
