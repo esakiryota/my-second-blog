@@ -10,4 +10,3 @@ local_settings.py
 /staticfiles
 env.json
 /practiceblog/boards
-djangopractice
