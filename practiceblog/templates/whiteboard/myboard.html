@@ -201,6 +201,7 @@
                         var pointer_x = 0
                         var pointer_y = 0
                         if (wheel_event == "touchmove") {
+                            logOnView(`touchしました`, 4000, "blue")
                             var touches = e.changedTouches ;
                             if (touches.length > 1) {
                                 // 座標1 (1本目の指)
@@ -211,6 +212,8 @@
                                 var x2 = getPositionXOnSvgByX(touches[1].pageX);
                                 var y2 = getPositionYOnSvgByY(touches[1].pageY);
 
+                                logOnView(`${x1}, ${x2}, ${y1}, ${y2},`, 4000, "blue")
+
                                 // 2点間の距離
                                 var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                                 if (baseDistance) {
@@ -219,6 +222,7 @@
                                 pointer_x = (x1 + x2)/2;
                                 pointer_y = (y1 + y2)/2;
                                 baseDistance = distance
+                                logOnView(`${scale}, ${beseDistance}, ${pointer_x}, ${pointer_y},`, 4000, "blue")
                             }
                         } else {
                             var dy = e.deltaY
