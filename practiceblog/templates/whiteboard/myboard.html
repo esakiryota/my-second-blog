@@ -190,20 +190,42 @@
                 return [minX, minY, width, height]
             }
 
-            var wheel_event = 'ontouchstart' in window ? "mousewheel" : "wheel";
+            var wheel_event = 'ontouchstart' in window ? "touchmove" : "wheel";
 
             function zoomAction() {
+                var baseDistance = 0
                 document.getElementById("drawingCanvas").addEventListener(wheel_event, function(e) {
                     if (pointerType == "zoom_in" || pointerType == "zoom_out" ) {
+                        var scale = 1
                         e.preventDefault()
-                        // var x = e.deltaX
-                        var dy = e.deltaY
-                        // var scale = 0.80
-                        // if (pointerType == "zoom_out") scale = 1.2
-                        var scale = dy < 0 ? 0.99 : 1.01
+                        var pointer_x = 0
+                        var pointer_y = 0
+                        if (wheel_event == "touchmove") {
+                            var touches = e.changedTouches ;
+                            if (touches.length > 1) {
+                                // 座標1 (1本目の指)
+                                var x1 = getPositionXOnSvgByX(touches[0].pageX);
+                                var y1 = getPositionYOnSvgByY(touches[0].pageY);
+
+                                // 座標2 (2本目の指)
+                                var x2 = getPositionXOnSvgByX(touches[1].pageX);
+                                var y2 = getPositionYOnSvgByY(touches[1].pageY);
+
+                                // 2点間の距離
+                                var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                                if (baseDistance) {
+                                    scale = distance / beseDistance;
+                                }
+                                pointer_x = (x1 + x2)/2;
+                                pointer_y = (y1 + y2)/2;
+                            }
+                        } else {
+                            var dy = e.deltaY
+                            scale = dy < 0 ? 0.99 : 1.01
+                            pointer_x = getPositionXOnSvg(e)
+                            pointer_y = getPositionYOnSvg(e)
+                        }
                         console.log(scale);
-                        var pointer_x = getPositionXOnSvg(e)
-                        var pointer_y = getPositionYOnSvg(e)
                         var [a, b, w, h] = svgElm_js.getAttribute('viewBox')
                             .split(' ')
                             .map(s => parseFloat(s));
@@ -1630,6 +1652,16 @@
                 return result
             }
 
+            function getPositionXOnSvgByX(page_x) {
+                var left = svgElm.position().left
+                var svg_w = svgElm_js.clientWidth
+                var viewBox = getViewBox()
+                var pageX_aspect =  viewBox[2]/svg_w
+                var viewBox_x = viewBox[0]
+                var result = (page_x - left)*pageX_aspect+viewBox_x;
+                return result
+            }
+
             function getPageY(e) {
                 var pageY = 0;
                 if (e.changedTouches) {
@@ -1649,6 +1681,17 @@
                 var pageY_aspect =  viewBox[3]/svg_h
                 var viewBox_y = viewBox[1]
                 var result = (y - top)*pageY_aspect + viewBox_y;
+                return result
+            }
+
+            function getPositionYOnSvgByY(page_y) {
+                var top = svgElm.position().top
+                var svg_w = svgElm_js.clientWidth
+                var viewBox = getViewBox()
+                var svg_h = svgElm_js.clientHeight
+                var pageY_aspect =  viewBox[3]/svg_h
+                var viewBox_y = viewBox[1]
+                var result = (page_y - top)*pageY_aspect + viewBox_y;
                 return result
             }
 
