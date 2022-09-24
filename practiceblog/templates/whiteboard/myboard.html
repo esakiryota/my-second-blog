@@ -222,13 +222,13 @@
                                     // 2点間の距離
                                     var distance = Math.sqrt(Math.pow(page_x2 - page_x1, 2) + Math.pow(page_y2 - page_y1, 2));
                                     if (baseDistance != 0) {
-                                        scale = distance / baseDistance;
-                                        logOnView(`scale: ${scale},`, 4000, "blue")
+                                        scale = baseDistance / distance;
+                                        logOnView(`scale: ${scale}`, 4000, "blue")
                                     }
                                     pointer_x = (x1 + x2)/2;
                                     pointer_y = (y1 + y2)/2;
                                     baseDistance = distance
-                                    logOnView(`${scale}`, 10000, red)
+                                    logOnView(`${scale}`, 10000, "red")
                                 } catch (error) {
                                     console.error(error);
                                     logOnView(`${error}`, 10000, "red")
