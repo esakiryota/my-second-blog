@@ -205,6 +205,13 @@
                             var touches = e.changedTouches ;
                             if (touches.length > 1) {
                                 try {
+                                    var page_x1 = touches[0].pageX;
+                                    var page_y1 = touches[0].pageY;
+
+                                    // 座標2 (2本目の指)
+                                    var page_x2 = touches[1].pageX
+                                    var page_y2 = touches[1].pageY
+
                                     var x1 = getPositionXOnSvgByX(touches[0].pageX);
                                     var y1 = getPositionYOnSvgByY(touches[0].pageY);
 
@@ -212,10 +219,8 @@
                                     var x2 = getPositionXOnSvgByX(touches[1].pageX);
                                     var y2 = getPositionYOnSvgByY(touches[1].pageY);
 
-                                    logOnView(`x1x2y1y2: ${x1}, ${x2}, ${y1}, ${y2},`, 4000, "blue")
-
                                     // 2点間の距離
-                                    var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                                    var distance = Math.sqrt(Math.pow(page_x2 - page_x1, 2) + Math.pow(page_y2 - page_y1, 2));
                                     if (baseDistance != 0) {
                                         scale = distance / baseDistance;
                                         logOnView(`scale: ${scale},`, 4000, "blue")
@@ -223,7 +228,7 @@
                                     pointer_x = (x1 + x2)/2;
                                     pointer_y = (y1 + y2)/2;
                                     baseDistance = distance
-                                    logOnView(`${scale}, ${baseDistance}, ${pointer_x}, ${pointer_y},`, 4000, "blue")
+                                    logOnView(`${scale}`, 10000, red)
                                 } catch (error) {
                                     console.error(error);
                                     logOnView(`${error}`, 10000, "red")
