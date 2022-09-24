@@ -215,7 +215,7 @@
 
                                 // 2点間の距離
                                 var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                                if (baseDistance) {
+                                if (baseDistance != 0) {
                                     scale = distance / beseDistance;
                                 }
                                 pointer_x = (x1 + x2)/2;
