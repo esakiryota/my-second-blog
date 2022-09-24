@@ -223,15 +223,12 @@
                                     var distance = Math.sqrt(Math.pow(page_x2 - page_x1, 2) + Math.pow(page_y2 - page_y1, 2));
                                     if (baseDistance != 0) {
                                         scale = baseDistance / distance;
-                                        logOnView(`scale: ${scale}`, 4000, "blue")
                                     }
                                     pointer_x = (x1 + x2)/2;
                                     pointer_y = (y1 + y2)/2;
                                     baseDistance = distance
-                                    logOnView(`${scale}`, 10000, "red")
                                 } catch (error) {
                                     console.error(error);
-                                    logOnView(`${error}`, 10000, "red")
                                 }
                     
                             }
@@ -253,9 +250,21 @@
                         svgElm_js.setAttribute('viewBox', zoomedViewBox);
 
                     }
-                }, {passive: false});
+                }, {passive: false})
             }
             zoomAction()
+
+            function zoomActionOnPad() {
+                document.getElementById("drawingCanvas").addEventListener("touchend", function(e) {
+                    if (pointerType == "zoom_in" || pointerType == "zoom_out" ) {
+                        if (wheel_event == "touchmove") {
+                            baseDistance = 0
+                        }
+                    }
+                })
+            }
+
+            zoomActionOnPad()
 
             function getCookie(name) {
                 var cookieValue = null;
