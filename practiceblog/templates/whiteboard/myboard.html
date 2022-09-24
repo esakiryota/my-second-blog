@@ -217,7 +217,7 @@
                                     // 2点間の距離
                                     var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                                     if (baseDistance != 0) {
-                                        scale = distance / beseDistance;
+                                        scale = distance / baseDistance;
                                         logOnView(`scale: ${scale},`, 4000, "blue")
                                     }
                                     pointer_x = (x1 + x2)/2;
