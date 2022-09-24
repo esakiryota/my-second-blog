@@ -191,9 +191,10 @@
             }
 
             var wheel_event = 'ontouchstart' in window ? "touchmove" : "wheel";
+            var baseDistance = 0
 
             function zoomAction() {
-                var baseDistance = 0
+                
                 document.getElementById("drawingCanvas").addEventListener(wheel_event, function(e) {
                     if (pointerType == "zoom_in" || pointerType == "zoom_out" ) {
                         var scale = 1
