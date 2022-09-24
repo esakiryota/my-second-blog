@@ -203,25 +203,31 @@
                         if (wheel_event == "touchmove") {
                             var touches = e.changedTouches ;
                             if (touches.length > 1) {
-                                // 座標1 (1本目の指)
-                                var x1 = getPositionXOnSvgByX(touches[0].pageX);
-                                var y1 = getPositionYOnSvgByY(touches[0].pageY);
+                                try {
+                                    var x1 = getPositionXOnSvgByX(touches[0].pageX);
+                                    var y1 = getPositionYOnSvgByY(touches[0].pageY);
 
-                                // 座標2 (2本目の指)
-                                var x2 = getPositionXOnSvgByX(touches[1].pageX);
-                                var y2 = getPositionYOnSvgByY(touches[1].pageY);
+                                    // 座標2 (2本目の指)
+                                    var x2 = getPositionXOnSvgByX(touches[1].pageX);
+                                    var y2 = getPositionYOnSvgByY(touches[1].pageY);
 
-                                logOnView(`x1x2y1y2: ${x1}, ${x2}, ${y1}, ${y2},`, 4000, "blue")
+                                    logOnView(`x1x2y1y2: ${x1}, ${x2}, ${y1}, ${y2},`, 4000, "blue")
 
-                                // 2点間の距離
-                                var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                                if (baseDistance != 0) {
-                                    scale = distance / beseDistance;
+                                    // 2点間の距離
+                                    var distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                                    if (baseDistance != 0) {
+                                        scale = distance / beseDistance;
+                                        logOnView(`scale: ${scale},`, 4000, "blue")
+                                    }
+                                    pointer_x = (x1 + x2)/2;
+                                    pointer_y = (y1 + y2)/2;
+                                    baseDistance = distance
+                                    logOnView(`${scale}, ${beseDistance}, ${pointer_x}, ${pointer_y},`, 4000, "blue")
+                                } catch (error) {
+                                    console.error(error);
+                                    logOnView(`${scale}, ${beseDistance}, ${pointer_x}, ${pointer_y},`, 10000, "blue")
                                 }
-                                pointer_x = (x1 + x2)/2;
-                                pointer_y = (y1 + y2)/2;
-                                baseDistance = distance
-                                logOnView(`${scale}, ${beseDistance}, ${pointer_x}, ${pointer_y},`, 4000, "blue")
+                    
                             }
                         } else {
                             var dy = e.deltaY
