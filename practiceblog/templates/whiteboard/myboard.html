@@ -784,7 +784,10 @@
                         }
                         drawingData = []
                     case "moveContent":
+                        console.log(data.id);
                         var target = document.getElementById(data.id);
+                        console.log(target);
+                        var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
                         if (!target.hasAttribute("transform")) {
                             target.transform.baseVal.appendItem(transform);
