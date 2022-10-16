@@ -14,6 +14,7 @@ from ..repositories.profileListRepository import ProfileListRepository
 
 def updateRoom(request, room_name):
     data = request.body
+    print(len(data))
     data_byte = (len(data)/1024)/1024
     print(data_byte)
     data = json.loads(data)

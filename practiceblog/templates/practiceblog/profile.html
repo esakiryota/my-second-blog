@@ -1,10 +1,12 @@
 {% extends 'practiceblog/base.html' %}
 {% block content %}
+{%if author_flag == True %}
 <div class="row">
   <div class="col s2 offset-s10">
     <a class="btn modal-trigger blue" href="#modal1"><i class="material-icons">edit</i></a>
   </div>
 </div>
+{% endif %}
 
 
   <!-- Modal Structure -->
@@ -74,6 +76,7 @@
   </div>
 </div>
 <div>
+  {%if relation_flag == True %}
   <a id="" class="col s12 m12" href="/myboard/{{token}}">
     <div class="row">
       <div class="col s12">
@@ -87,6 +90,7 @@
     </div>
   </a>
 </div>
+{% endif %}
 
 {{ token|json_script:"token" }}
 

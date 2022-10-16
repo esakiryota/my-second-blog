@@ -158,15 +158,6 @@
     {% csrf_token %}
     <script>
         $(function () {
-            // $(window).on("load", function () {
-            //     console.log("ok");
-                
-            // });
-            $('#brush-tap-target').css("width", "300px").css("height", "300px")
-            $("#videos").mCustomScrollbar({
-                    theme: "rounded-dark",
-                    axis:"y",
-                });
             
             var svgElm_js = document.getElementById("drawingCanvas")
             svgElm_js.clientHeight = svgElm_js.style.height
@@ -622,6 +613,7 @@
                      if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
                          console.log(`${name} connection: `, pc.iceConnectionState);
                          logOnView(`${getUserNameByToken(name)} との接続が切れました`, 4000, "orange")
+                         delete dataChannelList[name]
                          stop(name);
                      }
                      console.log(`${name} connection: `, pc.iceConnectionState);
@@ -779,9 +771,7 @@
                         target.remove();
                         break;
                     case "deleteAll":
-                        while (svgElm.lastChild) {
-                            svgElm.removeChild(svgElm.lastChild);
-                        }
+                        svgElm_js.innerHTML = ""
                         drawingData = []
                     case "moveContent":
                         console.log(data.id);
@@ -1033,32 +1023,7 @@
                             console.log("main");
                             break;
                     }
-                }).on(out_event, function (event) {
-                    event.preventDefault();
-                    console.log("end");
-                    switch (pointerType) {
-                        case "draw":
-                            pencilByMouseup();
-                            break;
-                        case "moveScreen":
-                            moveScreenByMouseup();
-                            break;
-                        case "moveContent": 
-                            moveContentByMouseup();
-                            break;
-                        case "eraser": 
-                            eraserByMouseup();
-                            break;
-                        case "text": 
-                            textBoxMouseup();
-                            break;
-                        default:
-                            console.log("main");
-                            break;
-                    }
                 })
-
-                $("#drawingCanvas")
             }
 
             main();
@@ -1290,6 +1255,9 @@
                         drawingData[resizeData.id].width = document.getElementById(resizeData.id).width.baseVal.value;
                         drawingData[resizeData.id].height = document.getElementById(resizeData.id).height.baseVal.value;
                     }
+                    $("#drawingCanvas").on(out_event, function (event) {
+                        moveContentByMouseup()
+                    })
                 });
             }
 
@@ -1298,6 +1266,7 @@
                 console.log("save");
                 svgElm.css('cursor', 'default');
                 $("#drawingCanvas").off(move_event);
+                $("#drawingCanvas").off(out_event);
             }
 
             function eraserByMousedown() {
@@ -1399,6 +1368,7 @@
                         drawingData[id] = sendTextBoxData;
                         saveBoardData();
                         createTextBox(sendTextBoxData.cx, sendTextBoxData.cy, sendTextBoxData.x, sendTextBoxData.y, sendTextBoxData.id, sendTextBoxData.text);
+                        sendOnDatachannel(sendTextBoxData);
                         input.value = ""
                     }
                 })
@@ -1492,6 +1462,10 @@
                     sendOnDatachannel(browserDrawingData);
                     pathElm.setAttribute("d", browserDrawingData.d);
                     cntMoveto++; //カウンターをセット
+                    $("#drawingCanvas").on(out_event, function (event) {
+                        console.log("mouseup");
+                        pencilByMouseup()
+                    })
                 });
             }
 
@@ -1499,6 +1473,7 @@
                 browserDrawData["d"] = linetoStr
                 drawingData[id] = browserDrawData;
                 $("#drawingCanvas").off(move_event); //pathの描画を終了
+                $("#drawingCanvas").off(out_event);
                 saveBoardData();
             }
 
@@ -1508,9 +1483,10 @@
                         + roomName
                         + '/update/'
                     const afterDrawFunc = function (response) {
-                        // logOnView(response.message, 1000, "blue")
+                        logOnView(response.message, 1000, "blue")
                         return response;
                     }
+                    console.log(drawingData);
                     ajax(drawingData, apiUrl, "post", afterDrawFunc)
                     shareBoardData();
             }
@@ -1540,7 +1516,7 @@
                         var sendData = {
                                         "type" : "deleteAll",
                                     }
-                        drawingData = []
+                        drawingData = {}
                         sendOnDatachannel(sendData);
                         saveBoardData();
                     }

@@ -60,20 +60,33 @@ def search_alg(arg):
     return searchArg
 
 @login_required
-def profile(request, str="str", num=1):
+def profile(request, num=None):
     author = request.user.username
+    user = ""
+    author_flag = True
+    relation_flag = True
+    if num != None:
+        user_rps = UserRepository()
+        user = user_rps.getUserObjectById(num)
+        author_flag = False
+        rel_rps = RelationshipListRepository()
+        relation_flag = rel_rps.getRalationShipBool(num, request.user.id)
+    else:
+        user = request.user
     rps = UserTokenListRepository()
-    token = rps.getUserToken(request.user)
+    token = rps.getUserToken(user)
     prof_rps = ProfileListRepository()
-    profile = prof_rps.getProfileByAuthor(request.user)
+    profile = prof_rps.getProfileByAuthor(user)
     image_src = ""
     if profile["image"] != "":
         image_src = prof_rps.getImageByUrl(profile["image"])
     params = {
     'author': author,
+    'author_flag': author_flag,
     'token': token,
     'profile': profile,
-    'image_src' : image_src
+    'image_src' : image_src,
+    'relation_flag': relation_flag
     }
     return render(request, 'practiceblog/profile.html', params)
 
