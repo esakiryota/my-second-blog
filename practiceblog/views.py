@@ -38,6 +38,9 @@ from .repositories.userRepository import UserRepository
 from .repositories.profileListRepository import ProfileListRepository
 from .aws_s3_storage import MediaStorage
 from django.contrib.auth import login
+from django.contrib.auth.forms import (
+    AuthenticationForm, UserCreationForm
+)
 
 def index(request):
     return render(request, 'practiceblog/index.html')

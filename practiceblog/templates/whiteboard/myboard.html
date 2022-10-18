@@ -17,6 +17,15 @@
     <!--Import materialize.js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RL1LQV6HMG"></script>
+    <meta name="google-site-verification" content="X_mgHnmtltcA7KorW6uvAFjafoFS7ZSACi3RJfSH3oE" />
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-RL1LQV6HMG');
+</script>
     <style>
         body {
             font-family: sans-serif;
@@ -28,15 +37,8 @@
             border-radius: 8px;
         }
     </style>
+    
 </head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RL1LQV6HMG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-RL1LQV6HMG');
-</script>
 
 
 <body>
@@ -129,6 +131,16 @@
             </a></li>
     </ul>
     </p>
+    <div>
+        <div class="row" style="position: fixed; left: 10px; bottom: 0px;">
+            <a class='btn tooltipped' data-position="top" data-delay="50" data-tooltip="リロード" href='#'
+            id="reload" style="background-color: #42a5f5;"style="margin: 10px;" ><i class="material-icons">refresh</i></a>
+            <a class='btn tooltipped' data-position="top" data-delay="50" data-tooltip="退出" href='#'
+            id="exit" style="background-color: #42a5f5;" style="margin: 10px;" ><i class="material-icons">logout</i></a>
+            <a class='btn tooltipped' data-position="top" data-delay="50" data-tooltip="ヘルプ" href='#'
+            id="help" style="background-color: #42a5f5;"  style="margin: 10px;"><i class="material-icons">help</i></a>
+        </div>
+    </div>
     <div id="videos" style="position: fixed; left: 100px; top:20px; max-height: 500px; overflow:auto;">
         <div id="{{user_name}}_box" style="position: relative;">
             <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
@@ -265,6 +277,14 @@
             }
 
             zoomActionOnPad()
+
+            document.getElementById("reload").addEventListener("click", function() {
+                location.reload()
+            })
+
+            document.getElementById("exit").addEventListener("click", function() {
+                window.location.href = '/profile';
+            })
 
             function getCookie(name) {
                 var cookieValue = null;
@@ -435,6 +455,10 @@
             }
             startInOrder();
 
+            window.addEventListener('offline', function (e) {
+                console.log('offlineです。');
+            });
+
             window.onbeforeunload = function (event) {
                 videoRoomSocket.send(JSON.stringify({
                     "type": "bye",
@@ -584,7 +608,7 @@
                      console.log("remote stream: ", event.streams[0].getTracks());
                      if (event.track.kind === "video") {
 
-                        handleRemoteStreamAdded(event.streams[0], name);
+                        remoteStream = event.streams[0];
                      }
                  })
 
@@ -615,6 +639,9 @@
                          logOnView(`${getUserNameByToken(name)} との接続が切れました`, 4000, "orange")
                          delete dataChannelList[name]
                          stop(name);
+                     }
+                     if (pc.iceConnectionState == "connected") {
+                        handleRemoteStreamAdded(remoteStream, name);
                      }
                      console.log(`${name} connection: `, pc.iceConnectionState);
                  });
@@ -772,7 +799,7 @@
                         break;
                     case "deleteAll":
                         svgElm_js.innerHTML = ""
-                        drawingData = []
+                        drawingData = {}
                     case "moveContent":
                         console.log(data.id);
                         var target = document.getElementById(data.id);

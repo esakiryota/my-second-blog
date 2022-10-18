@@ -76,10 +76,16 @@ class UserCreateForm(UserCreationForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
+    # def clean_email(self):
+    #     email = self.cleaned_data['email']
+    #     User.objects.filter(email=email, is_active=True).delete()
+    #     return email
     def clean_email(self):
-        email = self.cleaned_data['email']
-        User.objects.filter(email=email, is_active=True).delete()
-        return email
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        if not email:
+            raise forms.ValidationError("メールアドレスを入力して下さい")
+        return cleaned_data
 
 class TeacherStudentForm(forms.ModelForm):
     class Meta:
