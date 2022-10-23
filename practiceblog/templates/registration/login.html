@@ -1,5 +1,6 @@
 {% extends "practiceblog/base.html" %}
-
+{% block title %}ログイン{% endblock %}
+{% block meta_description %}<meta name="description" content="ネームとパスワードを入力し、ログインしてください。">{% endblock %}
 {% block content %}
     {% if form.errors %}
         <p>名前かパスワードが違います。</p>

@@ -1,7 +1,7 @@
 {% load static %}
 <html>
     <head>
-        <title>Board Meet</title>
+        <title>{% block title %}{% endblock %}</title>
         <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> -->
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
@@ -14,6 +14,7 @@
         <!--Let browser know website is optimized for mobile-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <meta name="google-site-verification" content="X_mgHnmtltcA7KorW6uvAFjafoFS7ZSACi3RJfSH3oE" />
+        {% block meta_description %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/blog.css' %}">
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-RL1LQV6HMG"></script>
 <script>
