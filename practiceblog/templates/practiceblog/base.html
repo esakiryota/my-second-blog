@@ -87,6 +87,11 @@
         </main>
           <hr>
           <footer class="">
+            <div class="footer">
+              <div class="container">
+                <div class="row" id="bc"></div>
+              </div>
+            </div>
             <div class="footer-copyright">
               <div class="container">
                 © 2022 Copyright Ryota Esaki
@@ -101,6 +106,39 @@
           <script src="{% static 'js/select.js' %}"></script>
           <script src="{% static 'js/init.js' %}"></script>
           <script type="text/javascript">
+          var bread_crumbs = {
+            "login" : {"TOP" : "/"},
+            "logout" : {"TOP" : "/"},
+            "explanation" : {"TOP" : "/"},
+            "user_create" : {"TOP" : "/"},
+            "board_list" : {"TOP" : "/"},
+            "user_list" : {"TOP" : "/"},
+            "profile" : {"TOP" : "/"},
+            "profile_user" : {"TOP" : "/", "ユーザーリスト": "/user_list"},
+          }
+
+          function createBreadcrumbs() {
+            var path = location.pathname
+            var path_array = path.split('/');
+            console.log(path_array);
+
+            var bread_crumb = bread_crumbs[path_array[1]]
+
+            if (path_array[1] === "profile" && path_array[2] !==undefined) {
+              var bread_crumb = bread_crumbs["profile_user"]
+            }
+            var breadcrumb_html = ``
+            console.log(bread_crumb);
+            for (let k in bread_crumb) {
+              breadcrumb_html += `<a href="${bread_crumb[k]}">${k}</a><span> > </span>`
+            }
+            var title = document.querySelector("title").textContent
+            breadcrumb_html += `<span>${title}</span>`
+            document.getElementById("bc").innerHTML = breadcrumb_html
+          }
+
+          createBreadcrumbs()
+
           function check() {
             var name = document.forms.teacher_form.first_name.value;
             var grade = document.forms.teacher_form.grade.value;

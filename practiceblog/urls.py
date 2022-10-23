@@ -18,8 +18,8 @@ urlpatterns = [
     path('profile/<int:num>/', views.profile, name='profile'),
     path('profile/api/update/', apis.profile_update),
     # 勉強部屋
-    path('rooms', views.rooms, name='rooms'),
-    path('rooms/<str:room_name>/', views.room, name='room'),
+    # path('rooms', views.rooms, name='rooms'),
+    # path('rooms/<str:room_name>/', views.room, name='room'),
     path('myboard/<str:room_name>/', views.myboard, name='myboard'),
     path('myboard/api/user_info', apis.getUserInfo),
     path('rooms/api/<str:room_name>/update/',  apis.updateRoom, name='updateRoom'),
