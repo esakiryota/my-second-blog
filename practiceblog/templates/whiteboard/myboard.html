@@ -7,14 +7,10 @@
     <title>ホワイトボード</title>
     <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!--Import materialize.css-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.css'%}" />
 
     <!--Import jQuery Library-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <!-- <script src="/path/to/jquery.mCustomScrollbar.concat.min.js"></script> -->
-    <!--Import materialize.js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RL1LQV6HMG"></script>
@@ -162,10 +158,6 @@
             </div>
         </div>
 </div>
-
-    <!-- <script src="{% static 'js/materialize.js' %}"></script> -->
-    <!-- <script src="{% static 'js/select.js' %}"></script> -->
-    <script src="{% static 'js/jquery.mCustomScrollbar.js'%}"></script>
     {{ token|json_script:"token" }}
     {{ user_name|json_script:"user_name"}}
     {% csrf_token %}
