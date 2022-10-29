@@ -1,5 +1,6 @@
 {% extends 'practiceblog/base.html' %}
 {% block title %}プロフィール{% endblock %}
+{% block meta_description %}<meta name="description" content="プロフィールページでは、ユーザーの簡単な情報が表示されます。">{% endblock %}
 {% block content %}
 {%if author_flag == True %}
 <div class="row">
@@ -48,11 +49,10 @@
   <div class="card-panel grey lighten-5 z-depth-1">
     <div class="row valign-wrapper">
       <div class="col s3" id="profile_image_block">
-        <!-- <img src="images/yuna.jpg" alt="" class="circle responsive-img"> notice the "circle" class -->
         {% if profile.image == "" %}
         <i class="material-icons circle gray large">person</i>
         {% else %}
-        <img src="{{image_src}}" alt="" class="circle" id="profile_image" width="100" height="100" style="object-fit: cover;">
+        <img src="{{image_src}}" alt="画像が見つかりません。" class="circle" id="profile_image" width="100" height="100" style="object-fit: cover;">
         {% endif%}
       </div>
       <div class="col s6">

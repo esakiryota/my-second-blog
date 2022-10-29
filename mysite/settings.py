@@ -17,7 +17,7 @@ import json
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 json_open = open(f'mysite/env.json', 'r')
-aws_env = json.load(json_open)
+env = json.load(json_open)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -26,8 +26,11 @@ aws_env = json.load(json_open)
 SECRET_KEY = 'v$i)dx-^kosepd-h@(q5!=0_skau-!x7-lw0@4dipn#r^%)*m%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = False
-DEBUG = True
+if env["ENV"] == "develop":
+    DEBUG = True
+if env["ENV"] == "production":
+    DEBUG = False
+# DEBUG = True
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
@@ -49,9 +52,9 @@ INSTALLED_APPS = [
 
 DEFAULT_FILE_STORAGE = 'practiceblog.aws_s3_storage.MediaStorage'
 
-AWS_ACCESS_KEY_ID = aws_env["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = aws_env["AWS_SECRET_ACCESS_KEY"]
-AWS_STORAGE_BUCKET_NAME = aws_env["AWS_STORAGE_BUCKET_NAME"]
+AWS_ACCESS_KEY_ID = env["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = env["AWS_SECRET_ACCESS_KEY"]
+AWS_STORAGE_BUCKET_NAME = env["AWS_STORAGE_BUCKET_NAME"]
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],

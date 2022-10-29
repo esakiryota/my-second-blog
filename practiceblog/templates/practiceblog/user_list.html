@@ -162,7 +162,7 @@
                 for (var i = 0; i < user_list_page.length; i++) {
                     new_user_list += `<li class="collection-item avatar">`
                     if (user_list_page[i].image != "") {
-                        new_user_list += `<a href="/profile/${user_list_page[i].author.pk}"><img src="${user_list_page[i].image_src}" alt="" class="circle" style="object-fit: cover;"></a>`
+                        new_user_list += `<a href="/profile/${user_list_page[i].author.pk}"><img src="${user_list_page[i].image_src}" alt="画像が見つかりません。" class="circle" style="object-fit: cover;"></a>`
                     } else {
                         new_user_list += `<a href="/profile/${user_list_page[i].author.pk}"><i class="material-icons circle">person_outline</i></a>`
                     }
