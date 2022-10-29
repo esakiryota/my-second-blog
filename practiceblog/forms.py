@@ -85,7 +85,7 @@ class UserCreateForm(UserCreationForm):
         email = cleaned_data.get('email')
         if not email:
             raise forms.ValidationError("メールアドレスを入力して下さい")
-        return cleaned_data
+        return email
 
 class TeacherStudentForm(forms.ModelForm):
     class Meta:
