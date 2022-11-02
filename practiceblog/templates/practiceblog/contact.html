@@ -1,0 +1,42 @@
+{% extends 'practiceblog/base.html' %}
+{% block title %}お問い合わせ{% endblock %}
+{% block meta_description %}<meta name="description" content="お問い合わせのページです。管理人に送信されます。">{% endblock %}
+{% block content %}
+{% if message %}
+<p>送信しました。</p>
+{% endif%}
+<div class="row">
+    <form class="col s12" action="/contact" method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="名前" id="name" type="text" class="validate" name="name">
+              <label for="name">名前</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="タイトル" id="title" type="text" class="validate" name="title">
+              <label for="title">タイトル</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="メールアドレス" id="address" type="text" class="validate" name="address">
+              <label for="address">メールアドレス</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <textarea id="textarea1" class="materialize-textarea" data-length="120" name="content"></textarea>
+              <label for="textarea1">内容</label>
+            </div>
+          </div>
+          <div class="row"> 
+              <div class="col">
+                <input type="submit" class="btn blue" value="送信">
+              </div>
+          </div>
+    </form>
+  </div>
+{% endblock %}

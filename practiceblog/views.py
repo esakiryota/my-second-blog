@@ -42,6 +42,8 @@ from django.contrib.auth.forms import (
     AuthenticationForm, UserCreationForm
 )
 
+from .email_on_app import Email
+
 def index(request):
     return render(request, 'practiceblog/index.html')
 
@@ -105,6 +107,24 @@ def boardList(request,  num=1):
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
+
+def contact(request):
+    params = {}
+    if request.method == "POST":
+        name = request.POST.get('name')
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        address = request.POST.get('address')
+        try:
+            email = Email()
+            send_mail = email.send_email(name, address, title, content)
+            send_mail_admin = email.send_email_admin(name, address, title, content)
+            params['message'] = "送信しました"
+            return render(request, 'practiceblog/contact.html', params)
+        except:
+            params['message'] = "メールを送信できませんでした。メールアドレスをお確かめください"
+
+    return render(request, 'practiceblog/contact.html', params)
 
 @login_required
 def myboard(request, room_name):

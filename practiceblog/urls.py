@@ -32,6 +32,8 @@ urlpatterns = [
     path('user_list/api/search', apis.user_search),
     path('user_list/api/follow', apis.user_follow),
     path('user_list/api/unfollow', apis.user_unfollow),
+    # お問い合わせ
+    path('contact', views.contact, name="contact"),
 ]
 
 router = routers.DefaultRouter()
