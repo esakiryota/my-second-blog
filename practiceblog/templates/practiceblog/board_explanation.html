@@ -1,0 +1,60 @@
+{% extends 'practiceblog/base.html' %}
+{% block title %}ホワイトボード説明{% endblock %}
+{% block meta_description %}
+<meta name="description" content="ホワイトボード説明では、ホワイトボードの使い方の説明をしています。">{% endblock %}
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="row">
+        <img src="{% static 'img/board_explain.png' %}" alt="画像が見つかりません" width="100%">
+    </div>
+    <div class="row">
+        <div class="col s2"><img src="{% static 'img/board_explain_1.png' %}" alt="画像が見つかりません" width="60%"></div>
+        <div class="col s10">・・・カーソルを使ってボードを編集するためのボタン類</div>
+        <div class="col s12" style="font-size: 12px;">
+            ① カラーボタン。色を変更できる。<br>
+            ② ペンシルボタン。デスクトップではクリックしながら動かすことにより、線を描ける。タブレットの場合はドラッグすることにより、線を描ける。<br>
+            ③ コンテンツを動かすボタン。ボードの記述した内容を動かすことができる。<br>
+            ④ コンテンツを削除するボタン。クリックしながらドラッグすることにより、ポインターがコンテンツに触れると削除される。<br>
+            ⑤ 未実装。<br>
+            ⑥ テキストボタン。記述したい場所にカーソルを持ってきてクリックすると、テキストボックスが現れて、テキストを記述できるようになる。<br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s2"><img src="{% static 'img/board_explain_2.png' %}" alt="画像が見つかりません" width="60%"></div>
+        <div class="col s10">・・・ミーティングに関するボタン類</div>
+        <div class="col s12" style="font-size: 12px;">
+            ① 退出ボタン。ミーティングを退出できる。<br>
+            ② リロードボタン。ページを再読み込みできる。エラーが起きた時などに用いる。<br>
+            ③ ヘルプボタン。ボードの説明が見れる。<br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s2"><img src="{% static 'img/board_explain_3.png' %}" alt="画像が見つかりません" width="60%"></div>
+        <div class="col s10">・・・ボタンを押すことによってボードを編集するためのボタン類</div>
+        <div class="col s12" style="font-size: 12px;">
+            ① 全削除ボタン。ボードの要素を全て削除する。<br>
+            ② やり直しボタン。コンテンツを記述前に戻す。<br>
+            ③ 画像ボタン。画像をボードに表示する。ドラッグアンドドロップでも画像は追加できる。<br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s2"><img src="{% static 'img/board_explain_4.png' %}" alt="画像が見つかりません" width="60%"></div>
+        <div class="col s10">・・・ボードを操作するためのボタン類</div>
+        <div class="col s12" style="font-size: 12px;">
+            ① ズームボタン。デスクトップではスクロールにより、ズームインできる。タブレットでは、ピンチイン（二本指）でズームできる。<br>
+            ② ムーブボタン。ボードを動かすことができる。<br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s2"><img src="{% static 'img/board_explain_5.png' %}" alt="画像が見つかりません" width="60%"></div>
+        <div class="col s10">・・・ビデオを操作するためのボタン類</div>
+        <div class="col s12" style="font-size: 12px;">
+            ① 名前。<br>
+            ② ミュート。デフォルトではミュート。<br>
+            ③ 映像の表示。デフォルトでは映像オン。<br>
+            ④ ビデオの表示。押すとアイコンになり、アイコンを押すと、ビデオが表示される。<br>
+        </div>
+    </div>
+</div>
+{% endblock %}

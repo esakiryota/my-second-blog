@@ -212,6 +212,7 @@
 </div>
     {{ token|json_script:"token" }}
     {{ user_name|json_script:"user_name"}}
+    {{ user|json_script:"user"}}
     {% csrf_token %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="{% static 'js/materialize.js' %}"></script>
@@ -648,7 +649,7 @@
              pc.ondatachannel = function (event) {
                  console.log('ondatachannel:', event.channel);
                  dataChannelList[name] = event.channel;
-                 onDataChannelCreated(dataChannelList[name]);
+                 onDataChannelCreated(dataChannelList[name], user_name);
              };
          }
 
@@ -731,7 +732,7 @@
              console.log('Sending offer to peer');
              dataChannelList[to] = pc.createDataChannel('test');
              console.log("create dataChannel");
-             onDataChannelCreated(dataChannelList[to]);
+             onDataChannelCreated(dataChannelList[to], from);
              pc.createOffer().then(function (sessionDescription) {
                  pc.setLocalDescription(sessionDescription);
                  sendMessage(sessionDescription, to, from);
@@ -798,17 +799,24 @@
                     document.getElementById("invisible_" + name).style.display = "none"
                 })
                 console.log(name);
-                getUserName(name)
+                // getUserName(name)
                 
             }
 
-         function onDataChannelCreated(channel) {
+         function onDataChannelCreated(channel, name) {
              console.log('onDataChannelCreated:', channel);
 
              channel.onopen = function () {
                  console.log('CHANNEL opened!!!');
                 //  logOnView("CHANNEL opened!!!", 4000, "blue")
                  logOnView("ボードのデータが共有されました", 4000, "blue")
+                 var user = JSON.parse(document.getElementById('user').textContent);
+                 var data = {
+                     "type": "name",
+                     "token": name,
+                     "username": user,
+                 }
+                 channel.send(JSON.stringify(data));
              };
 
              channel.onclose = function () {
@@ -823,6 +831,8 @@
                  console.log("data: ", data);
                 var svgElm = $("#drawingCanvas")
                 switch (data.type) {
+                    case "name":
+                        roomInComment(data.token, data.username)
                     case "draw":
                         var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         var path_attr = {
@@ -934,29 +944,26 @@
 
          var user_list = []
 
-         function getUserName(token) {
-             console.log(token);
-            const apiUrl = '/myboard/api/user_info'
-            var data = {
-                token : token
-            }
-            console.log(data);
-            var response = ajax(data, apiUrl, "POST", roomInComment)
-         }
+        //  function getUserName(token) {
+        //      console.log(token);
+        //     const apiUrl = '/myboard/api/user_info'
+        //     var data = {
+        //         token : token
+        //     }
+        //     console.log(data);
+        //     var response = ajax(data, apiUrl, "POST", roomInComment)
+        //  }
 
-         function roomInComment(response) {
-             console.log(response);
-             var data = {"token": response.data.token, "username": response.data.username, "image": response.data.image_src}
+         function roomInComment(token, username) {
+             var data = {"token": token, "username": username, "image": ""}
              user_list.push(data)
-             logOnView(response.data.username + "さんが入室しました。", 3000, "blue")
-             var name_plate = document.getElementById("name_" + response.data.token)
-             var name_tooltiped = document.getElementById("person_" + response.data.token)
-             if (response.data.image_src != "") {
-                document.getElementById("person_" + response.data.token).innerHTML = `<image src="${response.data.image_src}" height="30" width="30" class="circle" style="object-fit: cover;">`
-             } else {
-                document.getElementById("person_" + response.data.token).innerHTML = `<i class="material-icons circle black">person_outline</i>`
-             }
-             name_plate.textContent = response.data.username
+
+             logOnView(username + "さんが入室しました。", 3000, "blue")
+             var name_plate = document.getElementById("name_" + token)
+             var name_tooltiped = document.getElementById("person_" + token)
+              console.log(name_tooltiped);
+             document.getElementById("person_" + token).innerHTML = `<i class="material-icons circle black">person_outline</i>`
+             name_plate.textContent = username
          }
 
 

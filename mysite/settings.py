@@ -115,6 +115,9 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '',
+        'TEST': {
+            'NAME': 'test_db',
+        }
     }
 }
 

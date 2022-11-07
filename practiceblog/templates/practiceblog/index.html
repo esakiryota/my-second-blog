@@ -41,10 +41,28 @@
         <div class="col s1">
         </div>
     </div>
+    <div class="row center-align">
+        <div class="col s1">
+        </div>
+        <div class="col s10">
+            <div class="btn modal-trigger" href="#create_modal" style="background-color: blue;">ルーム作成</div>
+        </div>
+        <div class="col s1">
+        </div>
+    </div>
+    <div class="row center-align">
+        <div class="col s1">
+        </div>
+        <div class="col s10">
+            <div class="btn modal-trigger" href="#join_modal" style="background-color: blue;">ルーム参加</div>
+        </div>
+        <div class="col s1">
+        </div>
+    </div>
     {% endif %}
 </div>
 <hr>
-<div class="container" style="position: relative; top: 50px;">
+<!-- <div class="container" style="position: relative; top: 50px;">
     <div class="row">
       <div class="col s6"><img src="{% static 'img/explain_whiteboard.png' %}" alt="画像が見つかりません。" style="width: 100%;"></div>
       <div class="col s6"><span style="font-weight: bold; font-size: 16px;">図、文字で知の共有を行い、新しい価値創造を</span><br>Board Meetではペンを文字の書き込みや画像の貼り付けなどでアイデアを書き込むことができます。
@@ -60,5 +78,71 @@
       <div class="col s6"><span style="font-weight: bold; font-size: 16px;">アイデアをいつでも書き出せるボードを</span><br>ミーティングや自分で書き込んだボードは保存され、次のミーティングでも使うことができます。
       思いついた時、いつでもボードにアイデアを書き加えることができます。</div>
     </div>
+  </div> -->
+  <div id="create_modal" class="modal">
+    <div class="modal-content">
+      <h4>ルーム作成</h4>
+      <form action="" id="create_form" method="POST">
+      <div class="input-field col s12">
+        <input placeholder="名前" id="name" type="text" class="validate" name="token">
+      </div>
+      <div class="row">
+        <div class="col s12">
+            キー: <span>{{token}}</span><br>
+            <span>※ このキーをボード共有する人に送ってください</span><br>
+            <span>※ 同じボードを繰り返し使うには、このキーを保存して、ルームに参加でこのキーを入れてください。</span>
+        </div>
+    </div>
+    </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn-flat">キャンセル</a>
+      <!-- <a href="public_board/{{token}}" class="modal-close btn-flat" id="create_room">作成</a> -->
+      <div class="modal-close btn-flat" id="create_room">作成</div>
+    </div>
   </div>
+
+  <div id="join_modal" class="modal">
+    <div class="modal-content">
+      <h4>ルーム参加</h4>
+      <form action="" id="create_form" method="POST">
+      <div class="input-field col s12">
+        <input placeholder="名前" id="name_join" type="text" class="validate" name="">
+      </div>
+      <div class="row">
+        <div class="col s12">
+            <input placeholder="キー" id="key_join" type="text" class="validate" name="">
+        </div>
+        </div>
+        <div class="row">
+            <span>※ 教えてもらったキーを入れてください</span><br>
+            <span>※ 同じボードを繰り返し使うには、このキーを保存して、ルームに参加でこのキーを入れてください。</span>
+        </div>
+    </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn-flat">キャンセル</a>
+      <!-- <a href="public_board/{{token}}" class="modal-close btn-flat" id="create_room">作成</a> -->
+      <div class="modal-close btn-flat" id="join_room">参加</div>
+    </div>
+  </div>
+
+  {{ token|json_script:"token" }}
+
+
+  <script type="text/javascript">
+      document.getElementById("create_room").addEventListener('click', function() {
+          var token = JSON.parse(document.getElementById('token').textContent);
+          var name = document.getElementById("name").value
+          var url = `/public_board/${token}?name=${name}`
+          window.location.href = url
+      })
+
+      document.getElementById("join_room").addEventListener('click', function() {
+          var name = document.getElementById("name_join").value
+          var token = document.getElementById("key_join").value
+          var url = `/public_board/${token}?name=${name}`
+          window.location.href = url
+      })
+  </script>
 {% endblock %}

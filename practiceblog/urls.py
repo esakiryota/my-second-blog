@@ -17,7 +17,8 @@ urlpatterns = [
     path('profile', views.profile, name='profile'),
     path('profile/<int:num>/', views.profile, name='profile'),
     path('profile/api/update/', apis.profile_update),
-    # 勉強部屋
+    # public board
+    path('public_board/<str:room_name>/', views.public_board, name='public_board'),
     # path('rooms', views.rooms, name='rooms'),
     # path('rooms/<str:room_name>/', views.room, name='room'),
     path('myboard/<str:room_name>/', views.myboard, name='myboard'),
@@ -34,6 +35,8 @@ urlpatterns = [
     path('user_list/api/unfollow', apis.user_unfollow),
     # お問い合わせ
     path('contact', views.contact, name="contact"),
+    # ボード説明
+    path('board_explanation', views.board_explanation, name="board_explanation"),
 ]
 
 router = routers.DefaultRouter()

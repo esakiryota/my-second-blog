@@ -42,10 +42,14 @@ from django.contrib.auth.forms import (
     AuthenticationForm, UserCreationForm
 )
 
+import random, string
+
 from .email_on_app import Email
 
 def index(request):
-    return render(request, 'practiceblog/index.html')
+    token =  [random.choice(string.ascii_letters + string.digits) for i in range(15)]
+    params = {'token': ''.join(token)}
+    return render(request, 'practiceblog/index.html', params)
 
 def logout_view(request):
     logout(request)
@@ -101,12 +105,14 @@ def boardList(request,  num=1):
     rps = UserTokenListRepository()
     token_list = rps.getTokenListByMutalFollow(user)
     params = {"token_list": token_list}
-    print(params)
     return render(request, 'practiceblog/board_list.html', params)
 
 
 def explanation(request):
     return render(request, 'practiceblog/explanation.html')
+
+def board_explanation(request):
+    return render(request, 'practiceblog/board_explanation.html')
 
 def contact(request):
     params = {}
@@ -142,6 +148,13 @@ def myboard(request, room_name):
         return redirect("user_list")
     params = {"token": room_name, "user_name": user_token, "user": request.user.username, "image": image_src}
     return render(request, 'whiteboard/myboard.html', params)
+
+def public_board(request, room_name):
+    user = request.GET.get("name")
+    user_name =  [random.choice(string.ascii_letters + string.digits) for i in range(15)]
+    params = {"token": room_name, "user_name": "".join(user_name), "user": user, "image": ""}
+    return render(request, 'whiteboard/public_board.html', params)
+
 
 @login_required
 def rooms(request):
