@@ -649,7 +649,7 @@
              pc.ondatachannel = function (event) {
                  console.log('ondatachannel:', event.channel);
                  dataChannelList[name] = event.channel;
-                 onDataChannelCreated(dataChannelList[name], user_name);
+                 onDataChannelCreated(dataChannelList[name], user_name, name);
              };
          }
 
@@ -689,7 +689,9 @@
                      if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
                          console.log(`${name} connection: `, pc.iceConnectionState);
                          logOnView(`${getUserNameByToken(name)} との接続が切れました`, 4000, "orange")
+                         console.log(dataChannelList);
                          delete dataChannelList[name]
+                         console.log(dataChannelList);
                          stop(name);
                      }
                      if (pc.iceConnectionState == "connected") {
@@ -732,7 +734,7 @@
              console.log('Sending offer to peer');
              dataChannelList[to] = pc.createDataChannel('test');
              console.log("create dataChannel");
-             onDataChannelCreated(dataChannelList[to], from);
+             onDataChannelCreated(dataChannelList[to], from, to);
              pc.createOffer().then(function (sessionDescription) {
                  pc.setLocalDescription(sessionDescription);
                  sendMessage(sessionDescription, to, from);
@@ -803,7 +805,7 @@
                 
             }
 
-         function onDataChannelCreated(channel, name) {
+         function onDataChannelCreated(channel, name, channel_name) {
              console.log('onDataChannelCreated:', channel);
 
              channel.onopen = function () {
@@ -822,6 +824,10 @@
              channel.onclose = function () {
                  console.log('Channel closed.');
                 //  logOnView("Channel closed.", 4000, "red")
+                console.log(name);
+                console.log(dataChannelList);
+                 delete dataChannelList[channel_name]
+                 console.log(dataChannelList);
                  logOnView("接続が切れました", 4000, "red")
              }
 
@@ -1851,6 +1857,7 @@
             }
 
             function sendOnDatachannel(data) {
+                console.log(dataChannelList);
                 if (!isEmpty(dataChannelList)) {
                     for (let user_name in dataChannelList) {
                         dataChannelList[user_name].send(JSON.stringify(data));
