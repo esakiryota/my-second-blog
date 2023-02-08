@@ -51,6 +51,9 @@ def index(request):
     params = {'token': ''.join(token)}
     return render(request, 'practiceblog/index.html', params)
 
+def start(request):
+    return render(request, 'practiceblog/start.html')
+
 def logout_view(request):
     logout(request)
     return render(request, 'registration/logout.html')

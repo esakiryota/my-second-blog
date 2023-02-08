@@ -1,0 +1,33 @@
+{% extends 'practiceblog/base.html' %}
+{% block title %}始め方{% endblock %}
+{% block meta_description %}
+<meta name="description" content="ホワイトボード説明では、ホワイトボードの使い方の説明をしています。">{% endblock %}
+{% block content %}
+{% load static %}
+<div class="container">
+    <div class="row" style="padding: 10px; font-weight: bold; font-size: 30px; border-left: 0.5rem solid blue;">アカウントなしの場合</div>
+    <div class="row" style="padding: 10px; font-weight: bold; font-size: 20px;">・ルームを作成する人</div>
+    <div class="row"><img src="{% static 'img/start1-1.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">①ルーム作成をクリック。</div>
+    <div class="row"><img src="{% static 'img/start1-2.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">②キーボードを共有する人にキーを送信する。</div>
+    <div class="row"><img src="{% static 'img/start1-3.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">③自分の名前を入力。</div>
+    <div class="row"><img src="{% static 'img/start1-4.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">④作成をクリック。</div>
+    <div class="row" style="padding: 10px; font-weight: bold; font-size: 20px;">・ルームに参加する人</div>
+    <div class="row"><img src="{% static 'img/start2-1.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">①ルーム参加をクリック。</div>
+    <div class="row"><img src="{% static 'img/start2-2.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">②送られてきたキーをコピー＆ペースト。</div>
+    <div class="row"><img src="{% static 'img/start2-3.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">③自分の名前を入力。</div>
+    <div class="row"><img src="{% static 'img/start2-4.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">④参加をクリック。</div>
+    <div class="row" style="padding: 10px; font-weight: bold; font-size: 30px; border-left: 0.5rem solid blue;">アカウントありの場合</div>
+    <div class="row"><img src="{% static 'img/start3-1.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">①相互フォローになっていない場合はお互いにユーザーリストで検索し、フォローする。</div>
+    <div class="row"><img src="{% static 'img/start3-2.png' %}" style="width: 100%;" alt=""></div>
+    <div class="row">②相手のボードを編集したい場合はボードリストで相手のボードをクリックする。自分のボードの場合はプロフィールから自分のボードをクリックする。</div>
+</div>
+{% endblock %}

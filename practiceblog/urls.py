@@ -35,6 +35,8 @@ urlpatterns = [
     path('user_list/api/unfollow', apis.user_unfollow),
     # お問い合わせ
     path('contact', views.contact, name="contact"),
+    # 始め方
+    path('start', views.start, name="start"),
     # ボード説明
     path('board_explanation', views.board_explanation, name="board_explanation"),
 ]
