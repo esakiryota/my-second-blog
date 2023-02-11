@@ -16,82 +16,64 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RL1LQV6HMG"></script>
     <meta name="description" content="ホワイトボードのページです。自由に記述したりして、有意義なミーティングをお楽しみください。">
     <meta name="google-site-verification" content="X_mgHnmtltcA7KorW6uvAFjafoFS7ZSACi3RJfSH3oE" />
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-  gtag('config', 'G-RL1LQV6HMG');
-</script>
+        gtag('config', 'G-RL1LQV6HMG');
+    </script>
     <style>
         body {
             font-family: sans-serif;
         }
-    
+
         video {
             max-width: 100%;
             width: 200px;
             border-radius: 8px;
         }
     </style>
-    
+
 </head>
 
 
 <body>
-    <figure id="board" >
+    <figure id="board">
         <!-- <div id="zoom_in" style="left: 600px; position: absolute;"><i class="material-icons">zoom_in</i></div> -->
-        <svg id="drawingCanvas" style="top: 10px; left: 100px; position: absolute; width: 90%; height: 90%;" class="z-depth-5"></svg>
+        <svg id="drawingCanvas" style="top: 10px; left: 100px; position: absolute; width: 90%; height: 90%;"
+            class="z-depth-5"></svg>
         <div id="bottons" style="position: absolute; bottom: 50px; right: 50px;">
-            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right" data-delay="50" data-tooltip="全削除"
-            id="eraserAll" ><i class="material-icons">delete_forever</i></a>
-            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right" data-delay="50" data-tooltip="戻る"
-            id="redo"><i class="material-icons">redo</i></a>
-            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right" data-delay="50" data-tooltip="画像"
-            id="image_catch"><i class="material-icons">photo</i></a>
-            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right" data-delay="50" data-tooltip="ダウンロード"
-            id="board_download"><i class="material-icons">file_download</i></a>
+            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right"
+                data-delay="50" data-tooltip="全削除" id="eraserAll"><i class="material-icons">delete_forever</i></a>
+            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right"
+                data-delay="50" data-tooltip="戻る" id="redo"><i class="material-icons">redo</i></a>
+            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right"
+                data-delay="50" data-tooltip="画像" id="image_catch"><i class="material-icons">photo</i></a>
+            <a class='pointer-type btn-floating row tooltipped blue button' href='#' data-position="right"
+                data-delay="50" data-tooltip="ダウンロード" id="board_download"><i
+                    class="material-icons">file_download</i></a>
         </div>
         <div id="controllers" class="row" style="position: absolute; top: 20px; right: 50px;">
             <span class='pointer-type col controller' id="zoom_in"><i class="material-icons">zoom_in</i></span>
             <span class='pointer-type col controller' id="moveScreen"><i class="material-icons">open_with</i></span>
         </div>
     </figure>
+
     <p style="position: fixed; left: 10px; top: 10px; display: flex; flex-flow: column;">
-        <a class='dropdown-button btn row tooltipped' data-position="right" data-delay="50" data-tooltip="色"
-            style="background-color: black;" href='#' data-activates='dropdown1' id="color-btn"><i
-                class="material-icons">color_lens</i></a>
-        <a class='dropdown-button pointer-type btn row tooltipped' data-position="right" data-delay="50" data-tooltip="ペン" href='#'
-            id="draw" style="background-color: #2962ff;" data-activates='dropdown2'><i class="material-icons">edit</i></a>
+        <a class='dropdown-button pointer-type btn row tooltipped' data-position="right" data-delay="50"
+            data-tooltip="ペン" href='#' id="draw" style="background-color: #2962ff;" data-activates='dropdown2'><i
+                class="material-icons">edit</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="選択"
             id="moveContent" style="background-color: #42a5f5;"><i class="material-icons">pan_tool</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="削除"
             id="eraser" style="background-color: #42a5f5;"><i class="material-icons">delete</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50"
-            data-tooltip="comming soon" style="background-color: #42a5f5;"><i class="material-icons">picture_in_picture</i></a>
+            data-tooltip="comming soon" style="background-color: #42a5f5;"><i
+                class="material-icons">picture_in_picture</i></a>
         <a class='pointer-type btn row tooltipped' href='#' data-position="right" data-delay="50" data-tooltip="文字"
             id="text" style="background-color: #42a5f5;"><i class="material-icons">text_format</i></a>
         <input type="file" style="display: none;" accept="image/*" id="file-select-input">
-    <ul id='dropdown1' class='dropdown-content' style="width: 100px;">
-        <li class="color" id="#000000"><a href="#!">
-                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #000000;"></div>
-            </a></li>
-        <li class="color" id="#ff0000"><a href="#!">
-                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #ff0000;"></div>
-            </a></li>
-        <li class="color" id="#008000"><a href="#!">
-                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #008000;"></div>
-            </a></li>
-        <li class="color" id="#0000ff"><a href="#!">
-                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #0000ff;"></div>
-            </a></li>
-        <li class="color" id="#ffff00"><a href="#!">
-                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #ffff00;"></div>
-            </a></li>
-        <li class="color" id="#FFFFFF"><a href="#!">
-                <div style="width: 30px; height: 30px; border-radius: 50%; background-color: #FFFFFF;"></div>
-            </a></li>
-    </ul>
     <ul id='dropdown2' class='dropdown-content' style="width: 100px;">
         <li class="size" id="3"><a href="#!" class="">
                 <div style="width: 3px; height: 3px; border-radius: 50%; background-color: #000000;"></div>
@@ -121,12 +103,13 @@
     </p>
     <div>
         <div class="row" style="position: fixed; left: 10px; bottom: 0px;">
-            <a class='btn tooltipped' data-position="top" data-delay="50" data-tooltip="リロード" href='#'
-            id="reload" style="background-color: #42a5f5;"style="margin: 10px;" ><i class="material-icons">refresh</i></a>
-            <a class='btn tooltipped' data-position="top" data-delay="50" data-tooltip="退出" href='#'
-            id="exit" style="background-color: #42a5f5;" style="margin: 10px;" ><i class="material-icons">logout</i></a>
-            <a class='btn tooltipped modal-trigger' href="#help_modal" data-position="top" data-delay="50" data-tooltip="ヘルプ"
-            id="help" style="background-color: #42a5f5;"  style="margin: 10px;"><i class="material-icons">help</i></a>
+            <a class='btn tooltipped' data-position="top" data-delay="50" data-tooltip="リロード" href='#' id="reload"
+                style="background-color: #42a5f5;" style="margin: 10px;"><i class="material-icons">refresh</i></a>
+            <a class='btn tooltipped' data-position="top" data-delay="50" data-tooltip="退出" href='#' id="exit"
+                style="background-color: #42a5f5;" style="margin: 10px;"><i class="material-icons">logout</i></a>
+            <a class='btn tooltipped modal-trigger' href="#help_modal" data-position="top" data-delay="50"
+                data-tooltip="ヘルプ" id="help" style="background-color: #42a5f5;" style="margin: 10px;"><i
+                    class="material-icons">help</i></a>
         </div>
         <div id="help_modal" class="modal">
             <div class="modal-content">
@@ -135,7 +118,8 @@
                         <img src="{% static 'img/board_explain.png' %}" alt="画像が見つかりません" width="100%">
                     </div>
                     <div class="row">
-                        <div class="col s2"><img src="{% static 'img/board_explain_1.png' %}" alt="画像が見つかりません" width="60%"></div>
+                        <div class="col s2"><img src="{% static 'img/board_explain_1.png' %}" alt="画像が見つかりません"
+                                width="60%"></div>
                         <div class="col s10">・・・カーソルを使ってボードを編集するためのボタン類</div>
                         <div class="col s12" style="font-size: 12px;">
                             ① カラーボタン。色を変更できる。<br>
@@ -147,7 +131,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col s2"><img src="{% static 'img/board_explain_2.png' %}" alt="画像が見つかりません" width="60%"></div>
+                        <div class="col s2"><img src="{% static 'img/board_explain_2.png' %}" alt="画像が見つかりません"
+                                width="60%"></div>
                         <div class="col s10">・・・ミーティングに関するボタン類</div>
                         <div class="col s12" style="font-size: 12px;">
                             ① 退出ボタン。ミーティングを退出できる。<br>
@@ -156,7 +141,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col s2"><img src="{% static 'img/board_explain_3.png' %}" alt="画像が見つかりません" width="60%"></div>
+                        <div class="col s2"><img src="{% static 'img/board_explain_3.png' %}" alt="画像が見つかりません"
+                                width="60%"></div>
                         <div class="col s10">・・・ボタンを押すことによってボードを編集するためのボタン類</div>
                         <div class="col s12" style="font-size: 12px;">
                             ① 全削除ボタン。ボードの要素を全て削除する。<br>
@@ -165,7 +151,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col s2"><img src="{% static 'img/board_explain_4.png' %}" alt="画像が見つかりません" width="60%"></div>
+                        <div class="col s2"><img src="{% static 'img/board_explain_4.png' %}" alt="画像が見つかりません"
+                                width="60%"></div>
                         <div class="col s10">・・・ボードを操作するためのボタン類</div>
                         <div class="col s12" style="font-size: 12px;">
                             ① ズームボタン。デスクトップではスクロールにより、ズームインできる。タブレットでは、ピンチイン（二本指）でズームできる。<br>
@@ -173,7 +160,8 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col s2"><img src="{% static 'img/board_explain_5.png' %}" alt="画像が見つかりません" width="60%"></div>
+                        <div class="col s2"><img src="{% static 'img/board_explain_5.png' %}" alt="画像が見つかりません"
+                                width="60%"></div>
                         <div class="col s10">・・・ビデオを操作するためのボタン類</div>
                         <div class="col s12" style="font-size: 12px;">
                             ① 名前。<br>
@@ -185,49 +173,54 @@
                 </div>
             </div>
             <div class="modal-footer">
-              <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">閉じる</a>
             </div>
-          </div>
+        </div>
     </div>
 
     <div id="videos" style="position: fixed; left: 100px; top:20px; max-height: 500px; overflow:auto;">
         <div id="{{user_name}}_box" style="position: relative;">
             <video id="localVideo" class="z-depth-5" autoplay muted playsinline></video>
-            <div style="position: absolute; bottom: 6px; left: 0px; background-color: black; color: white;" id="name_{{user_name}}">{{user}}</div>
+            <div style="position: absolute; bottom: 6px; left: 0px; background-color: black; color: white;"
+                id="name_{{user_name}}">{{user}}</div>
             <div style="position: absolute; bottom: 0px; right: 0px;">
-            <a class='' href='#' id="mic" style="color: white"><i class="material-icons">mic_off</i></a>
-            <a class='' href='#' id="switch_video" style="color: white"><i class="material-icons">videocam</i></a>
-            <a class='' href='#' id="visibility_{{user_name}}" style="color: white" class="visible"><i class="material-icons">visibility_off</i></a>
+                <a class='' href='#' id="mic" style="color: white"><i class="material-icons">mic_off</i></a>
+                <a class='' href='#' id="switch_video" style="color: white"><i class="material-icons">videocam</i></a>
+                <a class='' href='#' id="visibility_{{user_name}}" style="color: white" class="visible"><i
+                        class="material-icons">visibility_off</i></a>
             </div>
-            <div style="position: relative; top: 10px; left: 10px; margin: 10px; display: none" id="invisible_{{user_name}}">
-                <span id="person_{{user_name}}" href='#' id="invisibility{{user_name}}" style="color: white" class="visible">
+            <div style="position: relative; top: 10px; left: 10px; margin: 10px; display: none"
+                id="invisible_{{user_name}}">
+                <span id="person_{{user_name}}" href='#' id="invisibility{{user_name}}" style="color: white"
+                    class="visible">
                     {% if image == "" %}
                     <i class="material-icons circle black" height="30" width="30">person</i>
                     {% else %}
-                    <img src="{{image}}" alt="画像が見つかりません。" class="circle" id="profile_image" style="object-fit: cover;" height="30" width="30">
+                    <img src="{{image}}" alt="画像が見つかりません。" class="circle" id="profile_image" style="object-fit: cover;"
+                        height="30" width="30">
                     {% endif%}
                 </span>
             </div>
         </div>
-</div>
+    </div>
+    <div id="selector"></div>
     {{ token|json_script:"token" }}
     {{ user_name|json_script:"user_name"}}
     {{ user|json_script:"user"}}
     {% csrf_token %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script src="{% static 'js/materialize.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="{% static 'js/materialize.js' %}"></script>
     <script>
         $(function () {
-            $(document).ready(function(){
-    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
-    $('.modal').modal();
-  });
-            
+            $(document).ready(function () {
+                // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+                $('.modal').modal();
+            });
+
             var svgElm_js = document.getElementById("drawingCanvas")
             svgElm_js.clientHeight = svgElm_js.style.height
             svgElm_js.clientWidth = svgElm_js.style.width
             document.getElementById("videos").style.maxHeight = svgElm_js.style.height + "px"
-            console.log(document.getElementById("videos"));
             var svgElm_js_height = svgElm_js.clientHeight
             var svgElm_js_width = svgElm_js.clientWidth
             var init_viewBox = "0 0 " + String(svgElm_js_width) + " " + String(svgElm_js_height)
@@ -238,9 +231,8 @@
                 var svgElm_js_height = svgElm_js.clientHeight
                 var svgElm_js_width = svgElm_js.clientWidth
                 document.getElementById("videos").style.maxHeight = svgElm_js.clientHeight + "px"
-                console.log(document.getElementById("videos").style.maxHeight);
                 var [minX, minY, width, height] = svgElm_js.getAttribute('viewBox').split(' ')
-                            .map(s => parseFloat(s));
+                    .map(s => parseFloat(s));
                 var init_viewBox = String(minX) + " " + String(minY) + " " + String(svgElm_js_width) + " " + String(svgElm_js_height)
 
                 svgElm_js.setAttribute("viewBox", init_viewBox)
@@ -258,15 +250,15 @@
             var baseDistance = 0
 
             function zoomAction() {
-                
-                document.getElementById("drawingCanvas").addEventListener(wheel_event, function(e) {
-                    if (pointerType == "zoom_in" || pointerType == "zoom_out" ) {
+
+                document.getElementById("drawingCanvas").addEventListener(wheel_event, function (e) {
+                    if (pointerType == "zoom_in" || pointerType == "zoom_out") {
                         var scale = 1
                         e.preventDefault()
                         var pointer_x = 0
                         var pointer_y = 0
                         if (wheel_event == "touchmove") {
-                            var touches = e.changedTouches ;
+                            var touches = e.changedTouches;
                             if (touches.length > 1) {
                                 try {
                                     var page_x1 = touches[0].pageX;
@@ -288,13 +280,13 @@
                                     if (baseDistance != 0) {
                                         scale = baseDistance / distance;
                                     }
-                                    pointer_x = (x1 + x2)/2;
-                                    pointer_y = (y1 + y2)/2;
+                                    pointer_x = (x1 + x2) / 2;
+                                    pointer_y = (y1 + y2) / 2;
                                     baseDistance = distance
                                 } catch (error) {
                                     console.error(error);
                                 }
-                    
+
                             }
                         } else {
                             var dy = e.deltaY
@@ -302,25 +294,24 @@
                             pointer_x = getPositionXOnSvg(e)
                             pointer_y = getPositionYOnSvg(e)
                         }
-                        console.log(scale);
                         var [a, b, w, h] = svgElm_js.getAttribute('viewBox')
                             .split(' ')
                             .map(s => parseFloat(s));
-                        var a_ = (a - pointer_x)*scale + pointer_x;
-                        var b_ = (b - pointer_y)*scale + pointer_y;
-                        var h_ = h*scale;
-                        var w_ = w*scale;
+                        var a_ = (a - pointer_x) * scale + pointer_x;
+                        var b_ = (b - pointer_y) * scale + pointer_y;
+                        var h_ = h * scale;
+                        var w_ = w * scale;
                         const zoomedViewBox = [a_, b_, w_, h_].join(' ');
                         svgElm_js.setAttribute('viewBox', zoomedViewBox);
 
                     }
-                }, {passive: false})
+                }, { passive: false })
             }
             zoomAction()
 
             function zoomActionOnPad() {
-                document.getElementById("drawingCanvas").addEventListener("touchend", function(e) {
-                    if (pointerType == "zoom_in" || pointerType == "zoom_out" ) {
+                document.getElementById("drawingCanvas").addEventListener("touchend", function (e) {
+                    if (pointerType == "zoom_in" || pointerType == "zoom_out") {
                         if (wheel_event == "touchmove") {
                             baseDistance = 0
                         }
@@ -330,11 +321,11 @@
 
             zoomActionOnPad()
 
-            document.getElementById("reload").addEventListener("click", function() {
+            document.getElementById("reload").addEventListener("click", function () {
                 location.reload()
             })
 
-            document.getElementById("exit").addEventListener("click", function() {
+            document.getElementById("exit").addEventListener("click", function () {
                 window.location.href = '/profile';
             })
 
@@ -360,8 +351,8 @@
             }
             const roomName = JSON.parse(document.getElementById('token').textContent);
 
-            
-            
+
+
 
             var ws_or_wss;
             if (location.protocol == 'http:') {
@@ -379,7 +370,7 @@
             );
 
             function defultDraw(data) {
-                Object.keys(data.data).forEach(function(key) {
+                Object.keys(data.data).forEach(function (key) {
                     //初期データをjsonfileに書き込む用のデータに加える
                     drawingData[key] = this[key];
                     var value = this[key];
@@ -388,14 +379,13 @@
                         case "draw":
                             var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
                             svgElm.append(pathElm);
-                            console.log(value);
                             svgElm.find("path:last").attr({
                                 "id": key,
-                                "d": value.d, 
+                                "d": value.d,
                                 "fill": "none",
-                                "stroke": value.stroke, 
-                                "stroke-width": value.strokeSize, 
-                                "stroke-linecap": "round" 
+                                "stroke": value.stroke,
+                                "stroke-width": value.strokeSize,
+                                "stroke-linecap": "round"
                             });
                             var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
                             if (!pathElm.hasAttribute("transform")) {
@@ -435,8 +425,8 @@
                         default:
                             console.log("no type");
                     }
-            }, data.data)
-        }
+                }, data.data)
+            }
             function loadRoom() {
                 const apiUrl =
                     '/rooms/api/'
@@ -466,31 +456,31 @@
             };
 
             var visibility = document.getElementById("visibility_" + user_name)
-            visibility.addEventListener("click", function() {
-                    console.log("click");
-                    document.getElementById("localVideo").style.display = "none"
-                    document.getElementById("name_" + user_name).style.display = "none"
-                    document.getElementById("visibility_" + user_name).style.display = "none"
-                    document.getElementById("mic").style.display = "none"
-                    document.getElementById("switch_video").style.display = "none"
-                    document.getElementById("invisible_" + user_name).style.display = ""
-                })
-                var invisibility = document.getElementById("invisible_" + user_name)
-                invisibility.addEventListener("click", function() {
-                    console.log("click");
-                    document.getElementById("localVideo").style.display = ""
-                    document.getElementById("name_" + user_name).style.display = ""
-                    document.getElementById("visibility_" + user_name).style.display = ""
-                    document.getElementById("mic").style.display = ""
-                    document.getElementById("switch_video").style.display = ""
-                    document.getElementById("invisible_" + user_name).style.display = "none"
-                })
+            visibility.addEventListener("click", function () {
+                console.log("click");
+                document.getElementById("localVideo").style.display = "none"
+                document.getElementById("name_" + user_name).style.display = "none"
+                document.getElementById("visibility_" + user_name).style.display = "none"
+                document.getElementById("mic").style.display = "none"
+                document.getElementById("switch_video").style.display = "none"
+                document.getElementById("invisible_" + user_name).style.display = ""
+            })
+            var invisibility = document.getElementById("invisible_" + user_name)
+            invisibility.addEventListener("click", function () {
+                console.log("click");
+                document.getElementById("localVideo").style.display = ""
+                document.getElementById("name_" + user_name).style.display = ""
+                document.getElementById("visibility_" + user_name).style.display = ""
+                document.getElementById("mic").style.display = ""
+                document.getElementById("switch_video").style.display = ""
+                document.getElementById("invisible_" + user_name).style.display = "none"
+            })
 
             async function startInOrder() {
                 let stream = null;
 
                 try {
-                    stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
                     await gotStream(stream);
                     videoRoomSocket = await new WebSocket(
                         ws_or_wss
@@ -501,7 +491,7 @@
                     );
                     await startConnection();
                     await setMessage();
-                } catch(e) {
+                } catch (e) {
                     console.log('startInOrder() error: ' + e.message);
                 }
             }
@@ -529,220 +519,224 @@
 
             async function startConnection() {
                 videoRoomSocket.onopen = async function (e) {
-                console.log('video room socket opened successfully')
-                await videoRoomSocket.send(JSON.stringify({
-                    "type": "join",
-                    "user_name": user_name
-                }))
-                videoRoomSocket.onclose = async function (e) {
-                console.error('video room socket closed unexpectedly');
-            };
-            }
+                    console.log('video room socket opened successfully')
+                    await videoRoomSocket.send(JSON.stringify({
+                        "type": "join",
+                        "user_name": user_name
+                    }))
+                    videoRoomSocket.onclose = async function (e) {
+                        console.error('video room socket closed unexpectedly');
+                    };
+                }
             }
 
             function switchVideo() {
                 var btn = document.getElementById("switch_video");
-                btn.addEventListener("click", function() {
+                btn.addEventListener("click", function () {
                     var mediaStream = localVideo.srcObject.getTracks();
                     for (var i = 0; i < mediaStream.length; i++) {
                         if (mediaStream[i].kind === "video") {
                             if (mediaStream[i].enabled) {
                                 mediaStream[i].enabled = false;
-                                btn.innerHTML= `<i class="material-icons">videocam_off</i>`
+                                btn.innerHTML = `<i class="material-icons">videocam_off</i>`
                             } else {
                                 mediaStream[i].enabled = true;
-                                btn.innerHTML= `<i class="material-icons">videocam</i>`
+                                btn.innerHTML = `<i class="material-icons">videocam</i>`
                             }
                         }
                     }
-                } )
+                })
             }
 
             switchVideo()
 
             function switchAudio() {
                 var btn = document.getElementById("mic");
-                btn.addEventListener("click", function() {
+                btn.addEventListener("click", function () {
                     var mediaStream = localVideo.srcObject.getTracks();
                     for (var i = 0; i < mediaStream.length; i++) {
                         if (mediaStream[i].kind === "audio") {
                             if (mediaStream[i].enabled) {
                                 mediaStream[i].enabled = false;
-                                btn.innerHTML= `<i class="material-icons">mic_off</i>`
+                                btn.innerHTML = `<i class="material-icons">mic_off</i>`
                             } else {
                                 mediaStream[i].enabled = true;
-                                btn.innerHTML= `<i class="material-icons">mic</i>`
+                                btn.innerHTML = `<i class="material-icons">mic</i>`
                             }
                         }
                     }
-                } )
+                })
             }
 
             switchAudio()
 
             async function setMessage() {
                 videoRoomSocket.onmessage = function (e) {
-             const data = JSON.parse(e.data);
-             if (data.type === 'bye') {
-                 if (data.from !== user_name) {
-                     stop(data.from);
-                 }
-                 return;
-             }
-             if (data.message == "join") {
-                 console.log("join?");
-                 if (data.user_name !== user_name) {
-                    console.log("join!");
-                     videoRoomSocket.send(JSON.stringify({
-                         "type": "hello",
-                         "to": data.user_name,
-                         "from": user_name
-                     }));
-                     return;
-                 }
-                 return
-             }
-             if (data.message == "hello") {
-                 if (data.to == user_name) {
-                     createPeerConnection(data.from);
-                     doCall(data.from, data.to, pc_list[data.from]);
-                     console.log("start from: ", user_name);
-                 } else {
-                     if (data.from == user_name) {
-                         createPeerConnection(data.to);
-                         recieveDataChannel(pc_list[data.to], data.to)
-                         console.log("recieve: ", user_name);
-                     }
-                 }
-                 return
-             }
-             
-             if (data.message.type === 'offer') {
-                 console.log("offer data: ", data);
-                 if (data.to == user_name) {
-                     console.log('remote description', data.message);
-                     pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
-                     doAnswer(data.from, data.to, pc_list[data.from]);
-                 }
-             } else if (data.message.type === 'answer') {
-                 if (data.to == user_name) {
-                     console.log("recieved answer");
-                     pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
-                 }
-             } else if (data.message.type === 'candidate') {
-                 if (data.to === user_name || data.from === user_name) {
-                     var name = data.to === user_name ? data.from : data.to;
-                     if (pc_list[name] !== data.message.target) {
-                         console.log("candidate", data.message.candidate);
-                         var candidate = new RTCIceCandidate({
-                             sdpMLineIndex: data.message.label,
-                             candidate: data.message.candidate
-                         });
-                         pc.addIceCandidate(candidate);
-                     }
-                 }
-             }
-         };
+                    const data = JSON.parse(e.data);
+
+                    if (data.type === 'bye') {
+                        if (data.from !== user_name) {
+                            stop(data.from);
+                        }
+                        return;
+                    }
+
+                    if (data.message == "join") {
+                        console.log("join?");
+                        if (data.user_name !== user_name) {
+                            console.log("join!");
+                            videoRoomSocket.send(JSON.stringify({
+                                "type": "hello",
+                                "to": data.user_name,
+                                "from": user_name
+                            }));
+                            return;
+                        }
+                        return
+                    }
+                    if (data.message == "hello") {
+                        if (data.to == user_name) {
+                            createPeerConnection(data.from);
+                            doCall(data.from, data.to, pc_list[data.from]);
+                            console.log("start from: ", user_name);
+                        } else {
+                            if (data.from == user_name) {
+                                createPeerConnection(data.to);
+                                recieveDataChannel(pc_list[data.to], data.to)
+                                console.log("recieve: ", user_name);
+                            }
+                        }
+                        return
+                    }
+                    if ('message' in data) {
+
+                        if (data.message.type === 'offer') {
+                            console.log("offer data: ", data);
+                            if (data.to == user_name) {
+                                console.log('remote description', data.message);
+                                pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
+                                doAnswer(data.from, data.to, pc_list[data.from]);
+                            }
+
+                        } else if (data.message.type === 'answer') {
+                            if (data.to == user_name) {
+                                console.log("recieved answer");
+                                pc_list[data.from].setRemoteDescription(new RTCSessionDescription(data.message));
+                            }
+                        } else if (data.message.type === 'candidate') {
+                            if (data.to === user_name || data.from === user_name) {
+                                var name = data.to === user_name ? data.from : data.to;
+                                if (pc_list[name] !== data.message.target) {
+                                    console.log("candidate", data.message.candidate);
+                                    var candidate = new RTCIceCandidate({
+                                        sdpMLineIndex: data.message.label,
+                                        candidate: data.message.candidate
+                                    });
+                                    pc.addIceCandidate(candidate);
+                                }
+                            }
+                        }
+                    }
+
+                };
             }
 
-         function recieveDataChannel(pc, name) {
-             pc.ondatachannel = function (event) {
-                 console.log('ondatachannel:', event.channel);
-                 dataChannelList[name] = event.channel;
-                 onDataChannelCreated(dataChannelList[name], user_name, name);
-             };
-         }
+            function recieveDataChannel(pc, name) {
+                pc.ondatachannel = function (event) {
+                    console.log('ondatachannel:', event.channel);
+                    dataChannelList[name] = event.channel;
+                    onDataChannelCreated(dataChannelList[name], user_name, name);
+                };
+            }
 
-         function createPeerConnection(name) {
-             try {
-                 pc = new RTCPeerConnection(pc_config);
-                 pc.addEventListener('track', function (event) {
-                     console.log("remote stream: ", event.streams[0].getTracks());
-                     if (event.track.kind === "video") {
+            function createPeerConnection(name) {
+                try {
+                    pc = new RTCPeerConnection(pc_config);
+                    pc.addEventListener('track', function (event) {
+                        console.log("remote stream: ", event.streams[0].getTracks());
+                        if (event.track.kind === "video") {
 
-                        remoteStream = event.streams[0];
-                     }
-                 })
+                            remoteStream = event.streams[0];
+                        }
+                    })
 
-                 pc.addEventListener('isolationchange', function (event) {
-                     console.log(event);
-                 })
-                 pc.addEventListener('icecandidate', function (event) {
-                     console.log('icecandidate event: ', event);
-                     if (event.candidate) {
-                         sendMessage({
-                             type: 'candidate',
-                             label: event.candidate.sdpMLineIndex,
-                             id: event.candidate.sdpMid,
-                             candidate: event.candidate.candidate,
-                             target: event.target,
-                         },
-                             name,
-                             user_name
-                         );
-                     } else {
-                         console.log('End of candidates.');
-                     }
-                 })
-                 pc.addEventListener('iceconnectionstatechange', () => {
-                     pc.iceConnectionState;
-                     if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
-                         console.log(`${name} connection: `, pc.iceConnectionState);
-                         logOnView(`${getUserNameByToken(name)} との接続が切れました`, 4000, "orange")
-                         console.log(dataChannelList);
-                         delete dataChannelList[name]
-                         console.log(dataChannelList);
-                         stop(name);
-                     }
-                     if (pc.iceConnectionState == "connected") {
-                        handleRemoteStreamAdded(remoteStream, name);
-                     }
-                     console.log(`${name} connection: `, pc.iceConnectionState);
-                 });
-                 console.log('signalingstate: ', pc.signalingState);
-                 pc.addEventListener('signalingstatechange', () => {
-                     console.log('signalingstate: ', pc.signalingState);
-                     signalingState = pc.signalingState;
-                 });
-                 pc_list[name] = pc;
-                 var video_track = localStream.getVideoTracks()[0];
-                 var audio_track = localStream.getAudioTracks()[0];
-                 console.log("local stream: ", localStream.getTracks());
-                 pc.addTrack(video_track, localStream);
-                 pc.addTrack(audio_track, localStream);
-                 console.log('Created RTCPeerConnnection');
-             } catch (e) {
-                 console.log('Failed to create PeerConnection, exception: ' + e.message);
-                 logOnView(`接続できません。: ${e.message}`, 10000, "red")
-                 return;
-             }
-         }
+                    pc.addEventListener('isolationchange', function (event) {
+                        console.log(event);
+                    })
+                    pc.addEventListener('icecandidate', function (event) {
+                        console.log('icecandidate event: ', event);
+                        if (event.candidate) {
+                            sendMessage({
+                                type: 'candidate',
+                                label: event.candidate.sdpMLineIndex,
+                                id: event.candidate.sdpMid,
+                                candidate: event.candidate.candidate,
+                                target: event.target,
+                            },
+                                name,
+                                user_name
+                            );
+                        } else {
+                            console.log('End of candidates.');
+                        }
+                    })
+                    pc.addEventListener('iceconnectionstatechange', () => {
+                        pc.iceConnectionState;
+                        if (pc.iceConnectionState == "disconnected" || pc.iceConnectionState == "failed") {
+                            console.log(`${name} connection: `, pc.iceConnectionState);
+                            logOnView(`${getUserNameByToken(name)} との接続が切れました`, 4000, "orange")
+                            delete dataChannelList[name]
+                            stop(name);
+                        }
+                        if (pc.iceConnectionState == "connected") {
+                            handleRemoteStreamAdded(remoteStream, name);
+                        }
+                        console.log(`${name} connection: `, pc.iceConnectionState);
+                    });
+                    console.log('signalingstate: ', pc.signalingState);
+                    pc.addEventListener('signalingstatechange', () => {
+                        console.log('signalingstate: ', pc.signalingState);
+                        signalingState = pc.signalingState;
+                    });
+                    pc_list[name] = pc;
+                    var video_track = localStream.getVideoTracks()[0];
+                    var audio_track = localStream.getAudioTracks()[0];
+                    console.log("local stream: ", localStream.getTracks());
+                    pc.addTrack(video_track, localStream);
+                    pc.addTrack(audio_track, localStream);
+                    console.log('Created RTCPeerConnnection');
+                } catch (e) {
+                    console.log('Failed to create PeerConnection, exception: ' + e.message);
+                    logOnView(`接続できません。: ${e.message}`, 10000, "red")
+                    return;
+                }
+            }
 
-         function getUserNameByToken(token) {
-             username = "匿名"
-             for (var i = 0; i < user_list.length; i++) {
-                 if (user_list[i].token == token) {
-                     username = user_list[i].username
-                     break;
-                 }
-             }
+            function getUserNameByToken(token) {
+                username = "匿名"
+                for (var i = 0; i < user_list.length; i++) {
+                    if (user_list[i].token == token) {
+                        username = user_list[i].username
+                        break;
+                    }
+                }
 
-             return username
-         }
+                return username
+            }
 
-         function doCall(to, from, pc) {
-             console.log('Sending offer to peer');
-             dataChannelList[to] = pc.createDataChannel('test');
-             console.log("create dataChannel");
-             onDataChannelCreated(dataChannelList[to], from, to);
-             pc.createOffer().then(function (sessionDescription) {
-                 pc.setLocalDescription(sessionDescription);
-                 sendMessage(sessionDescription, to, from);
-                 return;
-             });
-         }
+            function doCall(to, from, pc) {
+                console.log('Sending offer to peer');
+                dataChannelList[to] = pc.createDataChannel('test');
+                console.log("create dataChannel");
+                onDataChannelCreated(dataChannelList[to], from, to);
+                pc.createOffer().then(function (sessionDescription) {
+                    pc.setLocalDescription(sessionDescription);
+                    sendMessage(sessionDescription, to, from);
+                    return;
+                });
+            }
 
-         function handleRemoteStreamAdded(stream, name) {
+            function handleRemoteStreamAdded(stream, name) {
                 console.log('Remote stream added.');
                 console.log('stream: ', stream.getTracks());
                 remoteVideo = document.createElement("video");
@@ -784,7 +778,7 @@
                 remoteVideo = document.getElementById(name);
                 remoteStream = stream;
                 remoteVideo.srcObject = remoteStream;
-                remoteVideoVisibleDiv.addEventListener("click", function() {
+                remoteVideoVisibleDiv.addEventListener("click", function () {
                     console.log("click");
                     console.log(remoteVideoDiv.style.display);
                     document.getElementById(name).style.display = "none"
@@ -792,7 +786,7 @@
                     document.getElementById("visible_" + name).style.display = "none"
                     document.getElementById("invisible_" + name).style.display = ""
                 })
-                remoteVideoInvisibleDiv.addEventListener("click", function() {
+                remoteVideoInvisibleDiv.addEventListener("click", function () {
                     console.log("click");
                     console.log(remoteVideoDiv.style.display);
                     document.getElementById(name).style.display = ""
@@ -800,189 +794,162 @@
                     document.getElementById("visible_" + name).style.display = ""
                     document.getElementById("invisible_" + name).style.display = "none"
                 })
-                console.log(name);
-                // getUserName(name)
-                
+
             }
 
-         function onDataChannelCreated(channel, name, channel_name) {
-             console.log('onDataChannelCreated:', channel);
+            function onDataChannelCreated(channel, name, channel_name) {
+                console.log('onDataChannelCreated:', channel);
 
-             channel.onopen = function () {
-                 console.log('CHANNEL opened!!!');
-                //  logOnView("CHANNEL opened!!!", 4000, "blue")
-                 logOnView("ボードのデータが共有されました", 4000, "blue")
-                 var user = JSON.parse(document.getElementById('user').textContent);
-                 var data = {
-                     "type": "name",
-                     "token": name,
-                     "username": user,
-                 }
-                 channel.send(JSON.stringify(data));
-             };
+                channel.onopen = function () {
+                    console.log('CHANNEL opened!!!');
+                    //  logOnView("CHANNEL opened!!!", 4000, "blue")
+                    logOnView("ボードのデータが共有されました", 4000, "blue")
+                    var user = JSON.parse(document.getElementById('user').textContent);
+                    var data = {
+                        "type": "name",
+                        "token": name,
+                        "username": user,
+                    }
+                    channel.send(JSON.stringify(data));
+                };
 
-             channel.onclose = function () {
-                 console.log('Channel closed.');
-                //  logOnView("Channel closed.", 4000, "red")
-                console.log(name);
-                console.log(dataChannelList);
-                 delete dataChannelList[channel_name]
-                 console.log(dataChannelList);
-                 logOnView("接続が切れました", 4000, "red")
-             }
+                channel.onclose = function () {
+                    console.log('Channel closed.');
+                    delete dataChannelList[channel_name]
+                    logOnView("接続が切れました", 4000, "red")
+                }
 
-             channel.onmessage = function(e) {
-                 console.log('recieve message');
-                 const data = JSON.parse(e.data);
-                 console.log("data: ", data);
-                var svgElm = $("#drawingCanvas")
-                switch (data.type) {
-                    case "name":
-                        roomInComment(data.token, data.username)
-                    case "draw":
-                        var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        var path_attr = {
-                            "id": data.id,
-                            "d": "", //pathデータ//塗りつぶし
-                            "fill": "none",
-                            "stroke": data.stroke, //線の色
-                            "stroke-width": data.strokeSize, //線の太さ
-                            "stroke-linecap": "round" //線の端を丸める
-                        }
-                        for (let key in path_attr) {
-                            pathElm.setAttribute(key, path_attr[key])
-                        }
+                channel.onmessage = function (e) {
+                    console.log('recieve message');
+                    const data = JSON.parse(e.data);
+                    var svgElm = $("#drawingCanvas")
+                    switch (data.type) {
+                        case "name":
+                            roomInComment(data.token, data.username)
+                        case "draw":
+                            var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            var path_attr = {
+                                "id": data.id,
+                                "d": "", //pathデータ//塗りつぶし
+                                "fill": "none",
+                                "stroke": data.stroke, //線の色
+                                "stroke-width": data.strokeSize, //線の太さ
+                                "stroke-linecap": "round" //線の端を丸める
+                            }
+                            for (let key in path_attr) {
+                                pathElm.setAttribute(key, path_attr[key])
+                            }
 
-                        svgElm.append(pathElm);
-                        break;
-                    case "drawing":
-                        // svgElm.find("path:last").attr("d", data.d);
-                        document.getElementById(data.id).setAttribute("d", data.d)
-                        break;
-                    case "delete":
-                        var target = document.getElementById(data.id);
-                        console.log(target);
-                        target.remove();
-                        break;
-                    case "deleteAll":
-                        svgElm_js.innerHTML = ""
-                        drawingData = {}
-                    case "moveContent":
-                        console.log(data.id);
-                        var target = document.getElementById(data.id);
-                        console.log(target);
-                        var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
-                        if (!target.hasAttribute("transform")) {
-                            target.transform.baseVal.appendItem(transform);
-                        }
+                            svgElm.append(pathElm);
+                            break;
+                        case "drawing":
+                            // svgElm.find("path:last").attr("d", data.d);
+                            document.getElementById(data.id).setAttribute("d", data.d)
+                            break;
+                        case "delete":
+                            var target = document.getElementById(data.id);
+                            target.remove();
+                            break;
+                        case "deleteAll":
+                            svgElm_js.innerHTML = ""
+                            drawingData = {}
+                        case "moveContent":
+                            var target = document.getElementById(data.id);
+                            var pathElm = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                            var transform = pathElm.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
+                            if (!target.hasAttribute("transform")) {
+                                target.transform.baseVal.appendItem(transform);
+                            }
 
                             // var Matrix = target.transform.matrix;
-                        var Matrix = target.transform.baseVal[0].matrix;
-                        Matrix.e += data.dx;
-                        Matrix.f += data.dy;
-                        break;
-                    case "image":
-                        createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
-                        count = data.count;
-                        break;
-                    case "image_href":
-                        href += data.href;
-                        if (data.count === count) {
-                            var target = document.getElementById(data.id);
-                            target.setAttribute("href", href);
-                            href = "";
-                            count = 0;
-                        }
-                        break;
-                    case "textBox":
-                        createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
-                        break;
-                    case "writing":
-                        document.getElementById(data.id).textContent = data.text;
-                        break;
-                    case "resize":
-                        document.getElementById(data.id).width.baseVal.value += data.w;
-                        document.getElementById(data.id).height.baseVal.value += data.h;
-                        break;
-                    case "shareData":
-                        drawingData = data.data;
-                        console.log("share");
-                        break;
-                    case "redo":
-                        var target = document.getElementById(data.id)
-                        target.remove()
-                    default:
-                        console.log("no data");
-                        break;
+                            var Matrix = target.transform.baseVal[0].matrix;
+                            Matrix.e += data.dx;
+                            Matrix.f += data.dy;
+                            break;
+                        case "image":
+                            createImage(data.cx, data.cy, data.x, data.y, data.width, data.height, data.href, data.id);
+                            count = data.count;
+                            break;
+                        case "image_href":
+                            href += data.href;
+                            if (data.count === count) {
+                                var target = document.getElementById(data.id);
+                                target.setAttribute("href", href);
+                                href = "";
+                                count = 0;
+                            }
+                            break;
+                        case "textBox":
+                            createTextBox(data.cx, data.cy, data.x, data.y, data.id, data.text);
+                            break;
+                        case "writing":
+                            document.getElementById(data.id).textContent = data.text;
+                            break;
+                        case "resize":
+                            document.getElementById(data.id).width.baseVal.value += data.w;
+                            document.getElementById(data.id).height.baseVal.value += data.h;
+                            break;
+                        case "shareData":
+                            drawingData = data.data;
+                            break;
+                        case "redo":
+                            var target = document.getElementById(data.id)
+                            target.remove()
+                        default:
+                            console.log("no data");
+                            break;
+                    }
                 }
-             }
-         }
+            }
 
-         function doAnswer(to, from, pc) {
-             console.log('Sending answer to peer.');
-             pc.createAnswer().then(function (sessionDescription) {
-                 pc.setLocalDescription(sessionDescription);
-                 sendMessage(sessionDescription, to, from);
-                 return;
-             });
-         }
+            function doAnswer(to, from, pc) {
+                console.log('Sending answer to peer.');
+                pc.createAnswer().then(function (sessionDescription) {
+                    pc.setLocalDescription(sessionDescription);
+                    sendMessage(sessionDescription, to, from);
+                    return;
+                });
+            }
 
-         function sendMessage(message, to, from) {
-             console.log('Client sending message: ', message);
-             var content = {
-                 "type": "message",
-                 "message": message,
-                 "to": to,
-                 "from": from,
-             }
-             videoRoomSocket.send(JSON.stringify(content));
-         }
+            function sendMessage(message, to, from) {
+                console.log('Client sending message: ', message);
+                var content = {
+                    "type": "message",
+                    "message": message,
+                    "to": to,
+                    "from": from,
+                }
+                videoRoomSocket.send(JSON.stringify(content));
+            }
 
-         function stop(name) {
-             console.log(`Connection with ${name} was over`);
-             document.getElementById(name).remove();
-             document.getElementById(name + "_box").remove();
-            //  remoteVideoDiv
-             pc_list[name].close();
-             delete pc_list[name];
-         }
+            function stop(name) {
+                console.log(`Connection with ${name} was over`);
+                document.getElementById(name).remove();
+                document.getElementById(name + "_box").remove();
+                //  remoteVideoDiv
+                pc_list[name].close();
+                delete pc_list[name];
+            }
 
-         var user_list = []
+            var user_list = []
+            function roomInComment(token, username) {
+                var data = { "token": token, "username": username, "image": "" }
+                user_list.push(data)
 
-        //  function getUserName(token) {
-        //      console.log(token);
-        //     const apiUrl = '/myboard/api/user_info'
-        //     var data = {
-        //         token : token
-        //     }
-        //     console.log(data);
-        //     var response = ajax(data, apiUrl, "POST", roomInComment)
-        //  }
-
-         function roomInComment(token, username) {
-             var data = {"token": token, "username": username, "image": ""}
-             user_list.push(data)
-
-             logOnView(username + "さんが入室しました。", 3000, "blue")
-             var name_plate = document.getElementById("name_" + token)
-             var name_tooltiped = document.getElementById("person_" + token)
-              console.log(name_tooltiped);
-             document.getElementById("person_" + token).innerHTML = `<i class="material-icons circle black">person_outline</i>`
-             name_plate.textContent = username
-         }
+                logOnView(username + "さんが入室しました。", 3000, "blue")
+                var name_plate = document.getElementById("name_" + token)
+                var name_tooltiped = document.getElementById("person_" + token)
+                document.getElementById("person_" + token).innerHTML = `<i class="material-icons circle black">person_outline</i>`
+                name_plate.textContent = username
+            }
 
 
 
             function ajax(data, url, type, doneFunc) {
                 var csrf_token = getCookie("csrftoken");
                 var data = JSON.stringify(data);
-                // var csrftoken1 = Cookies.get('csrftoken');
                 var csrftoken2 = getCookie("csrftoken");
                 var csrftoken3 = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                // console.log(`csrftoken1:${csrftoken1}`);
-                console.log(`csrftoken2:${csrftoken2}`);
-                console.log(`csrftoken3:${csrftoken3}`);
                 $.ajax({
                     url: url,
                     type: type,
@@ -1040,13 +1007,13 @@
 
             var svgElm = $("#drawingCanvas"), //SVG要素を取得
                 svgElm_js = document.getElementById("drawingCanvas")
-                board = $("#board"),
+            board = $("#board"),
                 movetoX = 0, //開始点(横方向)の初期化
                 movetoY = 0, //開始点(縦方向)の初期化
                 linetoStr = "", //LineToコマンド値の初期化
                 strokeColor = "#666666", //描画色の初期化
                 strokeSize = "3"
-                drawType = ""; //塗りつぶしの初期化
+            drawType = ""; //塗りつぶしの初期化
             drawingData = {};
             browserDrawingData = {};
             svg_height = window.innerHeight;
@@ -1054,13 +1021,17 @@
             browserDrawData = {};
             id = "";
             old_id = "";
-            
+
             var input = document.createElement("input");
-                input.id = "textToolInput";
-                input.type = "text";
-                input.setAttribute("autocomplete", "off");
+            input.id = "textToolInput";
+            input.type = "text";
+            input.setAttribute("autocomplete", "off");
             var text = "";
             var curText = "";
+            var drawCondition = {
+                draw: { size: strokeSize, color: strokeColor },
+                text: { size: 20, color: "#666666" }
+            }
 
             var start_event = 'ontouchstart' in window ? "touchstart" : "mousedown";
             var move_event = 'ontouchstart' in window ? "touchmove" : "mousemove";
@@ -1078,13 +1049,13 @@
                         case "moveScreen":
                             moveScreenByMousedown();
                             break;
-                        case "moveContent": 
+                        case "moveContent":
                             moveContentByMousedown();
                             break;
-                        case "eraser": 
+                        case "eraser":
                             eraserByMousedown();
                             break;
-                        case "text": 
+                        case "text":
                             textBoxMousedown();
                             break;
                         default:
@@ -1101,13 +1072,13 @@
                         case "moveScreen":
                             moveScreenByMouseup();
                             break;
-                        case "moveContent": 
+                        case "moveContent":
                             moveContentByMouseup();
                             break;
-                        case "eraser": 
+                        case "eraser":
                             eraserByMouseup();
                             break;
-                        case "text": 
+                        case "text":
                             textBoxMouseup();
                             break;
                         default:
@@ -1124,10 +1095,14 @@
 
             }
 
+            var rect_selector = document.createElement("div");
+            var selector = document.getElementById('selector');
+            selector.appendChild(rect_selector);
+
             function changePinterType() {
                 let pointerTypeClass = document.getElementsByClassName("pointer-type");
                 for (let i = 0; i < pointerTypeClass.length; i++) {
-                    pointerTypeClass[i].addEventListener("click", () => {
+                    pointerTypeClass[i].addEventListener("click", (e) => {
                         if (pointerTypeClass[i].classList.contains("button")) {
                             return
                         }
@@ -1138,13 +1113,32 @@
                             }
                         }
                         pointerType = pointerTypeClass[i].id;
+
+                        switch (pointerType) {
+                            case "draw":
+                                selector.innerHTML = ""
+                                rect_selector = rectForSelectiton(e.pageX, e.pageY);
+                                selector.appendChild(rect_selector);
+                                penDesignSelecor(rect_selector);
+                                console.log(pointerType);
+                                break;
+                            case "text":
+                                selector.innerHTML = "";
+                                rect_selector = rectForSelectiton(e.pageX, e.pageY);
+                                selector.appendChild(rect_selector);
+                                textDesignSelecor(rect_selector);
+                                console.log(pointerType);
+                                break;
+                            default:
+                                break;
+                        }
                         if (pointerTypeClass[i].classList.contains("controller")) {
                             // pointerTypeClass[i].style.backgroundColor = "#bbdefb";
                             pointerTypeClass[i].classList.add("blue-text")
                         } else {
                             pointerTypeClass[i].style.backgroundColor = "#2962ff";
                         }
-                        
+
                         for (let j = 0; j < pointerTypeClass.length; j++) {
                             if (j !== i) {
                                 if (pointerTypeClass[j].classList.contains("controller")) {
@@ -1154,7 +1148,7 @@
                                 } else {
                                     pointerTypeClass[j].style.backgroundColor = "#42a5f5";
                                 }
-                                
+
                             }
                         }
                         console.log(`change:${pointerType}`);
@@ -1171,11 +1165,11 @@
                 svgElm.css("cursor", "move")
                 onDown = true;
                 var mouse_move_x = parseFloat(getPageX(event)); //SVG上のマウス座標(横方向)の取得
-                    mouse_move_y = parseFloat(getPageY(event)); //SVG上のマウス座標(縦方向)の取得
+                mouse_move_y = parseFloat(getPageY(event)); //SVG上のマウス座標(縦方向)の取得
                 $("#drawingCanvas").on(move_event, function (event) {
                     if (!onDown) return;
-                    
-                    
+
+
                     event.preventDefault();
                     // event.stopPropagation();
                     // var mouse_moving_x = parseFloat(getPositionXOnSvg(event)); //SVG上のマウス座標(横方向)の取得
@@ -1183,13 +1177,13 @@
                     // if (mouse_moving_x == mouse_move_x || mouse_moving_y == mouse_move_y) return
                     var mouse_moving_x = parseFloat(getPageX(event));
                     var mouse_moving_y = parseFloat(getPageY(event));
-                    
+
                     const viewBoxList = svgElm_js.getAttribute('viewBox').split(' ');
                     var svg_w = svgElm_js.clientWidth
-                    var pageX_aspect =  viewBoxList[2]/svg_w
-                    var x_length = (mouse_moving_x - mouse_move_x)*pageX_aspect;
-                    var y_length = (mouse_moving_y - mouse_move_y)*pageX_aspect;
-                    
+                    var pageX_aspect = viewBoxList[2] / svg_w
+                    var x_length = (mouse_moving_x - mouse_move_x) * pageX_aspect;
+                    var y_length = (mouse_moving_y - mouse_move_y) * pageX_aspect;
+
                     mouse_move_x = mouse_moving_x;
                     mouse_move_y = mouse_moving_y;
 
@@ -1197,18 +1191,18 @@
                     viewBoxList[1] = '' + (parseFloat(viewBoxList[1]) - y_length);
                     const viewBox = viewBoxList.join(' ');
                     // if (old_length_x == x_length*(-1) && old_length_y == y_length*(-1)) return;
-                    
+
                     svgElm_js.setAttribute('viewBox', viewBox);
 
                 });
-            // });
+                // });
             }
             // moveScreenByMousedown()
 
             function moveScreenByMouseup() {
                 console.log("finish");
                 onDown = false;
-                
+
                 svgElm.css("cursor", "default")
                 $("#drawingCanvas").off(move_event);
             }
@@ -1298,7 +1292,7 @@
                             targetContent.transform.baseVal.appendItem(transform);
                         }
 
-                            // var Matrix = targetContent.transform.matrix;
+                        // var Matrix = targetContent.transform.matrix;
                         var Matrix = targetContent.transform.baseVal[0].matrix;
                         Matrix.e += sendData.dx;
                         Matrix.f += sendData.dy;
@@ -1361,23 +1355,23 @@
             }
 
             function eraserByMousedown() {
-                        $("#drawingCanvas").on(move_event, function (evt) {
-                            // event.preventDefault()
-                            var target = document.elementFromPoint(getPageX(evt), getPageY(evt));
-                            var target_id = target.id;
-                            if (target !== document.getElementById("drawingCanvas") && target_id !== "") {
-                                var target_id = target.id;
-                                var sendData = {
-                                    "type" : "delete",
-                                    "id" : target_id
-                            }
-                            // roomSocket.send(JSON.stringify(sendData));
-                            sendOnDatachannel(sendData);
-                            var target = document.getElementById(sendData.id);
-                            target.remove();
-                            delete drawingData[target_id];
-                            }
-                        });
+                $("#drawingCanvas").on(move_event, function (evt) {
+                    // event.preventDefault()
+                    var target = document.elementFromPoint(getPageX(evt), getPageY(evt));
+                    var target_id = target.id;
+                    if (target !== document.getElementById("drawingCanvas") && target_id !== "") {
+                        var target_id = target.id;
+                        var sendData = {
+                            "type": "delete",
+                            "id": target_id
+                        }
+                        // roomSocket.send(JSON.stringify(sendData));
+                        sendOnDatachannel(sendData);
+                        var target = document.getElementById(sendData.id);
+                        target.remove();
+                        delete drawingData[target_id];
+                    }
+                });
             }
 
             function eraserByMouseup() {
@@ -1438,17 +1432,15 @@
                     input.removeEventListener("keyup", function () { })
                     input.style.top = '-1000px';
                 })
-                input.addEventListener("blur", function () {
-                    input.removeEventListener("keyup", function () { })
-                    input.style.top = '-1000px';
-                })
                 input.addEventListener("keypress", function (e) {
                     if (e.keyCode === 13) {
-                        input_y += 20
+                        input_y += parseInt(drawCondition.text.size);
                         input.style.top = input_y + 'px';
                         id = Math.random().toString(32).substring(2);
-                        y += 20;
+                        y +=  parseInt(drawCondition.text.size);
+                        console.log(y);
                         createTextBox(x, y, 0, 0, id, text);
+
                         sendTextBoxData.cx = x;
                         sendTextBoxData.cy = y;
                         sendTextBoxData.x = 0;
@@ -1480,17 +1472,6 @@
                     }
                 });
             }
-            // function initSvgSize() {
-            //     var init_height = String(window.innerHeight - 10) + "px";
-            //     var init_width = String(window.innerWidth - 10 - 100) + "px";
-            //     // svgElm.attr("height", `2000`);
-            //     // svgElm.attr("width", `2000`);
-            //     console.log(board[0]);
-            //     board[0].css("height", init_height)
-            //     board[0].css("width", init_width)
-            //     board[0].css("overflow", "auto")
-            // }
-            // initSvgSize()
 
             svgResize();
 
@@ -1526,7 +1507,7 @@
                 for (let key in path_attr) {
                     pathElm.setAttribute(key, path_attr[key])
                 }
-                
+
                 svgElm.append(pathElm);
 
 
@@ -1570,22 +1551,21 @@
 
             function saveBoardData() {
                 const apiUrl =
-                        '/rooms/api/'
-                        + roomName
-                        + '/update/'
-                    const afterDrawFunc = function (response) {
-                        logOnView(response.message, 1000, "blue")
-                        return response;
-                    }
-                    console.log(drawingData);
-                    ajax(drawingData, apiUrl, "post", afterDrawFunc)
-                    shareBoardData();
+                    '/rooms/api/'
+                    + roomName
+                    + '/update/'
+                const afterDrawFunc = function (response) {
+                    logOnView(response.message, 1000, "blue")
+                    return response;
+                }
+                ajax(drawingData, apiUrl, "post", afterDrawFunc)
+                shareBoardData();
             }
 
             function shareBoardData() {
                 var boardDataToShare = {
-                    "type" : "shareData",
-                    "data" : drawingData
+                    "type": "shareData",
+                    "data": drawingData
                 };
                 // sendOnDatachannel(boardDataToShare);
                 // shareは容量の問題があるので、socket使う
@@ -1597,7 +1577,7 @@
             var href = ""
 
             function eraserAll() {
-                document.getElementById("eraserAll").addEventListener("click", function() {
+                document.getElementById("eraserAll").addEventListener("click", function () {
                     if (confirm("ボード内容を全て削除しますか？")) {
                         // for (let id in drawingData) {
                         //     var target = document.getElementById(id)
@@ -1605,8 +1585,8 @@
                         // }
                         svgElm_js.innerHTML = ""
                         var sendData = {
-                                        "type" : "deleteAll",
-                                    }
+                            "type": "deleteAll",
+                        }
                         drawingData = {}
                         sendOnDatachannel(sendData);
                         saveBoardData();
@@ -1616,17 +1596,17 @@
             eraserAll()
 
             function redo() {
-                document.getElementById("redo").addEventListener("click", function() {
-                        var target = svgElm_js.lastElementChild
-                        var target_id = target.id
-                        target.remove()
-                        var sendData = {
-                                        "type" : "redo",
-                                        "id": target_id
-                                    }
-                        delete drawingData[target_id]
-                        sendOnDatachannel(sendData);
-                        saveBoardData();
+                document.getElementById("redo").addEventListener("click", function () {
+                    var target = svgElm_js.lastElementChild
+                    var target_id = target.id
+                    target.remove()
+                    var sendData = {
+                        "type": "redo",
+                        "id": target_id
+                    }
+                    delete drawingData[target_id]
+                    sendOnDatachannel(sendData);
+                    saveBoardData();
                 })
             }
 
@@ -1750,9 +1730,9 @@
                 var left = svgElm.position().left
                 var svg_w = svgElm_js.clientWidth
                 var viewBox = getViewBox()
-                var pageX_aspect =  viewBox[2]/svg_w
+                var pageX_aspect = viewBox[2] / svg_w
                 var viewBox_x = viewBox[0]
-                var result = (x - left)*pageX_aspect+viewBox_x;
+                var result = (x - left) * pageX_aspect + viewBox_x;
                 return result
             }
 
@@ -1760,9 +1740,9 @@
                 var left = svgElm.position().left
                 var svg_w = svgElm_js.clientWidth
                 var viewBox = getViewBox()
-                var pageX_aspect =  viewBox[2]/svg_w
+                var pageX_aspect = viewBox[2] / svg_w
                 var viewBox_x = viewBox[0]
-                var result = (page_x - left)*pageX_aspect+viewBox_x;
+                var result = (page_x - left) * pageX_aspect + viewBox_x;
                 return result
             }
 
@@ -1782,9 +1762,9 @@
                 var svg_w = svgElm_js.clientWidth
                 var viewBox = getViewBox()
                 var svg_h = svgElm_js.clientHeight
-                var pageY_aspect =  viewBox[3]/svg_h
+                var pageY_aspect = viewBox[3] / svg_h
                 var viewBox_y = viewBox[1]
-                var result = (y - top)*pageY_aspect + viewBox_y;
+                var result = (y - top) * pageY_aspect + viewBox_y;
                 return result
             }
 
@@ -1793,13 +1773,13 @@
                 var svg_w = svgElm_js.clientWidth
                 var viewBox = getViewBox()
                 var svg_h = svgElm_js.clientHeight
-                var pageY_aspect =  viewBox[3]/svg_h
+                var pageY_aspect = viewBox[3] / svg_h
                 var viewBox_y = viewBox[1]
-                var result = (page_y - top)*pageY_aspect + viewBox_y;
+                var result = (page_y - top) * pageY_aspect + viewBox_y;
                 return result
             }
 
-            function createImage(cx, cy, x, y,  w, h, href, id) {
+            function createImage(cx, cy, x, y, w, h, href, id) {
                 var image_elm = document.createElementNS("http://www.w3.org/2000/svg", "image");
                 image_elm.setAttribute("href", href);
                 image_elm.setAttribute("id", id);
@@ -1821,8 +1801,8 @@
                 var text_box = document.createElementNS("http://www.w3.org/2000/svg", "text");
                 text_box.setAttribute("x", cx);
                 text_box.setAttribute("y", cy);
-                text_box.setAttribute("font-size", 20);
-                text_box.setAttribute("fill", "#666666");
+                text_box.setAttribute("font-size", drawCondition.text.size);
+                text_box.setAttribute("fill", drawCondition.text.color);
                 text_box.setAttribute("id", id);
                 text_box.textContent = text;
                 var transform = text_box.transform.baseVal.createSVGTransformFromMatrix(SVGMatrixCreate())
@@ -1857,7 +1837,6 @@
             }
 
             function sendOnDatachannel(data) {
-                console.log(dataChannelList);
                 if (!isEmpty(dataChannelList)) {
                     for (let user_name in dataChannelList) {
                         dataChannelList[user_name].send(JSON.stringify(data));
@@ -1871,20 +1850,20 @@
 
             function sendImageDataChunk(chunk, data, id) {
                 var len = data.length;
-                var count = Math.floor(len/chunk);
+                var count = Math.floor(len / chunk);
                 for (var i = 0; i < count + 1; i++) {
-                    var parts = data.substring(i*chunk, (i+1)*chunk);
-                    var sendData = {"type": "image_href", "href": parts, "count": i, "id": id};
+                    var parts = data.substring(i * chunk, (i + 1) * chunk);
+                    var sendData = { "type": "image_href", "href": parts, "count": i, "id": id };
                     sendOnDatachannel(sendData);
                     if (i === count) {
-                        var parts = data.substring(i*chunk, len);
-                        var sendData = {"type": "image_href", "href": parts, "count": i, "id": id};
+                        var parts = data.substring(i * chunk, len);
+                        var sendData = { "type": "image_href", "href": parts, "count": i, "id": id };
                         sendOnDatachannel(sendData);
                     }
                 }
             }
 
-            document.getElementById("board_download").addEventListener("click", function(e) {
+            document.getElementById("board_download").addEventListener("click", function (e) {
                 downloadBoard()
             })
 
@@ -1910,7 +1889,7 @@
 
 
 
-            
+
 
             roomSocket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
@@ -1928,6 +1907,103 @@
             function logOnView(content, time, className) {
                 Materialize.toast(content, time, className)
             }
+
+            function rectForSelectiton(x, y) {
+                var rect = document.createElement('div');
+                rect.setAttribute('id', 'rect_selector');
+                rect.style.position = "fixed";
+                rect.style.top = y - 50 + "px";
+                rect.style.left = "100px";
+                // rect.style.width = "100px";
+                // rect.style.height = "100px";
+                rect.style.backgroundColor = "white";
+                rect.style.borderRadius = "10px";
+                rect.style.border = "solid grey"
+                rect.style.boxShadow = "0 10px 20px 0 rgba(0, 0, 0, .5)";
+                return rect;
+            }
+
+            function textDesignSelecor(elem) {
+                var size = drawCondition.text.size;
+                var color = drawCondition.text.color;
+                var select_elem = `<div style="position: absolute; top: 5px; right: 5px; cursor: pointer;" id="text_close"><i class="material-icons">close</i></div><div  style="margin: 10px;" id="text_design"><div>大きさ</div><p class='range-field'><input type='range' id='text_size' min='0' max='50' value="${size}"/>
+                    </p><div>色<br> <input id="color-list" type="color" value="${color}" list="colors"></br></br>
+		<datalist id="colors">
+            <option value="#000000"></option>
+            <option value="#ffffff"></option>
+			<option value="#ff0000"></option>
+			<option value="#00ff00"></option>
+			<option value="#0000ff"></option>
+		</datalist></div>
+        <div id="text_circle" style="font-size: ${size}px; color: ${color}; background-color: #EEEEEE";">あ</div></div>`
+                elem.innerHTML = select_elem;
+
+                var change_size = document.getElementById("text_size");
+                var change_color = ("color-list");
+                var circle = document.getElementById('text_circle');
+                change_size.addEventListener('input', function () {
+                    circle.style.fontSize = change_size.value + "px";
+                    drawCondition.text.size = change_size.value;
+                    strokeSize = change_size.value;
+                }, false);
+
+                $("#color-dialog").on("change", function () {
+                    circle.style.color = $('#color-dialog').val();
+                    drawCondition.text.color = $('#color-list').val();
+                    strokeColor = $('#color-list').val();
+                });
+                $("#color-list").on("change", function () {
+                    circle.style.color = $('#color-list').val();
+                    drawCondition.text.color = $('#color-list').val();
+                    strokeColor = $('#color-list').val();
+                })
+                $("#text_close").on("click", function () {
+                    selector.innerHTML = "";
+                })
+            }
+
+            function penDesignSelecor(elem) {
+                var size = drawCondition.draw.size;
+                var color = drawCondition.draw.color;
+                console.log(size);
+                var select_elem = `<div style="position: absolute; top: 5px; right: 5px; cursor: pointer; font-family: san-serif;" id="pen_close"><i class="material-icons">close</i></div><div  style="margin: 10px;" id="pen_design"><div>太さ</div><p class='range-field'><input type='range' id='pen_size' min='0' max='100' value="${size}"/>
+                    </p><div>色<br> <input id="color-list" type="color" value="${color}" list="colors"></br></br>
+		<datalist id="colors">
+            <option value="#000000"></option>
+            <option value="#ffffff"></option>
+			<option value="#ff0000"></option>
+			<option value="#00ff00"></option>
+			<option value="#0000ff"></option>
+		</datalist></div>
+        <div id="pen_circle" style="width: ${size}px; height: ${size}px; border-radius: 50%; background-color: ${color}; border: solid grey;"></div></div>`
+                elem.innerHTML = select_elem;
+
+                var change_size = document.getElementById("pen_size");
+                var change_color = ("color-list");
+                var circle = document.getElementById('pen_circle');
+                change_size.addEventListener('input', function () {
+                    circle.style.width = change_size.value + "px";
+                    circle.style.height = change_size.value + "px";
+                    drawCondition.draw.size = change_size.value;
+                    strokeSize = change_size.value;
+                }, false);
+
+                $("#color-dialog").on("change", function () {
+                    circle.style.backgroundColor = $('#color-dialog').val();
+                    drawCondition.draw.color = $('#color-list').val();
+                    strokeColor = $('#color-list').val();
+                });
+                $("#color-list").on("change", function () {
+                    circle.style.backgroundColor = $('#color-list').val();
+                    drawCondition.draw.color = $('#color-list').val();
+                    strokeColor = $('#color-list').val();
+                })
+                $("#pen_close").on("click", function () {
+                    selector.innerHTML = "";
+                })
+            }
+
+
 
         });
     </script>
